@@ -1,0 +1,64 @@
+﻿# OS / Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python cache / bytecode
+__pycache__/
+*.py[cod]
+*.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs and runtime files
+*.log
+*.out
+*.err
+
+# Local env vars / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Simulation outputs / generated artifacts
+data/logs/*
+!data/logs/.gitkeep
+experiments/results/*
+!experiments/results/.gitkeep
+
+# Optional large binaries (uncomment if needed)
+# diagrams/*.png
+# presentation/*.pptx
