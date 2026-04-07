@@ -17,3 +17,15 @@ func create_grid():
 				"type": "empty"
 			})
 		grid.append(row)
+		
+func is_valid_position(x, y):
+	if x < 0 or y < 0:
+		return false
+	if x >= width or y >= height:
+		return false
+
+	var cell = grid[x][y]
+
+	if cell["type"] == "wall":
+		return false
+	return true

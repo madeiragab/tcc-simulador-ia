@@ -61,6 +61,14 @@ A cobertura é aplicada automaticamente quando o agente está posicionado próxi
 
 ---
 
+## 4.1 Condição de Vitória
+
+- A simulação de um jogo/cenário é encerrada instantaneamente quando ocorre uma dentre duas condições: eliminação total de uma das partes rivais (*Total Annihilation*), ou atingimento de um limite fixo inflexível de 100 turnos (*Timeout Cap* de segurança procedural).
+- A equipe sobrevivente é aclamada vencedora.
+- Caso o limite de 100 turnos seja atingido estourando o tempo do jogo, um Empate (*Draw*) será decretado formalmente, independentemente dos HPs das equipes resultantes.
+
+---
+
 ## 5. Combate
 
 ### Linha de Visão (LOS)
@@ -102,29 +110,30 @@ As seguintes métricas serão utilizadas para avaliação:
 	- Número médio de turnos para vencer
 
 - Tempo de Decisão:
-	- Tempo médio para escolha de ação por agente
+	- Tempo médio para escolha de ação por agente.
 
 ---
 
 ## 7. Strategic Score
 
-Será definida uma métrica agregada para avaliação estratégica:
+Será definida uma métrica agregada para avaliação estratégica final com base estritamente formal:
 
 StrategicScore =
 0.3 * WinRate +
 0.2 * DamageRatio +
 0.2 * CoverUsage +
 0.2 * Efficiency +
-0.1 * (1 / TempoDecisão)
+0.1 * (1 / max(TempoDecisão, ε))
 
 Onde:
-- Efficiency = 1 / TurnsToVictory
+- Efficiency = 1 / max(TurnsToVictory, 1)
+- $\epsilon = 0.0001$ é uma constante técnica (EPSILON / valor muito pequeno) inserida estritamente para prevenir anomalias de divisão por zero (0.00ms) durante execuções muito velozes da máquina em nível de microprocessamento (*Float Exception Avoidance*).
 
 ---
 
-## 8. Contribuição Proposta
+## 8. Contribuição Proposta (Modelo Híbrido)
 
-O trabalho propõe o desenvolvimento de um modelo de tomada de decisão baseado no equilíbrio entre valor estratégico e custo computacional.
+O trabalho propõe o desenvolvimento de um modelo de tomada de decisão (Híbrido) baseado no equilíbrio entre valor estratégico (*Heurística*)  e custo computacional.
 
 ScoreAção = ValorEstratégico − λ × CustoComputacional
 

@@ -9,4 +9,10 @@ func _ready():
 	var agent = preload("res://agents/agent.gd").new()
 	agent.x = 5
 	agent.y = 5
+	agent.grid = grid
 	add_child(agent)
+
+	# TESTE DE MOVIMENTO
+	agent.move(1, 0)
+	agent.move(0, 1)
+	agent.move(-1, 0)
