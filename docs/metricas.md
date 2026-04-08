@@ -18,8 +18,8 @@ Percentual médio global, considerando a quantidade de turnos nos quais todos os
 ### Turns to Victory
 Número médio de turnos totais necessários para derrotar a equipe inimiga (vencendo o cenário). Para penalizar inércia ou loops infinitos de agentes reativos que sobrevivam até o teto lógico de processamento, caso a partida termine em empate pelo limite de 100 turnos fixos imposto globalmente, o modelo recebe de penalidade automática o valor máximo de tempo de arena.
 
-### Tempo de Decisão
-Tempo médio global da execução sintática (normalmente medido em milissegundos) que o processo do agente necessitou para rodar suas diretrizes e escolher uma ação. Incorpora-se aqui formalmente uma constante matemática ε (Epsilon = 0.0001) como limitador de piso em fórmulas matemáticas de proporção, sendo somada ou comparada para precaver qualquer *Crash* matemático caso a máquina calcule tudo em tempo real de 0.0s.
+### Custo Computacional Médio
+Esforço algorítmico médio global (medido através de contagem computacional abstrata de operações em código, como a taxa cumulativa de cálculos efetuados de LOS, ações geradas e nodos filtrados). Emprega-se tal métrica para substituir e nulificar as falhas de medição empírico-temporais em milissegundos *wall-clock time*, evitando dependência direta de hardware do avaliador do TCC. Incorpora-se uma constante matemática ε (Epsilon = 1) no algoritmo para delimitar um piso lógico nas fórmulas de proporção e obstar divisão paramétrica por zero.
 
 ## Métrica Composta
 
@@ -32,12 +32,12 @@ StrategicScore =
 0.2 * DamageRatio +
 0.2 * CoverUsage +
 0.2 * Efficiency +
-0.1 * (1 / max(TempoDecisão, ε))
+0.1 * (1 / max(CustoComputacionalMedio, ε))
 
 Onde:
 
 - Efficiency = 1 / max(TurnsToVictory, 1) (Usado unicamente para contornar resultados irreais)
-- $\epsilon = 0.0001$ é a constante técnica (*Epsilon*) fixada para proteger matematicamente as operações envolvendo tempo de latência de 0 absoluto (que resultariam no estouro imperativo da métrica global por Float Exception).
+- ε = 1 é a constante de base técnica (*Epsilon*) fixada estritamente contra *Float Exception* quando uma IA escolhe ação em custo unitário e zero não seja formalmente processado.
 
 ### Agregação Oficial das Métricas
 

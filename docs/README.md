@@ -23,3 +23,6 @@ Este diretório concentra a base teórica formal, definições arquiteturais e c
 - **ia.md**: Definições a respeito do paradigma reativo de Utility AI, cálculos de score puro abstrato e seleção de estado base.
 - **baseline.md**: Modelos empíricos fixos de referências comparativas estáticas para servir de atrito na comparação métrica final (Aleatória, Reativa, Heurística).
 - **modelo_proposto.md**: A especificação formal matemática da nova proposta, focada na híbrida decisão perante custos operacionais e viabilidade.
+
+### 4. Planejamento de Desenvolvimento
+- **roadmap_implementacao.md**: Cronograma estruturado em 5 fases dividindo a construção do software desde as mecânicas elementares até o *benchmark* algorítmico final.

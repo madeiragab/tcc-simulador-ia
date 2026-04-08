@@ -109,8 +109,8 @@ As seguintes métricas serão utilizadas para avaliação:
 - Turns to Victory:
 	- Número médio de turnos para vencer
 
-- Tempo de Decisão:
-	- Tempo médio para escolha de ação por agente.
+- Custo Computacional Médio:
+        - Esforço algorítmico numérico (operações de matriz e LOS).
 
 ---
 
@@ -123,11 +123,11 @@ StrategicScore =
 0.2 * DamageRatio +
 0.2 * CoverUsage +
 0.2 * Efficiency +
-0.1 * (1 / max(TempoDecisão, ε))
+0.1 * (1 / max(CustoComputacionalMedio, ε))
 
 Onde:
 - Efficiency = 1 / max(TurnsToVictory, 1)
-- $\epsilon = 0.0001$ é uma constante técnica (EPSILON / valor muito pequeno) inserida estritamente para prevenir anomalias de divisão por zero (0.00ms) durante execuções muito velozes da máquina em nível de microprocessamento (*Float Exception Avoidance*).
+- $\epsilon = 1$ é uma constante técnica inserida para impedir a divisão por base zero sobre avaliações matemáticas nulas unitárias imediatas.
 
 ---
 
@@ -138,8 +138,5 @@ O trabalho propõe o desenvolvimento de um modelo de tomada de decisão (Híbrid
 ScoreAção = ValorEstratégico − λ × CustoComputacional
 
 Onde:
-- ValorEstratégico considera fatores como posição, cobertura e dano esperado
-- CustoComputacional representa o tempo necessário para avaliar a ação
-- λ é um parâmetro de ajuste do equilíbrio
-
-O objetivo é encontrar decisões que sejam estrategicamente eficientes sem custo computacional excessivo.
+- ValorEstratégico considera fatores como posição, cobertura e dano esperado 
+- CustoComputacional é o rastreio avaliatório contínuo (processamento via count formal para processamento em loop)

@@ -17,20 +17,20 @@ Definir como os experimentos serão conduzidos para avaliar o desempenho dos mod
 
 ## 3. Configuração do Ambiente
 
-- Grid fixo (40x40)
+- Grid (40x40) acoplado a um gerador de 1000 configurações simétricas baseado puramente em um banco de Sementes (*seeds* espaciais únicas testadas uniformemente entre baselines) garantindo variabilidade controlada em oposição ao determinismo repetitivo.
 - Configuração fixa para confrontos de exatos 3 vs 3 agentes
-- Posições iniciais pré-definidas com espelhamento horizontal garantindo simetria
-- Fixação algorítmica de sementes computacionais (*seeds* controladas) para garantir percursos aleatórios consistentes e replicação exata
-- Mesmas regras determinísticas para todos os testes
+- Posições predefinidas espelhadas limitando vantagens locais 
+- Aplicação imperativa do revezamento 50/50 em viés inicial (*First-Mover Advantage*) garantindo probabilidade estatística de vitória inicial idêntica
+- Execução de mecânicas determinísticas (Sem RNG em combates)
 - Condição de vitória engatilhada apenas pela eliminação total do time rival (HP=0). Caso se atinja o limite máximo cravado de 100 turnos (*timeout cap* da restrição lógica), a simulação é finalizada em empate.
 
 ---
 
-## 4. Execução
+## 4. Execução Controlada
 
-- Exatas 1000 simulações por modelo
-- Execução automatizada em *batch* (em lotes sequenciais de simulações)
-- Sem renderização gráfica (modo *headless* / rápido)
+- Validação Paralela (Tuning de Pesos e Heurísticas de Risco): 200 iterativas isoladas para evitar Overfitting
+- Testes Finais e Benchmark Absoluto em Batch: Exatas 1000 simulações finais sobre banco de dados congelado e uniforme para todos os modelos competidores
+- Alternância em lote contínuo (*headless* simulado) em vez de tempo computacional (Aferição analítica proxy em vez de Wall-Clock *ms*)
 
 ---
 
@@ -42,7 +42,7 @@ Para cada simulação:
 - número de turnos
 - dano causado
 - dano recebido
-- tempo de decisão
+- custo algorítmico matemático proxy (Contagem em substituição aos Tempos de Custo)
 
 ---
 

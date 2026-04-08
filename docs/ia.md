@@ -52,7 +52,7 @@ Onde:
 - Proximidade: inverso da distância até o inimigo
 - Risco: quantidade de inimigos com linha de visão
 
-Os pesos (w1, w2, w3, w4) serão definidos empiricamente com base nos resultados das simulações.
+Os pesos (w1, w2, w3, w4) serão definidos empiricamente em um Espaço de Validação isolado (tuning run) com base nos resultados de simulações restritas, prevenindo overfitting antes da validação da IA Heurística no Benchmark oficial final.
 
 O fator risco possui impacto negativo, penalizando posições com maior exposição.
 
@@ -72,13 +72,13 @@ Essa abordagem caracteriza um processo de otimização local, comum em agentes r
 
 ## 6. Extensão do Modelo (Modelo Proposto - Híbrido)
 
-Diferenciando-se objetiva e metodologicamente da *IA Heurística* padrão, o modelo matemático proposto adiciona restrição de esforço e latência. Portanto, no *Modelo Proposto (Híbrido)*, essa estrutura é estendida para considerar o próprio *custo computacional (Tempo despendido)* da simulação na sua respectiva equação decisória final (impactando diretamente a viabilidade tática em *runtime*):
+Diferenciando-se objetiva e metodologicamente da *IA Heurística* padrão, o modelo matemático proposto adiciona restrição de esforço algorítmico abstrato. Portanto, no *Modelo Proposto (Híbrido)*, essa estrutura é estendida para considerar o próprio *custo computacional determinístico* (proxy de processamento) da simulação na sua respectiva equação decisória final:
 
 ScoreFinal = ValorEstratégico − λ × CustoComputacional
 
 Onde:
 
-- CustoComputacional representa e rastreia o tempo necessário para avaliar a ação
+- CustoComputacional rastreia o esforço do turno (contagem contínua abstrata de operações em loop, verificações matemáticas de LOS, número de cálculos de pathfinding). Assim elimina-se total dependência de medição de hardware/wall-clock da máquina nativa, evitando inconsistência de métricas.
 - λ é um parâmetro restritivo de ajuste do trade-off
 
 A inclusão desse fator permite equilibrar qualidade estratégica e eficiência, distinguindo-se estrutural e logicamente da *IA Heurística*, unindo otimização de processador à utilidade de campo. Alinhando-se a estudos sobre trade-offs em algoritmos de decisão (BROWNE et al., 2012).

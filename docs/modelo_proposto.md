@@ -16,10 +16,10 @@ ValorEstratégico:
 - cobertura
 - posição
 
-CustoComputacional:
-- número de avaliações
-- profundidade de busca
-- tempo de decisão
+CustoComputacional (Abstrato e Determinístico):
+- total de ações válidas avaliadas
+- quantidade de cálculos de linha de visão (LOS) e pathfinding acionados
+- número de verificações de estado heurístico realizadas
 
 ## Hipótese
 

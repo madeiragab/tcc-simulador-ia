@@ -6,25 +6,24 @@ O estudo será conduzido por meio de simulações automatizadas em um ambiente t
 
 ## Configuração do Ambiente
 
-- Grid bidimensional simétrico (NxN) com layout espelhado horizontalmente
-- Sistema simétrico com exatos 3 agentes por equipe (confronto 3 vs 3)
-- Condições iniciais padronizadas para cada cenário avaliado (posições fixamente predefinidas visando manter a equidade)
-- Utilização de sementes (*seeds*) pseudoaleatórias fixas (ex: *seed* = 42) ou múltiplas sementes rigidamente rastreadas para garantir a reprodutibilidade exata de cada cenário avaliado
-- Agentes com atributos definidos e padronizados
-- Sistema de combate determinístico
-- Regras fixas para todos os testes
+- Grid bidimensional simétrico (NxN) com geração procedural atrelada rigidamente a *seeds* exclusivas.
+- Banco padronizado de 1000 *seeds* definindo mapas, as quais serão enfrentadas de forma matematicamente idêntica por todos os modelos concorrentes
+- Configuração fixa para confrontos de 3 agentes (equipes lado-a-lado ou espelhadas horizontalmente)
+- Anulação do Viés de Primeiro Turno (*first-mover advantage*): distribuição obrigatória de 50/50 das rodadas iniciadas pelo primeiro ou segundo contendor
+- Sistema de combate determinístico blindando viés em confrontos e desvios por *RNG*
 
 ## Procedimento Experimental
 
-1. Inicializar o ambiente com posições definidas, conforme o cenário e número de agentes
-2. Executar a simulação até a condição de término (vencedor definido pela eliminação adversária, ou empate por limite fixo de 100 turnos)
-3. Registrar métricas de desempenho
-4. Repetir o processo múltiplas vezes
+1. Inicializar o labirinto/cenário e distribuir obstáculos validados através do banco fechado de Sementes (*seeds* espaciais)
+2. Engatilhar o sorteio 50/50 de quem efetuará a iniciativa do combate para eliminar vantagem assimétrica
+3. Registrar e iterar as métricas sobre avaliação matemática (Operações executadas substituem avaliações em milissegundos puramente do hardware nativo)
+4. Executar e consolidar em empate com valor numérico máximo após extrapolação imperiosa de limite global para o cravado de 100 turnos
 
 ## Execução
 
-- Número mínimo de simulações: 1000 por modelo
-- Execução automatizada e sem renderização para maior presteza e ganho de processamento
+- Validação (*Tuning*): 200 simulações preliminares em *seeds* únicas e exclusivas para calibração paramétrica, prevenindo *overfitting* de heurísticas e *lambdas* da IA.
+- Teste Cego Final (*Benchmark*): Exatas 1000 simulações oficiais no banco isolado de *seeds* reservadas para análise das vitórias cegas
+- Execução automatizada e sem renderização em lotes contínuos.
 
 ## Modelos Avaliados
 
@@ -37,9 +36,7 @@ O estudo será conduzido por meio de simulações automatizadas em um ambiente t
 
 Serão coletados:
 
-- resultados das partidas
-- métricas de desempenho
-- tempo de decisão
+- resultados das partidas iteradas e métricas matemáticas abstraídas de hardware local (tais como as verificações analíticas do terreno no Custo Computacional)
 
 ## Análise
 
