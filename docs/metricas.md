@@ -10,13 +10,13 @@ Definir métricas quantitativas para avaliar o desempenho e a qualidade estraté
 Percentual de vitórias do agente em múltiplas simulações.
 
 ### Damage Ratio
-Relação dada pelo (total de dano causado pela equipe) dividido pelo (total de dano recebido). Caso nenhum dano seja recebido, define-se um limitador (teto numérico ou valor fixo padrão) para prevenir erros no cálculo.
+Relação dada pelo total de dano causado pelo agente avaliado dividido pelo total de dano recebido por ele. Caso nenhum dano seja recebido, define-se um limitador (teto numérico ou valor fixo padrão) para prevenir erros no cálculo.
 
 ### Cover Usage
-Percentual médio global, considerando a quantidade de turnos nos quais todos os agentes da equipe sobreviveram estando ativamente atrás de algum tipo de cobertura.
+Percentual de turnos em que o agente avaliado terminou o turno em posição protegida (com célula de cobertura adjacente, oferecendo proteção potencial em pelo menos uma direção).
 
 ### Turns to Victory
-Número médio de turnos totais necessários para derrotar a equipe inimiga (vencendo o cenário). Para penalizar inércia ou loops infinitos de agentes reativos que sobrevivam até o teto lógico de processamento, caso a partida termine em empate pelo limite de 100 turnos fixos imposto globalmente, o modelo recebe de penalidade automática o valor máximo de tempo de arena.
+Número médio de turnos necessários para o agente avaliado vencer a partida. Para penalizar inércia ou loops de sobrevivência passiva, caso a partida termine em empate pelo limite de 100 turnos, o modelo recebe como penalidade o valor máximo (100).
 
 ### Custo Computacional Médio
 Esforço algorítmico médio global (medido através de contagem computacional abstrata de operações em código, como a taxa cumulativa de cálculos efetuados de LOS, ações geradas e nodos filtrados). Emprega-se tal métrica para substituir e nulificar as falhas de medição empírico-temporais em milissegundos *wall-clock time*, evitando dependência direta de hardware do avaliador do TCC. Incorpora-se uma constante matemática ε (Epsilon = 1) no algoritmo para delimitar um piso lógico nas fórmulas de proporção e obstar divisão paramétrica por zero.
