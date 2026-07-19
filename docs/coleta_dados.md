@@ -15,12 +15,13 @@ Os dados serão coletados em dois níveis:
 Para cada partida executada:
 
 - id_simulacao
-- modelo_ia
-- vencedor
+- seed
+- modelo_ia (modelo que controla o agente avaliado)
+- vencedor (verde, vermelho, azul ou empate)
 - numero_turnos
-- dano_causado
-- dano_recebido
-- tempo_total_decisao
+- dano_causado (pelo agente avaliado)
+- dano_recebido (pelo agente avaliado)
+- custo_computacional (contagem de operações do agente avaliado)
 
 ---
 
@@ -32,7 +33,7 @@ Para análises mais detalhadas:
 - agente
 - ação escolhida
 - posição
-- em_cobertura (sim/não)
+- protegido_por_cobertura (sim/não)
 - inimigos_visiveis
 
 ---
@@ -44,9 +45,9 @@ Os dados serão armazenados em formato CSV, permitindo fácil manipulação e an
 ### Exemplo (simulação)
 
 ```csv
-id_simulacao,modelo_ia,vencedor,turnos,dano_causado,dano_recebido,tempo_decisao
-1,heuristica,A,25,120,80,0.032
-2,reativa,B,40,90,130,0.010
+id_simulacao,seed,modelo_ia,vencedor,turnos,dano_causado,dano_recebido,custo_computacional
+1,42,heuristica,verde,25,120,80,1430
+2,43,reativa,empate,100,90,130,610
 ```
 
 ## 4. Organização dos Arquivos
