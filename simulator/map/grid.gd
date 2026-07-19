@@ -8,6 +8,10 @@ var height = 40
 
 var grid = []
 
+# Medidor de custo acoplado pela Simulation durante a decisão da IA da
+# vez (null fora dela). O grid só incrementa; não sabe de quem é.
+var cost_meter = null
+
 func _ready():
 	create_grid()
 	print("Grid criado: ", width, "x", height)
@@ -68,6 +72,9 @@ func get_reachable_cells(x, y, max_steps):
 		var pos = current[0]
 		var dist = current[1]
 
+		if cost_meter != null:
+			cost_meter.cells_explored += 1
+
 		if dist > 0:
 			result.append(pos)
 
@@ -112,12 +119,24 @@ func get_line_cells(x1, y1, x2, y2):
 
 # Só paredes bloqueiam linha de visão; cobertura não bloqueia.
 func has_line_of_sight(x1, y1, x2, y2):
+	if cost_meter != null:
+		cost_meter.los_checks += 1
 	var cells = get_line_cells(x1, y1, x2, y2)
 	for i in range(1, cells.size() - 1):
 		var cell = cells[i]
 		if get_cell_type(cell.x, cell.y) == "wall":
 			return false
 	return true
+
+# Posição protegida (métrica Cover Usage, docs/metricas.md): tem célula
+# de cobertura ortogonalmente adjacente, oferecendo proteção potencial
+# em pelo menos uma direção.
+func has_adjacent_cover(x, y):
+	for offset in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		var type = get_cell_type(x + offset.x, y + offset.y)
+		if type == "cover_light" or type == "cover_heavy":
+			return true
+	return false
 
 # Cobertura direcional: só protege o defensor se houver uma célula de
 # cobertura entre ele e o atacante especificamente.

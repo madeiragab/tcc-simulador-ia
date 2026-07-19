@@ -11,6 +11,10 @@ var is_alive = true
 var team_id = 0
 var vision_range = 8
 
+# Acumuladores para as métricas da partida (docs/metricas.md).
+var damage_dealt = 0
+var damage_received = 0
+
 var grid = null
 
 func _ready():
@@ -51,10 +55,12 @@ func attack(target):
 	var damage = max(BASE_DAMAGE - reduction, 0)
 
 	target.take_damage(damage)
+	damage_dealt += damage
 	print("Agente (", x, ",", y, ") atacou (", target.x, ",", target.y, ") causando ", damage, " de dano")
 	return damage
 
 func take_damage(amount):
+	damage_received += amount
 	hp = max(hp - amount, 0)
 	if hp == 0:
 		is_alive = false

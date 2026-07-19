@@ -4,9 +4,11 @@ var agents = []
 var current_index = 0
 var turn_count = 0
 
-func setup(agents_array):
+# start_index define quem inicia a partida (rotação de iniciativa entre
+# simulações — docs/turnos.md).
+func setup(agents_array, start_index = 0):
 	agents = agents_array
-	current_index = 0
+	current_index = start_index
 	turn_count = 0
 
 func get_current_agent():
@@ -36,5 +38,7 @@ func advance():
 		if current_index == start_index:
 			break
 
+const TURN_LIMIT = 100
+
 func is_turn_limit_reached():
-	return turn_count >= 100
+	return turn_count >= TURN_LIMIT
