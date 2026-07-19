@@ -15,11 +15,12 @@
 - [x] Geração procedural de mapas por *seed* (4 setores, spawn sorteado, validação de conectividade — ver `geracao_mapas.md`)
 - [x] Limite de 100 turnos com empate
 - [x] Modo de execução rápida sem animação (embrião do modo *headless* em lote)
-- [ ] Logger de métricas (contadores de custo computacional abstrato)
-- [ ] Rotação uniforme da ordem inicial entre os 3 jogadores
-- [ ] Banco fixo de 1000 *seeds* de benchmark + 200 de validação
-- [ ] Execução em lote de múltiplas simulações
-- [ ] Exportação de arquivos CSV
+- [x] Contadores de custo computacional abstrato por agente (LOS, nodos de busca, ações avaliadas)
+- [x] Rotação uniforme da ordem inicial entre os 3 jogadores (partida i inicia pelo jogador i mod 3)
+- [x] Banco fixo de 1000 *seeds* de benchmark + 200 de validação (`experiments/configs/`)
+- [x] Execução em lote de múltiplas simulações (`godot --headless -- batch <N> [banco]`)
+- [x] Exportação CSV (`data/partidas.csv`, uma linha por jogador por partida)
+- [x] Métricas agregadas com StrategicScore literal (`core/metrics.gd`, fórmula de `metricas.md`)
 
 ## Fase 3 — IAs Base
 - [ ] IA aleatória

@@ -16,11 +16,32 @@ var log_label = null
 func _ready():
 	print("Simulador iniciado")
 
-	# Seed via linha de comando (godot -- <seed>) para reprodutibilidade;
-	# sem argumento, sorteia uma e imprime para poder repetir o cenário.
+	# Argumentos após "--":
+	#   <seed>            roda uma partida com essa seed (reprodutível)
+	#   fast              roda a partida inteira sem animação e sai
+	#   batch <N> [banco] [turnos]
+	#                     roda N partidas do banco de seeds ("benchmark"
+	#                     por padrão, ou "tuning"), documentando tudo em
+	#                     data/runs/; "turnos" liga o log turno a turno
 	var map_seed = 0
 	var fast_mode = false
 	var args = OS.get_cmdline_user_args()
+
+	if args.size() > 0 and args[0] == "batch":
+		var count = int(args[1]) if args.size() > 1 and args[1].is_valid_int() else 1000
+		var bank = "benchmark"
+		var log_turns = false
+		for extra in args.slice(2):
+			if extra == "turnos":
+				log_turns = true
+			elif extra in ["benchmark", "tuning"]:
+				bank = extra
+		var runner = preload("res://core/batch_runner.gd").new()
+		add_child(runner)
+		runner.run(bank, count, log_turns)
+		get_tree().quit()
+		return
+
 	for arg in args:
 		if arg == "fast":
 			fast_mode = true
@@ -42,6 +63,7 @@ func _ready():
 			simulation.run_turn()
 			result = simulation.check_victory()
 		print("Resultado: ", result, " em ", simulation.turn_system.turn_count, " turnos")
+		print("Custo computacional: ", simulation.cost_summary())
 		get_tree().quit()
 		return
 
@@ -85,6 +107,7 @@ func _on_step():
 			print("Resultado: empate em ", simulation.turn_system.turn_count, " turnos")
 		else:
 			print("Resultado: vitória do ", result, " em ", simulation.turn_system.turn_count, " turnos")
+		print("Custo computacional: ", simulation.cost_summary())
 		finish(result)
 		return
 

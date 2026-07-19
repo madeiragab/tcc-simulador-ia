@@ -10,7 +10,9 @@ Definir métricas quantitativas para avaliar o desempenho e a qualidade estraté
 Percentual de vitórias do agente em múltiplas simulações.
 
 ### Damage Ratio
-Relação dada pelo total de dano causado pelo agente avaliado dividido pelo total de dano recebido por ele. Caso nenhum dano seja recebido, define-se um limitador (teto numérico ou valor fixo padrão) para prevenir erros no cálculo.
+Relação dada pelo total de dano causado pelo agente avaliado dividido pelo total de dano recebido por ele. O limitador contra divisão por zero segue o padrão ε do trabalho:
+
+DamageRatio = dano_causado / max(dano_recebido, ε), com ε = 1
 
 ### Cover Usage
 Percentual de turnos em que o agente avaliado terminou o turno em posição protegida (com célula de cobertura adjacente, oferecendo proteção potencial em pelo menos uma direção).

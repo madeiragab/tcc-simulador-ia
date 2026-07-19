@@ -25,8 +25,20 @@ const PLAYER_AI_SCRIPTS = [
 var grid = null
 var agents = []
 var ais = []
+var cost_meters = []
 var turn_system = null
 var map_seed = 0
+var start_player = 0
+
+# Coleta por jogador (docs/metricas.md): turnos em que agiu e turnos que
+# terminou em posição protegida por cobertura adjacente.
+var turns_acted = []
+var turns_in_cover = []
+
+# Log detalhado turno a turno (docs/coleta_dados.md §2.2). Desligado por
+# padrão; o batch_runner liga quando o lote pede documentação por turno.
+var collect_turn_log = false
+var turn_log = []
 
 # Eventos de tiro recentes, consumidos pela view para desenhar os tracers.
 var recent_shots = []
@@ -36,8 +48,9 @@ var last_event = ""
 
 # ---------- INICIALIZAÇÃO (diagrams/fluxo_simulacao.png) ----------
 
-func setup(seed_value):
+func setup(seed_value, first_player = 0):
 	map_seed = seed_value
+	start_player = first_player
 
 	grid = preload("res://map/grid.gd").new()
 	add_child(grid)
@@ -47,6 +60,9 @@ func setup(seed_value):
 
 	agents = []
 	ais = []
+	cost_meters = []
+	turns_acted = []
+	turns_in_cover = []
 	for i in range(spawns.size()):
 		var agent = preload("res://agents/agent.gd").new()
 		agent.x = spawns[i].x
@@ -56,10 +72,13 @@ func setup(seed_value):
 		agents.append(agent)
 		add_child(agent)
 		ais.append(PLAYER_AI_SCRIPTS[i].new())
+		cost_meters.append(preload("res://core/cost_meter.gd").new())
+		turns_acted.append(0)
+		turns_in_cover.append(0)
 
 	turn_system = preload("res://core/turn_system.gd").new()
 	add_child(turn_system)
-	turn_system.setup(agents)
+	turn_system.setup(agents, start_player)
 
 # ---------- LOOP PRINCIPAL ----------
 # Um passo do loop: selecionar agente -> IA decide -> aplicar -> avançar.
@@ -67,10 +86,52 @@ func setup(seed_value):
 func run_turn():
 	var agent = turn_system.get_current_agent()
 	if agent != null and agent.is_alive:
+		# O medidor fica acoplado só durante a decisão: o custo medido é
+		# o esforço da IA para decidir, não o da execução da ação.
+		grid.cost_meter = cost_meters[agent.team_id]
 		var action = ais[agent.team_id].decide(agent, self)
+		grid.cost_meter = null
+
 		apply_action(agent, action)
-		# (Fase 2) ponto de coleta: registrar métricas do turno aqui
+
+		# Coleta do turno (métrica Cover Usage).
+		turns_acted[agent.team_id] += 1
+		var protegido = agent.is_alive and grid.has_adjacent_cover(agent.x, agent.y)
+		if protegido:
+			turns_in_cover[agent.team_id] += 1
+
+		if collect_turn_log:
+			log_turn(agent, action, protegido)
 	turn_system.advance()
+
+# Registra a linha do turno. Roda com o medidor desacoplado: as contagens
+# feitas aqui (LOS para inimigos visíveis) não entram no custo da IA.
+func log_turn(agent, action, protegido):
+	var acao = "esperar"
+	var moveu = action != null and action.get("move_to") != null
+	var atacou = action != null and action.get("attack_target") != null
+	if moveu and atacou:
+		acao = "mover_e_atacar"
+	elif moveu:
+		acao = "mover"
+	elif atacou:
+		acao = "atacar"
+
+	var visiveis = 0
+	for enemy in get_enemies(agent):
+		var dist = max(abs(enemy.x - agent.x), abs(enemy.y - agent.y))
+		if dist <= agent.vision_range and grid.has_line_of_sight(agent.x, agent.y, enemy.x, enemy.y):
+			visiveis += 1
+
+	turn_log.append({
+		"turno": turn_system.turn_count,
+		"jogador": PLAYER_NAMES[agent.team_id],
+		"acao": acao,
+		"x": agent.x,
+		"y": agent.y,
+		"protegido": protegido,
+		"inimigos_visiveis": visiveis,
+	})
 
 # Aplica a ação sugerida pela IA: primeiro o movimento, depois o ataque.
 func apply_action(agent, action):
@@ -105,6 +166,41 @@ func get_enemies(agent):
 		if other != agent and other.is_alive:
 			enemies.append(other)
 	return enemies
+
+# Nome do modelo de IA de um jogador (derivado do script configurado).
+static func model_name(player_id):
+	var file = PLAYER_AI_SCRIPTS[player_id].resource_path.get_file()
+	match file:
+		"ai_reactive.gd":
+			return "reativa"
+		"ai_random.gd":
+			return "aleatoria"
+		"ai_heuristic.gd":
+			return "heuristica"
+		"ai_hybrid.gd":
+			return "modelo_proposto"
+	return file.trim_suffix(".gd")
+
+# Estatísticas brutas de um jogador ao fim da partida — a matéria-prima
+# das métricas de docs/metricas.md.
+func get_player_stats(player_id):
+	var agent = agents[player_id]
+	return {
+		"jogador": PLAYER_NAMES[player_id],
+		"modelo_ia": model_name(player_id),
+		"dano_causado": agent.damage_dealt,
+		"dano_recebido": agent.damage_received,
+		"turnos_agidos": turns_acted[player_id],
+		"turnos_em_cobertura": turns_in_cover[player_id],
+		"custo_computacional": cost_meters[player_id].total(),
+	}
+
+# Custo computacional acumulado de cada jogador, para log e coleta.
+func cost_summary():
+	var parts = []
+	for i in range(agents.size()):
+		parts.append("%s=%d" % [PLAYER_NAMES[i], cost_meters[i].total()])
+	return "  ".join(parts)
 
 func get_alive():
 	var alive = []

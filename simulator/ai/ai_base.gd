@@ -16,6 +16,12 @@ func decide(_agent, _sim):
 
 # ---------- Helpers compartilhados entre as IAs ----------
 
+# IAs que geram e pontuam ações (heurística, híbrida) devem chamar isto
+# uma vez por ação avaliada, para o custo entrar no medidor do agente.
+func note_action_evaluated(sim):
+	if sim.grid.cost_meter != null:
+		sim.grid.cost_meter.actions_evaluated += 1
+
 # Inimigos vivos que o agente consegue atacar agora (alcance + LOS).
 func get_attackable_enemies(agent, sim):
 	var targets = []
