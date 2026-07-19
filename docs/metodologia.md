@@ -6,24 +6,29 @@ O estudo será conduzido por meio de simulações automatizadas em um ambiente t
 
 ## Configuração do Ambiente
 
-- Grid bidimensional simétrico (NxN) com geração procedural atrelada rigidamente a *seeds* exclusivas.
-- Banco padronizado de 1000 *seeds* definindo mapas, as quais serão enfrentadas de forma matematicamente idêntica por todos os modelos concorrentes
-- Configuração fixa para confrontos de 3 agentes (equipes lado-a-lado ou espelhadas horizontalmente)
-- Anulação do Viés de Primeiro Turno (*first-mover advantage*): distribuição obrigatória de 50/50 das rodadas iniciadas pelo primeiro ou segundo contendor
-- Sistema de combate determinístico blindando viés em confrontos e desvios por *RNG*
+- Grid bidimensional 40x40 com geração procedural determinística de mapas a partir de *seeds* (ver `geracao_mapas.md`).
+- Banco padronizado de 1000 *seeds* definindo mapas e posições de nascimento, enfrentado de forma idêntica por todos os modelos comparados.
+- Confronto entre 3 agentes independentes (todos contra todos), identificados por cor: verde, vermelho e azul.
+- Neutralização de vantagem de terreno: o mapa é dividido em 4 setores e cada agente nasce em um setor distinto, sorteado pela *seed* — nenhuma posição favorece sistematicamente um jogador ao longo das 1000 simulações.
+- Neutralização do viés de ordem de turno: a ordem inicial de jogo é rotacionada uniformemente entre os 3 agentes ao longo das simulações (cada um inicia 1/3 das partidas).
+- Combate determinístico (sem RNG durante a partida): toda a aleatoriedade do experimento se concentra na geração do mapa via *seed*.
+
+## Composição dos Confrontos
+
+Em cada simulação, o modelo avaliado controla um dos agentes; os outros dois executam um modelo adversário fixo (IA Reativa), idêntico em todas as avaliações. Isso garante que todos os modelos sejam medidos contra a mesma oposição, nas mesmas condições.
 
 ## Procedimento Experimental
 
-1. Inicializar o labirinto/cenário e distribuir obstáculos validados através do banco fechado de Sementes (*seeds* espaciais)
-2. Engatilhar o sorteio 50/50 de quem efetuará a iniciativa do combate para eliminar vantagem assimétrica
-3. Registrar e iterar as métricas sobre avaliação matemática (Operações executadas substituem avaliações em milissegundos puramente do hardware nativo)
-4. Executar e consolidar em empate com valor numérico máximo após extrapolação imperiosa de limite global para o cravado de 100 turnos
+1. Gerar mapa e posições de nascimento a partir da *seed* do banco.
+2. Definir o agente que inicia a partida conforme a rotação de iniciativa.
+3. Executar turnos até restar um único agente vivo (vitória) ou atingir o limite de 100 turnos (empate).
+4. Registrar as métricas da partida. O custo computacional é medido por contagem de operações (avaliações de LOS, pathfinding, ações geradas), e não por tempo de relógio, eliminando a dependência do hardware onde o experimento roda.
 
 ## Execução
 
-- Validação (*Tuning*): 200 simulações preliminares em *seeds* únicas e exclusivas para calibração paramétrica, prevenindo *overfitting* de heurísticas e *lambdas* da IA.
-- Teste Cego Final (*Benchmark*): Exatas 1000 simulações oficiais no banco isolado de *seeds* reservadas para análise das vitórias cegas
-- Execução automatizada e sem renderização em lotes contínuos.
+- Validação (*tuning*): 200 simulações preliminares, com *seeds* exclusivas, para calibração dos pesos e do λ — separadas do benchmark para prevenir *overfitting*.
+- Benchmark final: 1000 simulações oficiais no banco de *seeds* reservado, idêntico para todos os modelos.
+- Execução automatizada e sem renderização, em lotes.
 
 ## Modelos Avaliados
 
@@ -34,9 +39,7 @@ O estudo será conduzido por meio de simulações automatizadas em um ambiente t
 
 ## Coleta de Dados
 
-Serão coletados:
-
-- resultados das partidas iteradas e métricas matemáticas abstraídas de hardware local (tais como as verificações analíticas do terreno no Custo Computacional)
+Para cada simulação serão registrados: resultado, número de turnos, dano causado e recebido pelo agente avaliado, e custo computacional (contagem de operações).
 
 ## Análise
 

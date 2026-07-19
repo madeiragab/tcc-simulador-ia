@@ -45,7 +45,7 @@ Modelo baseado em regras simples:
 
 #### Objetivo
 
-Representar um agente funcional básico.
+Representar um agente funcional básico. É também o modelo que controla os dois agentes adversários em todas as avaliações, garantindo oposição idêntica entre os modelos comparados.
 
 ---
 
@@ -103,8 +103,9 @@ Todos os modelos implementados serão avaliados sob as mesmas condições.
 ### Configuração
 
 - 1000 simulações por modelo
-- Ambiente fixo
-- Condições iniciais controladas
+- Mesmo banco de *seeds* para todos (mapas e posições de nascimento idênticos entre modelos)
+- Rotação uniforme da ordem inicial de jogo
+- O modelo avaliado controla um agente; os outros dois executam a IA Reativa como adversário padrão
 
 ---
 
@@ -114,7 +115,7 @@ Todos os modelos implementados serão avaliados sob as mesmas condições.
 - Damage Ratio
 - Cover Usage
 - Turns to Victory
-- Tempo de Decisão
+- Custo Computacional Médio
 
 ---
 
