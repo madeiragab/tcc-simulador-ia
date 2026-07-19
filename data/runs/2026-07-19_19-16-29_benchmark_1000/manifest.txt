@@ -1,0 +1,27 @@
+Execução de lote — Simulador Tático para Avaliação de IA
+data_hora: 2026-07-19T19:17:39
+godot: 4.7.1-stable (official)
+banco_seeds: benchmark
+partidas: 1000
+primeira_seed: 438557537
+ultima_seed: 1215748322
+rotacao_iniciativa: partida i inicia pelo jogador i mod 3
+log_por_turno: nao
+duracao_segundos: 70.0
+
+[modelos]
+verde: reativa
+vermelho: reativa
+azul: reativa
+
+[constantes_de_jogo]
+dano_base: 30
+reducao_cobertura_leve: 10
+reducao_cobertura_pesada: 20
+limite_turnos: 100
+movimento_max_celulas: 3
+hp_inicial: 100
+alcance_visao_e_ataque: 8
+
+[metricas]
+formulas: docs/metricas.md (implementação literal em core/metrics.gd, epsilon=1)

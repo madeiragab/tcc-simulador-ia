@@ -15,28 +15,29 @@ O ambiente é representado por um grid bidimensional de tamanho NxN (padrão 40x
 	- Bloqueia linha de visão
 
 - Cobertura leve:
-	- Permite movimentação adjacente
-	- Reduz dano recebido
+	- Célula transponível (não bloqueia movimento nem linha de visão)
+	- Reduz o dano recebido quando está entre o defensor e o atacante (cobertura direcional)
 
 - Cobertura pesada:
-	- Permite movimentação adjacente
-	- Reduz significativamente o dano recebido
+	- Célula transponível (não bloqueia movimento nem linha de visão)
+	- Reduz significativamente o dano recebido, sob a mesma regra direcional
 
 ---
 
 ## 2. Agentes
 
-Cada agente possui os seguintes atributos:
+A partida é disputada por 3 agentes independentes (todos contra todos), identificados por cor: verde, vermelho e azul. Cada agente possui os seguintes atributos:
 
 - Posição (x, y)
 - Vida (HP)
-- Alcance de visão
+- Alcance de visão (também define o alcance de ataque)
 - Estado (vivo ou morto)
+- Identificador do jogador (cor)
 
 ### Estado Tático
 
-- Em cobertura: definido automaticamente com base na posição
-- Tipo de cobertura: leve ou pesada
+- Proteção por cobertura: avaliada por confronto — o agente está protegido de um atacante quando existe célula de cobertura adjacente a ele na direção desse atacante
+- Tipo de cobertura: leve ou pesada (prevalece a maior proteção)
 
 ---
 
@@ -44,12 +45,12 @@ Cada agente possui os seguintes atributos:
 
 Em cada turno, o agente pode:
 
-1. Mover-se até 3 células (utilizando pathfinding)
+1. Mover-se até 3 células (caminho validado por busca em largura, 4 direções, respeitando paredes)
 2. Executar uma ação:
 	 - Atacar um inimigo
 	 - Permanecer na posição atual
 
-A cobertura é aplicada automaticamente quando o agente está posicionado próximo a elementos de cobertura.
+A proteção de cobertura é direcional e automática: aplica-se quando há célula de cobertura adjacente ao agente na direção do atacante.
 
 ---
 
@@ -63,9 +64,9 @@ A cobertura é aplicada automaticamente quando o agente está posicionado próxi
 
 ## 4.1 Condição de Vitória
 
-- A simulação de um jogo/cenário é encerrada instantaneamente quando ocorre uma dentre duas condições: eliminação total de uma das partes rivais (*Total Annihilation*), ou atingimento de um limite fixo inflexível de 100 turnos (*Timeout Cap* de segurança procedural).
-- A equipe sobrevivente é aclamada vencedora.
-- Caso o limite de 100 turnos seja atingido estourando o tempo do jogo, um Empate (*Draw*) será decretado formalmente, independentemente dos HPs das equipes resultantes.
+- A simulação encerra quando ocorre uma dentre duas condições: resta apenas um agente vivo, ou o limite fixo de 100 turnos é atingido.
+- O último agente vivo é o vencedor.
+- Se o limite de 100 turnos for atingido com dois ou mais agentes vivos, a partida termina em empate (*draw*), independentemente dos HPs restantes.
 
 ---
 
@@ -78,7 +79,7 @@ A cobertura é aplicada automaticamente quando o agente está posicionado próxi
 
 ### Alcance
 
-- Ataques possuem alcance fixo (definido no sistema)
+- O alcance de ataque é igual ao alcance de visão do agente (distância de Chebyshev)
 
 ### Dano (Determinístico)
 
@@ -86,7 +87,9 @@ O dano é calculado de forma determinística:
 
 Dano = ValorBase − Redução por Cobertura
 
-Exemplo:
+A redução só se aplica se houver célula de cobertura adjacente ao alvo na direção do atacante (cobertura direcional).
+
+Valores:
 - Dano base: 30
 - Cobertura leve: reduz 10
 - Cobertura pesada: reduz 20
@@ -95,48 +98,10 @@ Exemplo:
 
 ## 6. Métricas
 
-As seguintes métricas serão utilizadas para avaliação:
-
-- WinRate:
-	- Percentual de vitórias em múltiplas simulações
-
-- Damage Ratio:
-	- Dano causado / dano recebido
-
-- Cover Usage:
-	- Percentual de turnos em cobertura
-
-- Turns to Victory:
-	- Número médio de turnos para vencer
-
-- Custo Computacional Médio:
-        - Esforço algorítmico numérico (operações de matriz e LOS).
+As métricas de avaliação (WinRate, Damage Ratio, Cover Usage, Turns to Victory, Custo Computacional Médio) e a métrica composta *Strategic Score* estão definidas em `metricas.md`, que é a fonte única das fórmulas.
 
 ---
 
-## 7. Strategic Score
+## 7. Contribuição Proposta (Modelo Híbrido)
 
-Será definida uma métrica agregada para avaliação estratégica final com base estritamente formal:
-
-StrategicScore =
-0.3 * WinRate +
-0.2 * DamageRatio +
-0.2 * CoverUsage +
-0.2 * Efficiency +
-0.1 * (1 / max(CustoComputacionalMedio, ε))
-
-Onde:
-- Efficiency = 1 / max(TurnsToVictory, 1)
-- $\epsilon = 1$ é uma constante técnica inserida para impedir a divisão por base zero sobre avaliações matemáticas nulas unitárias imediatas.
-
----
-
-## 8. Contribuição Proposta (Modelo Híbrido)
-
-O trabalho propõe o desenvolvimento de um modelo de tomada de decisão (Híbrido) baseado no equilíbrio entre valor estratégico (*Heurística*)  e custo computacional.
-
-ScoreAção = ValorEstratégico − λ × CustoComputacional
-
-Onde:
-- ValorEstratégico considera fatores como posição, cobertura e dano esperado 
-- CustoComputacional é o rastreio avaliatório contínuo (processamento via count formal para processamento em loop)
+O trabalho propõe um modelo de tomada de decisão que equilibra valor estratégico e custo computacional. A especificação completa está em `modelo_proposto.md` e `contribuicao.md`.

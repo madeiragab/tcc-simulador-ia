@@ -1,28 +1,30 @@
 # Documentação do Projeto
 
-Este diretório concentra a base teórica formal, definições arquiteturais e configurações de validação metodológica para o uso do ambiente de simulações e verificação analítica dos diferentes paradigmas das lógicas artificiais adotadas pelo projeto.
+Este diretório concentra a base teórica, as definições de arquitetura e a configuração metodológica do simulador e dos experimentos de avaliação dos modelos de IA.
 
 ## Arquivos e Guias do Sistema
 
 ### 1. Sistema e Arquitetura
-- **arquitetura.md**: Estruturação geral lógica da separação entre responsabilidades dos módulos de Core, Mapa, IA e Coleta.
-- **agentes.md**: Define atributos primitivos, estado basal corporativo (Vida, Posição) da entidade-núcleo nos campos lógicos do experimento.
-- **movimento.md**: Consolida a mecânica paramétrica limitadora de locomoção válida no *grid* por turno.
-- **regras.md**: Regras definitivas implementadas no mundo das simulações táticas perante a simetria, ações e determinismo bélico para validar o sistema sem enviesamentos.
-- **turnos.md**: Regência processual da temporalidade sequencial dos agentes para executar comandos assíncronos justos durante as simulações baseadas em *ticks*.
+- **arquitetura.md**: Separação de responsabilidades entre os módulos de Core, Mapa, Agentes, IA, Turnos e Coleta.
+- **agentes.md**: Atributos e estado dos agentes (posição, vida, visão, jogador).
+- **movimento.md**: Regras de locomoção no *grid* (até 3 células por turno, caminho validado por BFS).
+- **geracao_mapas.md**: Geração procedural de mapas por *seed* — divisão em 4 setores, sorteio de spawn dos 3 jogadores, obstáculos e validação de conectividade.
+- **regras.md**: Regras do mundo simulado — tipos de célula, cobertura direcional, combate determinístico, condição de vitória.
+- **turnos.md**: Ordem de execução dos agentes e rotação de iniciativa entre simulações.
 
 ### 2. Metodologia Científica e Analítica
-- **problema.md**: Descritivo da ausência empírica das métricas completas nas avaliações modernas e fundamentação científica em cima disso.
-- **contribuicao.md**: Descrição e consolidações formais pautando o cerne intelectual dessa modelagem baseada em Equilíbrio x Custos que serve de entrega final.
-- **metodologia.md**: Parâmetros padronizados das regras de laboratório simulado buscando impulsionar e resguardar reprodutibilidade estrita.
-- **experiments.md**: Fatores processuais em *batch*, definindo uso de múltiplas simulações repetidas (1000 iteradas), limite global e *seeds* estatisticamente idênticas.
-- **coleta_dados.md**: Mecânicas e parâmetros que dão suporte para o parseamento e registro das logs e resultados em `data/` em formato `.csv`.
-- **metricas.md**: Fórmulas, funções descritivas, proteção a *exploits* numéricos (Epsilon para Divisão por 0) e equações absolutas agregadas como o *Strategic Score*.
+- **problema.md**: Contexto, problema de pesquisa, questão central e hipótese.
+- **contribuicao.md**: A contribuição central do trabalho — o modelo híbrido de decisão baseado em equilíbrio entre valor estratégico e custo computacional.
+- **metodologia.md**: Configuração experimental padronizada para garantir reprodutibilidade.
+- **experiments.md**: Planejamento dos experimentos em lote (1000 *seeds* de benchmark + 200 de validação).
+- **coleta_dados.md**: Estrutura de registro dos resultados em `data/` em formato CSV.
+- **metricas.md**: Fórmulas das métricas individuais e da métrica composta (*Strategic Score*), com proteções numéricas (ε contra divisão por zero).
+- **resultados_validacao.md**: Experimento zero — validação da neutralidade do ambiente com 1000 simulações (3 IAs idênticas, WinRates estatisticamente equivalentes) e achados preliminares.
 
 ### 3. Concepção das Inteligências
-- **ia.md**: Definições a respeito do paradigma reativo de Utility AI, cálculos de score puro abstrato e seleção de estado base.
-- **baseline.md**: Modelos empíricos fixos de referências comparativas estáticas para servir de atrito na comparação métrica final (Aleatória, Reativa, Heurística).
-- **modelo_proposto.md**: A especificação formal matemática da nova proposta, focada na híbrida decisão perante custos operacionais e viabilidade.
+- **ia.md**: O paradigma reativo de Utility AI, geração/filtragem/avaliação de ações e seleção da melhor.
+- **baseline.md**: Modelos de referência para comparação (Aleatória, Reativa, Heurística) e o MCTS como referência teórica.
+- **modelo_proposto.md**: Especificação do modelo híbrido proposto (valor estratégico − λ × custo computacional).
 
 ### 4. Planejamento de Desenvolvimento
-- **roadmap_implementacao.md**: Cronograma estruturado em 5 fases dividindo a construção do software desde as mecânicas elementares até o *benchmark* algorítmico final.
+- **roadmap_implementacao.md**: Cronograma em 5 fases, das mecânicas elementares ao *benchmark* final, com status de progresso.
