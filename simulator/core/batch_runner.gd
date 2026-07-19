@@ -148,6 +148,12 @@ func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
 	file.store_line("hp_inicial: 100")
 	file.store_line("alcance_visao_e_ataque: 8")
 	file.store_line("")
+	file.store_line("[parametros_ia]")
+	var heuristic = preload("res://ai/ai_heuristic.gd")
+	file.store_line("heuristica_pesos: vida=%.2f cobertura=%.2f proximidade=%.2f risco=%.2f" % [
+		heuristic.W_VIDA, heuristic.W_COBERTURA, heuristic.W_PROXIMIDADE, heuristic.W_RISCO,
+	])
+	file.store_line("")
 	file.store_line("[metricas]")
 	file.store_line("formulas: docs/metricas.md (implementação literal em core/metrics.gd, epsilon=%d)" % Metrics.EPSILON)
 	file.close()
