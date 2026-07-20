@@ -20,6 +20,16 @@ Percentual de turnos em que o agente avaliado terminou o turno em posição prot
 ### Turns to Victory
 Número médio de turnos necessários para o agente avaliado vencer a partida. Para penalizar inércia ou loops de sobrevivência passiva, caso a partida termine em empate pelo limite de 100 turnos, o modelo recebe como penalidade o valor máximo (100).
 
+### Pontuação de Partida (Match Points)
+
+Cada partida atribui pontos ao modelo conforme o resultado:
+
+- Vitória: **+3**
+- Empate: **−1**
+- Derrota: **−3**
+
+O empate é deliberadamente penalizado (e não tratado como neutro): um modelo que apenas sobrevive sem decidir a partida — por exemplo, entrincheirando-se até o limite de turnos — não demonstra eficácia estratégica. A agregação usa o total e a média de pontos por partida (faixa −3 a +3).
+
 ### Custo Computacional Médio
 Esforço algorítmico médio global (medido através de contagem computacional abstrata de operações em código, como a taxa cumulativa de cálculos efetuados de LOS, ações geradas e nodos filtrados). Emprega-se tal métrica para substituir e nulificar as falhas de medição empírico-temporais em milissegundos *wall-clock time*, evitando dependência direta de hardware do avaliador do TCC. Incorpora-se uma constante matemática ε (Epsilon = 1) no algoritmo para delimitar um piso lógico nas fórmulas de proporção e obstar divisão paramétrica por zero.
 

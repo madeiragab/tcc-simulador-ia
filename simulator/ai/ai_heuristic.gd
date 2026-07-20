@@ -22,9 +22,16 @@ const W_PROXIMIDADE = 0.5
 const W_RISCO = -0.2
 
 func decide(agent, sim):
-	var enemies = sim.get_enemies(agent)
+	# Percepção primeiro: a heurística só raciocina sobre quem enxerga.
+	var enemies = get_visible_enemies(agent, sim)
+
+	# Ninguém à vista: caça a última posição conhecida ou explora,
+	# sem pagar o custo da avaliação posicional completa.
 	if enemies.is_empty():
-		return {"move_to": null, "attack_target": null}
+		var goal = pursuit_position(agent, sim)
+		if goal == null:
+			return {"move_to": null, "attack_target": null}
+		return {"move_to": step_towards(agent, sim, goal), "attack_target": null}
 
 	# Candidatos: todas as posições alcançáveis + ficar parado.
 	var candidates = sim.grid.get_reachable_cells(agent.x, agent.y, 3)

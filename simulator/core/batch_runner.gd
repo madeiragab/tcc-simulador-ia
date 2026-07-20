@@ -16,9 +16,9 @@ extends Node
 const Metrics = preload("res://core/metrics.gd")
 const SimulationScript = preload("res://core/simulation.gd")
 
-const MATCH_HEADER = "id_simulacao,seed,jogador_inicial,jogador,modelo_ia,vencedor,venceu,turnos,dano_causado,dano_recebido,damage_ratio,cover_usage,custo_total,custo_los,custo_nodos,custo_acoes"
+const MATCH_HEADER = "id_simulacao,seed,jogador_inicial,jogador,modelo_ia,vencedor,venceu,pontos,turnos,dano_causado,dano_recebido,damage_ratio,cover_usage,custo_total,custo_los,custo_nodos,custo_acoes"
 const TURN_HEADER = "id_simulacao,seed,turno,jogador,acao,x,y,protegido,inimigos_visiveis"
-const SUMMARY_HEADER = "jogador,modelo_ia,partidas,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score"
+const SUMMARY_HEADER = "jogador,modelo_ia,partidas,pontos_total,pontos_media,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score"
 
 # bank: "benchmark" ou "tuning"; count: quantas seeds do banco rodar.
 func run(bank, count, log_turns = false):
@@ -88,9 +88,11 @@ func collect_match(csv, metric_rows, sim, match_id, result):
 		var cu = Metrics.cover_usage(stats["turnos_em_cobertura"], stats["turnos_agidos"])
 		var meter = sim.cost_meters[p]
 
-		csv.store_line("%d,%d,%s,%s,%s,%s,%d,%d,%d,%d,%.4f,%.4f,%d,%d,%d,%d" % [
+		var pontos = Metrics.match_points(venceu, empate)
+
+		csv.store_line("%d,%d,%s,%s,%s,%s,%d,%d,%d,%d,%d,%.4f,%.4f,%d,%d,%d,%d" % [
 			match_id, sim.map_seed, starter, stats["jogador"], stats["modelo_ia"],
-			"empate" if empate else result, 1 if venceu else 0, turns,
+			"empate" if empate else result, 1 if venceu else 0, pontos, turns,
 			stats["dano_causado"], stats["dano_recebido"], dr, cu,
 			meter.total(), meter.los_checks, meter.cells_explored, meter.actions_evaluated,
 		])
@@ -109,8 +111,9 @@ func write_summary(run_dir, metric_rows):
 	csv.store_line(SUMMARY_HEADER)
 	for p in range(metric_rows.size()):
 		var agg = Metrics.aggregate(metric_rows[p])
-		csv.store_line("%s,%s,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.2f,%.6f,%.2f,%.2f,%.6f" % [
+		csv.store_line("%s,%s,%d,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.2f,%.6f,%.2f,%.2f,%.6f" % [
 			SimulationScript.PLAYER_NAMES[p], SimulationScript.model_name(p), agg["n"],
+			agg["points_total"], agg["points_mean"],
 			agg["win_rate"], agg["damage_ratio_mean"], agg["damage_ratio_std"],
 			agg["cover_usage_mean"], agg["cover_usage_std"],
 			agg["turns_to_victory_mean"], agg["efficiency"],
@@ -163,6 +166,7 @@ func print_aggregates(metric_rows):
 	for p in range(metric_rows.size()):
 		var agg = Metrics.aggregate(metric_rows[p])
 		print("\n[%s — %s] (%d partidas)" % [SimulationScript.PLAYER_NAMES[p], SimulationScript.model_name(p), agg["n"]])
+		print("  Pontuação:        %d  (média %.2f por partida)" % [agg["points_total"], agg["points_mean"]])
 		print("  WinRate:          %.3f" % agg["win_rate"])
 		print("  DamageRatio:      %.3f ± %.3f" % [agg["damage_ratio_mean"], agg["damage_ratio_std"]])
 		print("  CoverUsage:       %.3f ± %.3f" % [agg["cover_usage_mean"], agg["cover_usage_std"]])
