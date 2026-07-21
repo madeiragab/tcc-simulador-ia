@@ -85,6 +85,12 @@ A inclusão desse fator permite equilibrar qualidade estratégica e eficiência,
 
 ---
 
+## 6.5 Aprendizado entre Partidas
+
+No modo lote, a mesma instância de IA disputa todas as partidas e recebe, após cada uma, a pontuação obtida (+3 vitória, −1 empate, −3 derrota). A IA Heurística usa esse sinal para calibrar seus pesos por *hill-climbing*: joga uma janela de 25 partidas com uma configuração, mede a média de pontos e adota a configuração se superou a melhor média conhecida (caso contrário, reverte); a janela seguinte testa uma perturbação da melhor configuração (RNG semeado — todo o processo é reprodutível).
+
+Ao fim do lote, a evolução completa (pesos testados, média por janela, adotado/revertido) é gravada em `aprendizado.csv` na pasta da execução, e as instâncias são descartadas — cada lote parte do zero. Os modelos Aleatório e Reativo não possuem parâmetros ajustáveis e servem de contraste estático.
+
 ## 7. Limitações
 
 - O modelo não considera planejamento de longo prazo

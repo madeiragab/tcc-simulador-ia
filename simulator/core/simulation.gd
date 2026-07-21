@@ -60,7 +60,9 @@ var last_event = ""
 
 # ---------- INICIALIZAÇÃO (diagrams/fluxo_simulacao.png) ----------
 
-func setup(seed_value, first_player = 0):
+# injected_ais: instâncias persistentes de IA (modo lote, para o
+# aprendizado entre partidas). Sem elas, cria instâncias novas.
+func setup(seed_value, first_player = 0, injected_ais = null):
 	map_seed = seed_value
 	start_player = first_player
 
@@ -83,7 +85,11 @@ func setup(seed_value, first_player = 0):
 		agent.grid = grid
 		agents.append(agent)
 		add_child(agent)
-		ais.append(ai_script_for(i).new())
+		if injected_ais != null:
+			injected_ais[i].reset_match_state()
+			ais.append(injected_ais[i])
+		else:
+			ais.append(ai_script_for(i).new())
 		cost_meters.append(preload("res://core/cost_meter.gd").new())
 		turns_acted.append(0)
 		turns_in_cover.append(0)
