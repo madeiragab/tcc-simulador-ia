@@ -21,6 +21,59 @@ const W_COBERTURA = 0.3
 const W_PROXIMIDADE = 0.5
 const W_RISCO = -0.2
 
+# ---------- Aprendizado entre partidas (hill-climbing nos pesos) ----------
+# Joga LEARN_WINDOW partidas com os pesos atuais e mede a média de
+# pontos (+3/-1/-3). Melhorou a melhor média conhecida: adota. Piorou:
+# reverte. Em ambos os casos, a próxima janela testa uma perturbação da
+# melhor configuração (RNG semeado -> lote reprodutível).
+
+const LEARN_WINDOW = 25
+const LEARN_STEP = 0.05
+
+var weights = [W_VIDA, W_COBERTURA, W_PROXIMIDADE, W_RISCO]
+var best_weights = [W_VIDA, W_COBERTURA, W_PROXIMIDADE, W_RISCO]
+var best_avg = -INF
+var window_points = []
+var windows_done = 0
+var learn_rng = null
+var log_rows = []
+
+func learn(points):
+	window_points.append(points)
+	if window_points.size() < LEARN_WINDOW:
+		return
+
+	var total = 0
+	for p in window_points:
+		total += p
+	var avg = float(total) / window_points.size()
+	windows_done += 1
+
+	var adopted = avg > best_avg
+	if adopted:
+		best_avg = avg
+		best_weights = weights.duplicate()
+
+	log_rows.append({
+		"janela": windows_done,
+		"pesos": weights.duplicate(),
+		"pontos_media": avg,
+		"decisao": "adotado" if adopted else "revertido",
+	})
+
+	# Próxima tentativa: perturbação da melhor configuração conhecida.
+	if learn_rng == null:
+		learn_rng = RandomNumberGenerator.new()
+		learn_rng.seed = 977 + player_id
+	var next = best_weights.duplicate()
+	for i in range(next.size()):
+		next[i] = clamp(next[i] + learn_rng.randf_range(-LEARN_STEP, LEARN_STEP), -1.0, 1.0)
+	weights = next
+	window_points.clear()
+
+func learning_log():
+	return log_rows
+
 func decide(agent, sim):
 	# Percepção primeiro: a heurística só raciocina sobre quem enxerga.
 	var enemies = get_visible_enemies(agent, sim)
@@ -74,7 +127,7 @@ func strategic_value(agent, sim, cell, enemies):
 			exposed += 1
 	var risco = float(exposed) / max(enemies.size(), 1)
 
-	return W_VIDA * vida + W_COBERTURA * cobertura + W_PROXIMIDADE * proximidade + W_RISCO * risco
+	return weights[0] * vida + weights[1] * cobertura + weights[2] * proximidade + weights[3] * risco
 
 # Proteção potencial da posição: 0 sem cobertura adjacente, 0.5 leve, 1 pesada.
 func cover_level(sim, cell):
@@ -85,11 +138,17 @@ func cover_level(sim, cell):
 	return best / float(sim.grid.COVER_HEAVY_REDUCTION)
 
 # Melhor alvo atacável a partir da célula escolhida (o mais próximo).
+# Requer linha de tiro reta e livre a partir dessa célula.
 func best_attack_from(agent, sim, cell, enemies):
 	var attackable = []
 	for enemy in enemies:
-		var dist = max(abs(enemy.x - cell.x), abs(enemy.y - cell.y))
-		if dist <= agent.vision_range and sim.grid.has_line_of_sight(cell.x, cell.y, enemy.x, enemy.y):
+		var dx = enemy.x - cell.x
+		var dy = enemy.y - cell.y
+		if max(abs(dx), abs(dy)) > agent.vision_range:
+			continue
+		if not agent.is_straight_line(dx, dy):
+			continue
+		if sim.grid.has_line_of_sight(cell.x, cell.y, enemy.x, enemy.y):
 			attackable.append(enemy)
 	if attackable.is_empty():
 		return null

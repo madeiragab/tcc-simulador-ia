@@ -89,9 +89,10 @@ A proteção de cobertura é direcional e automática: aplica-se quando há cél
 - Um agente só pode atacar se houver linha de visão direta
 - Paredes bloqueiam completamente a visão
 
-### Alcance
+### Alcance e Linha de Tiro
 
 - O alcance de ataque é igual ao alcance de visão do agente (distância de Chebyshev)
+- **O tiro só é permitido em linha reta**: horizontal, vertical ou diagonal perfeita. Sem essa restrição, ataques em ângulos arbitrários contornariam a cobertura direcional, tornando as defesas irrelevantes
 
 ### Dano (Determinístico)
 

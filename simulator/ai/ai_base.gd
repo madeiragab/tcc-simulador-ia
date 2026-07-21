@@ -14,6 +14,28 @@ extends RefCounted
 func decide(_agent, _sim):
 	return {"move_to": null, "attack_target": null}
 
+# ---------- Aprendizado entre partidas ----------
+# No modo lote a MESMA instância de IA joga todas as partidas: após cada
+# uma, learn() recebe a pontuação (+3/-1/-3). Modelos estáticos ignoram;
+# quem aprende registra a evolução para o aprendizado.csv da run.
+# Ao fim do lote as instâncias são descartadas (o aprendizado reseta).
+
+var player_id = -1  # preenchido pelo batch_runner
+
+func learn(_points):
+	pass
+
+# Linhas para o aprendizado.csv: [{janela, pesos, pontos_media, decisao}].
+func learning_log():
+	return []
+
+# Estado de percepção zerado entre partidas (memória e exploração são
+# da partida; só o que learn() consolidou atravessa o lote).
+func reset_match_state():
+	last_known = {}
+	patrol_target = null
+	patrol_rng = null
+
 # ---------- Percepção (campo de visão) ----------
 # Um agente NÃO é onisciente: só conhece inimigos dentro do alcance de
 # visão e com linha de visão livre — paredes bloqueiam a visão,
@@ -25,17 +47,21 @@ var last_known = {}       # inimigo -> última posição vista (Vector2i)
 var patrol_target = null  # destino de exploração
 var patrol_rng = null
 
-# Inimigos vivos dentro do campo de visão. Como o alcance de ataque é
-# igual ao de visão, todo inimigo visível é também atacável.
+# Inimigos vivos que o agente percebe: dentro do cone de visão
+# direcional (agent.can_see) OU revelados por terem atirado nele.
 func get_visible_enemies(agent, sim):
 	var visible = []
 	for enemy in sim.get_enemies(agent):
-		var dist = max(abs(enemy.x - agent.x), abs(enemy.y - agent.y))
-		if dist > agent.vision_range:
-			continue
-		if sim.grid.has_line_of_sight(agent.x, agent.y, enemy.x, enemy.y):
+		if agent.can_see(enemy.x, enemy.y):
 			visible.append(enemy)
 			last_known[enemy] = Vector2i(enemy.x, enemy.y)
+	# Levar tiro revela o atirador (o agente "ouve" o disparo), mesmo
+	# fora do cone — senão morreria sem reagir a ataques pelas costas.
+	if agent.last_hit_from != null:
+		for enemy in sim.get_enemies(agent):
+			if Vector2i(enemy.x, enemy.y) == agent.last_hit_from and not visible.has(enemy):
+				visible.append(enemy)
+				last_known[enemy] = Vector2i(enemy.x, enemy.y)
 	return visible
 
 # Posição a perseguir quando nada está visível: a memória mais próxima,
@@ -82,9 +108,24 @@ func note_action_evaluated(sim):
 	if sim.grid.cost_meter != null:
 		sim.grid.cost_meter.actions_evaluated += 1
 
-# Mantido como sinônimo de get_visible_enemies (ataque exige visão).
+# Inimigos que o agente pode atacar agora: percebidos, em alcance, em
+# linha reta e com linha de visão livre.
 func get_attackable_enemies(agent, sim):
-	return get_visible_enemies(agent, sim)
+	return filter_attackable(agent, sim, get_visible_enemies(agent, sim))
+
+# Dentre uma lista já percebida, os que têm linha de tiro reta e livre.
+func filter_attackable(agent, sim, visible):
+	var targets = []
+	for enemy in visible:
+		var dx = enemy.x - agent.x
+		var dy = enemy.y - agent.y
+		if max(abs(dx), abs(dy)) > agent.vision_range:
+			continue
+		if not agent.is_straight_line(dx, dy):
+			continue
+		if sim.grid.has_line_of_sight(agent.x, agent.y, enemy.x, enemy.y):
+			targets.append(enemy)
+	return targets
 
 # O mais próximo (distância Manhattan) dentre os candidatos.
 func closest_of(agent, candidates):

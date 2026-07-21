@@ -38,6 +38,14 @@ func run(bank, count, log_turns = false):
 
 	var metric_rows = [[], [], []]
 
+	# IAs persistentes: a mesma instância joga o lote inteiro, aprendendo
+	# entre partidas; descartadas (reset) quando o lote termina.
+	var ais = []
+	for p in range(SimulationScript.PLAYER_NAMES.size()):
+		var ai = SimulationScript.ai_script_for(p).new()
+		ai.player_id = p
+		ais.append(ai)
+
 	print("Lote: %d partidas do banco '%s' -> %s" % [count, bank, run_dir])
 	var t0 = Time.get_ticks_msec()
 
@@ -45,7 +53,7 @@ func run(bank, count, log_turns = false):
 		var sim = SimulationScript.new()
 		add_child(sim)
 		sim.collect_turn_log = log_turns
-		sim.setup(seeds[i], i % 3)
+		sim.setup(seeds[i], i % 3, ais)
 
 		var result = sim.check_victory()
 		while result == "":
@@ -53,6 +61,10 @@ func run(bank, count, log_turns = false):
 			result = sim.check_victory()
 
 		collect_match(match_csv, metric_rows, sim, i + 1, result)
+
+		for p in range(ais.size()):
+			var venceu = result == sim.PLAYER_NAMES[p]
+			ais[p].learn(Metrics.match_points(venceu, result == "draw"))
 		if turn_csv != null:
 			for row in sim.turn_log:
 				turn_csv.store_line("%d,%d,%d,%s,%s,%d,%d,%d,%d" % [
@@ -72,6 +84,7 @@ func run(bank, count, log_turns = false):
 
 	var duration = (Time.get_ticks_msec() - t0) / 1000.0
 	write_summary(run_dir, metric_rows)
+	write_learning_log(run_dir, ais)
 	write_manifest(run_dir, bank, count, seeds, log_turns, duration)
 	print("Lote concluído em %.1fs — documentação completa em %s" % [duration, run_dir])
 
@@ -121,6 +134,26 @@ func write_summary(run_dir, metric_rows):
 		])
 	csv.close()
 
+# O que cada IA aprendeu ao longo do lote, janela a janela — o registro
+# vai junto dos resultados; as instâncias em si são descartadas (reset).
+func write_learning_log(run_dir, ais):
+	var csv = FileAccess.open(run_dir.path_join("aprendizado.csv"), FileAccess.WRITE)
+	csv.store_line("jogador,modelo_ia,janela,w_vida,w_cobertura,w_proximidade,w_risco,pontos_media_janela,decisao")
+	for p in range(ais.size()):
+		var rows = ais[p].learning_log()
+		var name = SimulationScript.PLAYER_NAMES[p]
+		var model = SimulationScript.model_name(p)
+		if rows.is_empty():
+			csv.store_line("%s,%s,,,,,,,sem_aprendizado" % [name, model])
+			continue
+		for row in rows:
+			csv.store_line("%s,%s,%d,%.4f,%.4f,%.4f,%.4f,%.3f,%s" % [
+				name, model, row["janela"],
+				row["pesos"][0], row["pesos"][1], row["pesos"][2], row["pesos"][3],
+				row["pontos_media"], row["decisao"],
+			])
+	csv.close()
+
 func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
 	var agent_script = preload("res://agents/agent.gd")
 	var grid_script = preload("res://map/grid.gd")
@@ -153,8 +186,11 @@ func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
 	file.store_line("")
 	file.store_line("[parametros_ia]")
 	var heuristic = preload("res://ai/ai_heuristic.gd")
-	file.store_line("heuristica_pesos: vida=%.2f cobertura=%.2f proximidade=%.2f risco=%.2f" % [
+	file.store_line("heuristica_pesos_iniciais: vida=%.2f cobertura=%.2f proximidade=%.2f risco=%.2f" % [
 		heuristic.W_VIDA, heuristic.W_COBERTURA, heuristic.W_PROXIMIDADE, heuristic.W_RISCO,
+	])
+	file.store_line("aprendizado: hill-climbing entre partidas (janela=%d, passo=%.2f); evolução em aprendizado.csv; instâncias resetam ao fim do lote" % [
+		heuristic.LEARN_WINDOW, heuristic.LEARN_STEP,
 	])
 	file.store_line("")
 	file.store_line("[metricas]")
