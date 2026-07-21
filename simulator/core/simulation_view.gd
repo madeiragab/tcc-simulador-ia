@@ -76,7 +76,12 @@ func _draw():
 	for y in range(grid.height + 1):
 		draw_line(Vector2(0, y * CELL_SIZE), Vector2(grid.width * CELL_SIZE, y * CELL_SIZE), COLOR_GRID_LINE)
 
-	# Mortos primeiro (por baixo): marcador cinza de onde caíram.
+	# Cones de visão por baixo de tudo que está vivo.
+	for agent in simulation.agents:
+		if agent.is_alive:
+			draw_vision_cone(agent)
+
+	# Mortos (por baixo dos vivos): marcador cinza de onde caíram.
 	for agent in simulation.agents:
 		if not agent.is_alive:
 			draw_dead_agent(cell_center(agent.x, agent.y))
@@ -101,6 +106,22 @@ func draw_agent(center, color):
 func draw_dead_agent(center):
 	draw_circle(center, AGENT_RADIUS * 0.9, COLOR_DEAD)
 	draw_circle(center, AGENT_RADIUS * 0.45, COLOR_DEAD.darkened(0.35))
+
+# Leque translúcido na cor do jogador, indicando para onde ele olha.
+func draw_vision_cone(agent):
+	var color = PLAYER_COLORS[agent.team_id]
+	var center = cell_center(agent.x, agent.y)
+	var radius = agent.vision_range * CELL_SIZE
+	var base_angle = agent.facing.angle()
+	var half = deg_to_rad(agent.VISION_CONE_DEGREES / 2.0)
+
+	var points = PackedVector2Array()
+	points.append(center)
+	var steps = 20
+	for i in range(steps + 1):
+		var a = base_angle - half + (2.0 * half) * i / steps
+		points.append(center + Vector2(cos(a), sin(a)) * radius)
+	draw_colored_polygon(points, Color(color.r, color.g, color.b, 0.05))
 
 # Tracer na cor do atirador, esvaindo com o tempo, com clarão no impacto.
 func draw_shots():

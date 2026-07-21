@@ -67,6 +67,8 @@ data/runs/<data-hora>_<banco>_<N>/
 │                  # total e aberto por tipo (LOS, nodos, ações)
 ├── resumo.csv     # agregados por jogador: média ± desvio padrão de cada
 │                  # métrica e o StrategicScore
+├── aprendizado.csv # evolução do aprendizado entre partidas (janela a
+│                  # janela: pesos testados, média de pontos, decisão)
 └── turnos.csv     # (opcional) log turno a turno
 ```
 

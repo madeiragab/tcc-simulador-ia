@@ -25,7 +25,20 @@ extends RefCounted
 const EPSILON = 1
 const TURN_LIMIT_PENALTY = 100
 
+# Pontuação de partida (docs/metricas.md): empate é penalizado de
+# propósito — sobreviver sem decidir a partida não é eficácia.
+const POINTS_WIN = 3
+const POINTS_DRAW = -1
+const POINTS_LOSS = -3
+
 # ---------- valores por partida ----------
+
+static func match_points(venceu, empate):
+	if venceu:
+		return POINTS_WIN
+	if empate:
+		return POINTS_DRAW
+	return POINTS_LOSS
 
 static func damage_ratio(dano_causado, dano_recebido):
 	return float(dano_causado) / max(dano_recebido, EPSILON)
@@ -57,12 +70,14 @@ static func std_dev(values):
 static func aggregate(rows):
 	var n = rows.size()
 	var wins = 0
+	var points_total = 0
 	var ttv_values = []       # turnos p/ vencer (vitórias) + penalidade (empates)
 	var dr_values = []
 	var cu_values = []
 	var cost_values = []
 
 	for row in rows:
+		points_total += match_points(row["venceu"], row["empate"])
 		if row["venceu"]:
 			wins += 1
 			ttv_values.append(float(row["turnos"]))
@@ -89,6 +104,8 @@ static func aggregate(rows):
 
 	return {
 		"n": n,
+		"points_total": points_total,
+		"points_mean": float(points_total) / max(n, 1),
 		"win_rate": win_rate,
 		"damage_ratio_mean": dr_mean,
 		"damage_ratio_std": std_dev(dr_values),

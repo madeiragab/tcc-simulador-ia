@@ -22,6 +22,18 @@ const PLAYER_AI_SCRIPTS = [
 	preload("res://ai/ai_reactive.gd"),   # azul
 ]
 
+# Modelos disponíveis por nome (usado pela escalação via linha de comando,
+# ex.: godot -- batch 1000 verde=heuristica vermelho=aleatoria).
+const AI_BY_NAME = {
+	"aleatoria": preload("res://ai/ai_random.gd"),
+	"reativa": preload("res://ai/ai_reactive.gd"),
+	"heuristica": preload("res://ai/ai_heuristic.gd"),
+}
+
+# Sobrescreve a IA de jogadores específicos em tempo de execução
+# (player_id -> script). Configurado pelo game.gd a partir dos argumentos.
+static var ai_overrides = {}
+
 var grid = null
 var agents = []
 var ais = []
@@ -48,7 +60,9 @@ var last_event = ""
 
 # ---------- INICIALIZAÇÃO (diagrams/fluxo_simulacao.png) ----------
 
-func setup(seed_value, first_player = 0):
+# injected_ais: instâncias persistentes de IA (modo lote, para o
+# aprendizado entre partidas). Sem elas, cria instâncias novas.
+func setup(seed_value, first_player = 0, injected_ais = null):
 	map_seed = seed_value
 	start_player = first_player
 
@@ -71,7 +85,11 @@ func setup(seed_value, first_player = 0):
 		agent.grid = grid
 		agents.append(agent)
 		add_child(agent)
-		ais.append(PLAYER_AI_SCRIPTS[i].new())
+		if injected_ais != null:
+			injected_ais[i].reset_match_state()
+			ais.append(injected_ais[i])
+		else:
+			ais.append(ai_script_for(i).new())
 		cost_meters.append(preload("res://core/cost_meter.gd").new())
 		turns_acted.append(0)
 		turns_in_cover.append(0)
@@ -167,9 +185,12 @@ func get_enemies(agent):
 			enemies.append(other)
 	return enemies
 
+static func ai_script_for(player_id):
+	return ai_overrides.get(player_id, PLAYER_AI_SCRIPTS[player_id])
+
 # Nome do modelo de IA de um jogador (derivado do script configurado).
 static func model_name(player_id):
-	var file = PLAYER_AI_SCRIPTS[player_id].resource_path.get_file()
+	var file = ai_script_for(player_id).resource_path.get_file()
 	match file:
 		"ai_reactive.gd":
 			return "reativa"
