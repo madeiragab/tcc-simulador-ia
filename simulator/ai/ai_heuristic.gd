@@ -21,6 +21,14 @@ const W_COBERTURA = 0.3
 const W_PROXIMIDADE = 0.5
 const W_RISCO = -0.2
 
+# Incentivo de movimentação (docs/ia.md §4): valores fixos, fora do
+# aprendizado — são regra de comportamento, não parâmetro calibrável.
+const W_MOVIMENTO = 0.2    # por célula percorrida até a posição avaliada
+const W_REPETICAO = -0.2   # posição já visitada nesta partida
+
+# Células onde o agente já esteve nesta partida (anti-entrincheiramento).
+var visited = {}
+
 # ---------- Aprendizado entre partidas (hill-climbing nos pesos) ----------
 # Joga LEARN_WINDOW partidas com os pesos atuais e mede a média de
 # pontos (+3/-1/-3). Melhorou a melhor média conhecida: adota. Piorou:
@@ -74,7 +82,14 @@ func learn(points):
 func learning_log():
 	return log_rows
 
+func reset_match_state():
+	super.reset_match_state()
+	visited = {}
+
 func decide(agent, sim):
+	# Registra onde está: repetir esta célula perde valor daqui em diante.
+	visited[Vector2i(agent.x, agent.y)] = true
+
 	# Percepção primeiro: a heurística só raciocina sobre quem enxerga.
 	var enemies = get_visible_enemies(agent, sim)
 
@@ -127,7 +142,14 @@ func strategic_value(agent, sim, cell, enemies):
 			exposed += 1
 	var risco = float(exposed) / max(enemies.size(), 1)
 
-	return weights[0] * vida + weights[1] * cobertura + weights[2] * proximidade + weights[3] * risco
+	# Movimentação: +0.2 por célula percorrida, -0.2 se repete casa já
+	# visitada (ficar parado repete a própria célula).
+	var percorrido = abs(cell.x - agent.x) + abs(cell.y - agent.y)
+	var movimentacao = W_MOVIMENTO * percorrido
+	if visited.has(cell):
+		movimentacao += W_REPETICAO
+
+	return weights[0] * vida + weights[1] * cobertura + weights[2] * proximidade + weights[3] * risco + movimentacao
 
 # Proteção potencial da posição: 0 sem cobertura adjacente, 0.5 leve, 1 pesada.
 func cover_level(sim, cell):

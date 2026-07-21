@@ -43,7 +43,8 @@ ValorEstratégico =
 w1 * Vida +
 w2 * Cobertura +
 w3 * Proximidade +
-w4 * Risco
+w4 * Risco +
+Movimentação
 
 Onde:
 
@@ -51,6 +52,7 @@ Onde:
 - Cobertura: nível de proteção da posição (0, 1 ou 2)
 - Proximidade: inverso da distância até o inimigo
 - Risco: quantidade de inimigos com linha de visão
+- Movimentação: incentivo fixo de deslocamento — **+0,2 por célula percorrida** até a posição avaliada e **−0,2 se a posição já foi visitada na partida** (ficar parado repete a própria célula). Garante movimentação constante mesmo durante o combate, impedindo o entrincheiramento passivo
 
 Os pesos (w1, w2, w3, w4) serão definidos empiricamente em um Espaço de Validação isolado (tuning run) com base nos resultados de simulações restritas, prevenindo overfitting antes da validação da IA Heurística no Benchmark oficial final.
 
