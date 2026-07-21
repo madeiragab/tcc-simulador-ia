@@ -31,11 +31,20 @@ func _ready():
 		var count = int(args[1]) if args.size() > 1 and args[1].is_valid_int() else 1000
 		var bank = "benchmark"
 		var log_turns = false
+		var sim_script = preload("res://core/simulation.gd")
 		for extra in args.slice(2):
 			if extra == "turnos":
 				log_turns = true
 			elif extra in ["benchmark", "tuning"]:
 				bank = extra
+			elif "=" in extra:
+				# Escalação: verde=heuristica vermelho=aleatoria azul=reativa
+				var parts = extra.split("=")
+				var player_id = sim_script.PLAYER_NAMES.find(parts[0])
+				if player_id >= 0 and sim_script.AI_BY_NAME.has(parts[1]):
+					sim_script.ai_overrides[player_id] = sim_script.AI_BY_NAME[parts[1]]
+				else:
+					push_error("Escalação inválida: " + extra)
 		var runner = preload("res://core/batch_runner.gd").new()
 		add_child(runner)
 		runner.run(bank, count, log_turns)

@@ -43,7 +43,8 @@ ValorEstratégico =
 w1 * Vida +
 w2 * Cobertura +
 w3 * Proximidade +
-w4 * Risco
+w4 * Risco +
+Movimentação
 
 Onde:
 
@@ -51,6 +52,7 @@ Onde:
 - Cobertura: nível de proteção da posição (0, 1 ou 2)
 - Proximidade: inverso da distância até o inimigo
 - Risco: quantidade de inimigos com linha de visão
+- Movimentação: incentivo fixo de deslocamento — **+0,2 por célula percorrida** até a posição avaliada e **−0,2 se a posição já foi visitada na partida** (ficar parado repete a própria célula). Garante movimentação constante mesmo durante o combate, impedindo o entrincheiramento passivo
 
 Os pesos (w1, w2, w3, w4) serão definidos empiricamente em um Espaço de Validação isolado (tuning run) com base nos resultados de simulações restritas, prevenindo overfitting antes da validação da IA Heurística no Benchmark oficial final.
 
@@ -84,6 +86,12 @@ Onde:
 A inclusão desse fator permite equilibrar qualidade estratégica e eficiência, distinguindo-se estrutural e logicamente da *IA Heurística*, unindo otimização de processador à utilidade de campo. Alinhando-se a estudos sobre trade-offs em algoritmos de decisão (BROWNE et al., 2012).
 
 ---
+
+## 6.5 Aprendizado entre Partidas
+
+No modo lote, a mesma instância de IA disputa todas as partidas e recebe, após cada uma, a pontuação obtida (+3 vitória, −1 empate, −3 derrota). A IA Heurística usa esse sinal para calibrar seus pesos por *hill-climbing*: joga uma janela de 25 partidas com uma configuração, mede a média de pontos e adota a configuração se superou a melhor média conhecida (caso contrário, reverte); a janela seguinte testa uma perturbação da melhor configuração (RNG semeado — todo o processo é reprodutível).
+
+Ao fim do lote, a evolução completa (pesos testados, média por janela, adotado/revertido) é gravada em `aprendizado.csv` na pasta da execução, e as instâncias são descartadas — cada lote parte do zero. Os modelos Aleatório e Reativo não possuem parâmetros ajustáveis e servem de contraste estático.
 
 ## 7. Limitações
 

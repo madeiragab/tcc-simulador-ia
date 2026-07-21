@@ -16,9 +16,9 @@ extends Node
 const Metrics = preload("res://core/metrics.gd")
 const SimulationScript = preload("res://core/simulation.gd")
 
-const MATCH_HEADER = "id_simulacao,seed,jogador_inicial,jogador,modelo_ia,vencedor,venceu,turnos,dano_causado,dano_recebido,damage_ratio,cover_usage,custo_total,custo_los,custo_nodos,custo_acoes"
+const MATCH_HEADER = "id_simulacao,seed,jogador_inicial,jogador,modelo_ia,vencedor,venceu,pontos,turnos,dano_causado,dano_recebido,damage_ratio,cover_usage,custo_total,custo_los,custo_nodos,custo_acoes"
 const TURN_HEADER = "id_simulacao,seed,turno,jogador,acao,x,y,protegido,inimigos_visiveis"
-const SUMMARY_HEADER = "jogador,modelo_ia,partidas,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score"
+const SUMMARY_HEADER = "jogador,modelo_ia,partidas,pontos_total,pontos_media,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score"
 
 # bank: "benchmark" ou "tuning"; count: quantas seeds do banco rodar.
 func run(bank, count, log_turns = false):
@@ -38,6 +38,14 @@ func run(bank, count, log_turns = false):
 
 	var metric_rows = [[], [], []]
 
+	# IAs persistentes: a mesma instância joga o lote inteiro, aprendendo
+	# entre partidas; descartadas (reset) quando o lote termina.
+	var ais = []
+	for p in range(SimulationScript.PLAYER_NAMES.size()):
+		var ai = SimulationScript.ai_script_for(p).new()
+		ai.player_id = p
+		ais.append(ai)
+
 	print("Lote: %d partidas do banco '%s' -> %s" % [count, bank, run_dir])
 	var t0 = Time.get_ticks_msec()
 
@@ -45,7 +53,7 @@ func run(bank, count, log_turns = false):
 		var sim = SimulationScript.new()
 		add_child(sim)
 		sim.collect_turn_log = log_turns
-		sim.setup(seeds[i], i % 3)
+		sim.setup(seeds[i], i % 3, ais)
 
 		var result = sim.check_victory()
 		while result == "":
@@ -53,6 +61,10 @@ func run(bank, count, log_turns = false):
 			result = sim.check_victory()
 
 		collect_match(match_csv, metric_rows, sim, i + 1, result)
+
+		for p in range(ais.size()):
+			var venceu = result == sim.PLAYER_NAMES[p]
+			ais[p].learn(Metrics.match_points(venceu, result == "draw"))
 		if turn_csv != null:
 			for row in sim.turn_log:
 				turn_csv.store_line("%d,%d,%d,%s,%s,%d,%d,%d,%d" % [
@@ -72,6 +84,7 @@ func run(bank, count, log_turns = false):
 
 	var duration = (Time.get_ticks_msec() - t0) / 1000.0
 	write_summary(run_dir, metric_rows)
+	write_learning_log(run_dir, ais)
 	write_manifest(run_dir, bank, count, seeds, log_turns, duration)
 	print("Lote concluído em %.1fs — documentação completa em %s" % [duration, run_dir])
 
@@ -88,9 +101,11 @@ func collect_match(csv, metric_rows, sim, match_id, result):
 		var cu = Metrics.cover_usage(stats["turnos_em_cobertura"], stats["turnos_agidos"])
 		var meter = sim.cost_meters[p]
 
-		csv.store_line("%d,%d,%s,%s,%s,%s,%d,%d,%d,%d,%.4f,%.4f,%d,%d,%d,%d" % [
+		var pontos = Metrics.match_points(venceu, empate)
+
+		csv.store_line("%d,%d,%s,%s,%s,%s,%d,%d,%d,%d,%d,%.4f,%.4f,%d,%d,%d,%d" % [
 			match_id, sim.map_seed, starter, stats["jogador"], stats["modelo_ia"],
-			"empate" if empate else result, 1 if venceu else 0, turns,
+			"empate" if empate else result, 1 if venceu else 0, pontos, turns,
 			stats["dano_causado"], stats["dano_recebido"], dr, cu,
 			meter.total(), meter.los_checks, meter.cells_explored, meter.actions_evaluated,
 		])
@@ -109,13 +124,34 @@ func write_summary(run_dir, metric_rows):
 	csv.store_line(SUMMARY_HEADER)
 	for p in range(metric_rows.size()):
 		var agg = Metrics.aggregate(metric_rows[p])
-		csv.store_line("%s,%s,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.2f,%.6f,%.2f,%.2f,%.6f" % [
+		csv.store_line("%s,%s,%d,%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.2f,%.6f,%.2f,%.2f,%.6f" % [
 			SimulationScript.PLAYER_NAMES[p], SimulationScript.model_name(p), agg["n"],
+			agg["points_total"], agg["points_mean"],
 			agg["win_rate"], agg["damage_ratio_mean"], agg["damage_ratio_std"],
 			agg["cover_usage_mean"], agg["cover_usage_std"],
 			agg["turns_to_victory_mean"], agg["efficiency"],
 			agg["custo_mean"], agg["custo_std"], agg["strategic_score"],
 		])
+	csv.close()
+
+# O que cada IA aprendeu ao longo do lote, janela a janela — o registro
+# vai junto dos resultados; as instâncias em si são descartadas (reset).
+func write_learning_log(run_dir, ais):
+	var csv = FileAccess.open(run_dir.path_join("aprendizado.csv"), FileAccess.WRITE)
+	csv.store_line("jogador,modelo_ia,janela,w_vida,w_cobertura,w_proximidade,w_risco,pontos_media_janela,decisao")
+	for p in range(ais.size()):
+		var rows = ais[p].learning_log()
+		var name = SimulationScript.PLAYER_NAMES[p]
+		var model = SimulationScript.model_name(p)
+		if rows.is_empty():
+			csv.store_line("%s,%s,,,,,,,sem_aprendizado" % [name, model])
+			continue
+		for row in rows:
+			csv.store_line("%s,%s,%d,%.4f,%.4f,%.4f,%.4f,%.3f,%s" % [
+				name, model, row["janela"],
+				row["pesos"][0], row["pesos"][1], row["pesos"][2], row["pesos"][3],
+				row["pontos_media"], row["decisao"],
+			])
 	csv.close()
 
 func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
@@ -148,6 +184,15 @@ func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
 	file.store_line("hp_inicial: 100")
 	file.store_line("alcance_visao_e_ataque: 8")
 	file.store_line("")
+	file.store_line("[parametros_ia]")
+	var heuristic = preload("res://ai/ai_heuristic.gd")
+	file.store_line("heuristica_pesos_iniciais: vida=%.2f cobertura=%.2f proximidade=%.2f risco=%.2f" % [
+		heuristic.W_VIDA, heuristic.W_COBERTURA, heuristic.W_PROXIMIDADE, heuristic.W_RISCO,
+	])
+	file.store_line("aprendizado: hill-climbing entre partidas (janela=%d, passo=%.2f); evolução em aprendizado.csv; instâncias resetam ao fim do lote" % [
+		heuristic.LEARN_WINDOW, heuristic.LEARN_STEP,
+	])
+	file.store_line("")
 	file.store_line("[metricas]")
 	file.store_line("formulas: docs/metricas.md (implementação literal em core/metrics.gd, epsilon=%d)" % Metrics.EPSILON)
 	file.close()
@@ -157,6 +202,7 @@ func print_aggregates(metric_rows):
 	for p in range(metric_rows.size()):
 		var agg = Metrics.aggregate(metric_rows[p])
 		print("\n[%s — %s] (%d partidas)" % [SimulationScript.PLAYER_NAMES[p], SimulationScript.model_name(p), agg["n"]])
+		print("  Pontuação:        %d  (média %.2f por partida)" % [agg["points_total"], agg["points_mean"]])
 		print("  WinRate:          %.3f" % agg["win_rate"])
 		print("  DamageRatio:      %.3f ± %.3f" % [agg["damage_ratio_mean"], agg["damage_ratio_std"]])
 		print("  CoverUsage:       %.3f ± %.3f" % [agg["cover_usage_mean"], agg["cover_usage_std"]])

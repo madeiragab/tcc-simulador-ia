@@ -39,6 +39,18 @@ A partida é disputada por 3 agentes independentes (todos contra todos), identif
 - Proteção por cobertura: avaliada por confronto — o agente está protegido de um atacante quando existe célula de cobertura adjacente a ele na direção desse atacante
 - Tipo de cobertura: leve ou pesada (prevalece a maior proteção)
 
+### Percepção (Campo de Visão)
+
+Os agentes **não são oniscientes**. Um agente só conhece a posição de um inimigo quando ele está dentro do seu campo de visão:
+
+- Distância até o alcance de visão (Chebyshev)
+- Linha de visão desobstruída: **paredes bloqueiam a visão; coberturas não**
+
+Sem nenhum inimigo à vista, o agente age com base em memória e busca:
+
+- **Memória tática**: guarda a última posição onde viu cada inimigo e caça a mais próxima; ao chegar lá e não encontrar nada, esquece
+- **Exploração**: sem memória alguma, percorre destinos sorteados do mapa (RNG semeado pela *seed* da partida — o comportamento permanece determinístico e reprodutível)
+
 ---
 
 ## 3. Ações
@@ -77,9 +89,10 @@ A proteção de cobertura é direcional e automática: aplica-se quando há cél
 - Um agente só pode atacar se houver linha de visão direta
 - Paredes bloqueiam completamente a visão
 
-### Alcance
+### Alcance e Linha de Tiro
 
 - O alcance de ataque é igual ao alcance de visão do agente (distância de Chebyshev)
+- **O tiro só é permitido em linha reta**: horizontal, vertical ou diagonal perfeita. Sem essa restrição, ataques em ângulos arbitrários contornariam a cobertura direcional, tornando as defesas irrelevantes
 
 ### Dano (Determinístico)
 
