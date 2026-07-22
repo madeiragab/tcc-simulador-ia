@@ -1,0 +1,4 @@
+jogador,modelo_ia,partidas,pontos_total,pontos_media,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score
+verde,reativa,1000,-990,-0.9900,0.2310,4.0870,9.9693,0.0506,0.0887,74.16,0.013484,886.97,677.42,0.899626
+vermelho,reativa,1000,-984,-0.9840,0.2320,3.6555,8.8118,0.0542,0.0992,73.61,0.013585,881.99,670.90,0.814360
+azul,reativa,1000,-1026,-1.0260,0.2250,3.8473,9.2268,0.0482,0.0794,74.38,0.013444,869.90,686.43,0.849408

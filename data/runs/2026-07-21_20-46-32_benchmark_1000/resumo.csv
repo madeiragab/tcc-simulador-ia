@@ -1,0 +1,4 @@
+jogador,modelo_ia,partidas,pontos_total,pontos_media,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score
+verde,aleatoria,1000,-1572,-1.5720,0.0270,0.1086,1.3469,0.0473,0.0626,97.78,0.010227,1519.69,792.30,0.041378
+vermelho,reativa,1000,-834,-0.8340,0.1500,11.1695,28.5695,0.0596,0.1063,90.83,0.011010,1358.25,716.47,2.293105
+azul,heuristica,1000,-594,-0.5940,0.1900,13.0758,33.0819,0.0721,0.0958,88.33,0.011321,1811.02,729.10,2.688908
