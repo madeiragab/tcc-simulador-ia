@@ -1,0 +1,4 @@
+jogador,modelo_ia,janela,w_vida,w_cobertura,w_proximidade,w_risco,pontos_media_janela,decisao
+verde,reativa,,,,,,,sem_aprendizado
+vermelho,reativa,,,,,,,sem_aprendizado
+azul,reativa,,,,,,,sem_aprendizado
