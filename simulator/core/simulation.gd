@@ -157,9 +157,15 @@ func apply_action(agent, action):
 	if action == null:
 		return
 
-	var move_to = action.get("move_to")
-	if move_to != null:
-		agent.move_to(move_to.x, move_to.y)
+	# Caminho já traçado pela IA (movimento guloso) tem precedência:
+	# validação O(1) por passo, sem refazer a busca.
+	var move_path = action.get("move_path")
+	if move_path != null:
+		agent.move_along(move_path)
+	else:
+		var move_to = action.get("move_to")
+		if move_to != null:
+			agent.move_to(move_to.x, move_to.y)
 
 	var target = action.get("attack_target")
 	if target != null:

@@ -48,6 +48,35 @@ func move_to(target_x, target_y):
 	print("Agente moveu para: ", x, ", ", y)
 	return true
 
+# Move seguindo um caminho já traçado pela IA (passos ortogonais
+# contíguos). Valida cada passo em O(1) — sem refazer a busca completa,
+# preservando a economia do movimento guloso.
+func move_along(path):
+	if grid == null or path.is_empty():
+		return false
+	var pos = Vector2i(x, y)
+	var steps = 0
+	for cell in path:
+		if steps >= 3:
+			break
+		var delta = cell - pos
+		if absi(delta.x) + absi(delta.y) != 1:
+			break
+		if not grid.is_valid_position(cell.x, cell.y):
+			break
+		pos = cell
+		steps += 1
+
+	if pos == Vector2i(x, y):
+		return false
+
+	var move_delta = Vector2(pos.x - x, pos.y - y)
+	if move_delta != Vector2.ZERO:
+		facing = move_delta.normalized()
+	x = pos.x
+	y = pos.y
+	return true
+
 # Linha reta no grid: horizontal, vertical ou diagonal perfeita.
 static func is_straight_line(dx, dy):
 	return dx == 0 or dy == 0 or abs(dx) == abs(dy)
