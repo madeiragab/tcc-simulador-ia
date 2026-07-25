@@ -138,6 +138,43 @@ func closest_of(agent, candidates):
 			best = candidate
 	return best
 
+# Passo guloso na direção do alvo: caminha até max_steps células
+# verificando apenas as do caminho (~3-6 verificações), em vez de
+# expandir a vizinhança inteira por busca em largura (~25 nós).
+# Retorna o caminho percorrido (lista de células) ou vazio.
+func cheap_path_towards(agent, sim, target, max_steps = 3):
+	var pos = Vector2i(agent.x, agent.y)
+	var path = []
+	for step in range(max_steps):
+		var dx = signi(target.x - pos.x)
+		var dy = signi(target.y - pos.y)
+		if dx == 0 and dy == 0:
+			break
+
+		# Tenta primeiro o eixo com maior distância a cobrir.
+		var options = []
+		if absi(target.x - pos.x) >= absi(target.y - pos.y):
+			if dx != 0:
+				options.append(Vector2i(pos.x + dx, pos.y))
+			if dy != 0:
+				options.append(Vector2i(pos.x, pos.y + dy))
+		else:
+			if dy != 0:
+				options.append(Vector2i(pos.x, pos.y + dy))
+			if dx != 0:
+				options.append(Vector2i(pos.x + dx, pos.y))
+
+		var moved = false
+		for opt in options:
+			if sim.grid.check_walkable(opt.x, opt.y):
+				pos = opt
+				path.append(pos)
+				moved = true
+				break
+		if not moved:
+			break
+	return path
+
 # Melhor célula alcançável neste turno na direção do alvo (ou null).
 func step_towards(agent, sim, target):
 	var reachable = sim.grid.get_reachable_cells(agent.x, agent.y, 3)

@@ -37,6 +37,13 @@ func is_valid_position(x, y):
 		return false
 	return true
 
+# Verificação pontual de caminhabilidade, contabilizada no custo (uma
+# célula examinada). Permite movimento guloso sem busca completa.
+func check_walkable(x, y):
+	if cost_meter != null:
+		cost_meter.cells_explored += 1
+	return is_valid_position(x, y)
+
 func get_cell_type(x, y):
 	if x < 0 or y < 0 or x >= width or y >= height:
 		return "wall"
