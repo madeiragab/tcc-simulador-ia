@@ -28,6 +28,7 @@ const AI_BY_NAME = {
 	"aleatoria": preload("res://ai/ai_random.gd"),
 	"reativa": preload("res://ai/ai_reactive.gd"),
 	"heuristica": preload("res://ai/ai_heuristic.gd"),
+	"hibrida": preload("res://ai/ai_hybrid.gd"),
 }
 
 # Sobrescreve a IA de jogadores específicos em tempo de execução

@@ -101,9 +101,7 @@ func decide(agent, sim):
 			return {"move_to": null, "attack_target": null}
 		return {"move_to": step_towards(agent, sim, goal), "attack_target": null}
 
-	# Candidatos: todas as posições alcançáveis + ficar parado.
-	var candidates = sim.grid.get_reachable_cells(agent.x, agent.y, 3)
-	candidates.append(Vector2i(agent.x, agent.y))
+	var candidates = candidate_cells(agent, sim, enemies)
 
 	var best_cell = Vector2i(agent.x, agent.y)
 	var best_score = -INF
@@ -118,6 +116,13 @@ func decide(agent, sim):
 		move_to = best_cell
 
 	return {"move_to": move_to, "attack_target": best_attack_from(agent, sim, best_cell, enemies)}
+
+# Posições consideradas no turno: todas as alcançáveis + ficar parado.
+# A IA Híbrida sobrescreve para podar por orçamento de operações.
+func candidate_cells(agent, sim, _enemies):
+	var cells = sim.grid.get_reachable_cells(agent.x, agent.y, 3)
+	cells.append(Vector2i(agent.x, agent.y))
+	return cells
 
 # Pontua uma posição candidata. A IA Híbrida sobrescreve este método
 # para acrescentar a penalidade de custo computacional.
