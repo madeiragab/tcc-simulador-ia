@@ -23,11 +23,16 @@ extends "res://ai/ai_heuristic.gd"
 # λ converte operações em unidades de valor estratégico. Calibrado no
 # banco de tuning (200 seeds), nunca no benchmark. Sobrescrevível pela
 # linha de comando (-- lambda=0.02) para a varredura de calibração.
+# Calibrado em 0,005 pela varredura nas 200 seeds de tuning: mantém a
+# eficácia máxima observada (WinRate 0,235, igual a λ=0) com 15% menos
+# operações; acima disso a eficácia começa a cair.
 const LAMBDA_PADRAO = 0.005
 static var lambda_atual = LAMBDA_PADRAO
 
-# Orçamento de operações de avaliação por turno (0 = sem poda).
-const BUDGET_PADRAO = 45
+# Orçamento de operações de avaliação por turno. A varredura mostrou
+# que podar candidatas prejudica a eficácia sem economia relevante
+# (o regime econômico já elimina o grosso do custo), então 0 = sem poda.
+const BUDGET_PADRAO = 0
 static var budget_atual = BUDGET_PADRAO
 
 # Pesos iniciais aprendidos no confronto misto de 1000 partidas.
