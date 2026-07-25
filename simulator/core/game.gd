@@ -37,6 +37,12 @@ func _ready():
 				log_turns = true
 			elif extra in ["benchmark", "tuning"]:
 				bank = extra
+			elif extra.begins_with("lambda="):
+				# Calibração do modelo híbrido: lambda=0.02
+				preload("res://ai/ai_hybrid.gd").lambda_atual = float(extra.split("=")[1])
+			elif extra.begins_with("budget="):
+				# Orçamento de avaliação do híbrido (0 = sem poda)
+				preload("res://ai/ai_hybrid.gd").budget_atual = int(extra.split("=")[1])
 			elif "=" in extra:
 				# Escalação: verde=heuristica vermelho=aleatoria azul=reativa
 				var parts = extra.split("=")

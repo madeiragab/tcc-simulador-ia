@@ -31,15 +31,18 @@
 - [x] Campanha de coleta das etapas 1 e 2 (4 lotes × 1000 partidas) — ver
       `resultados_campanha.md`
 
-## Fase 4 — Modelo Proposto (em andamento)
-- [ ] Implementação da IA híbrida com integração do custo computacional abstrato
-      (`ScoreAção = ValorEstratégico − λ × Custo`)
-- [ ] Validação preliminar dos pesos e do λ nas 200 *seeds* de tuning (contra *overfitting*)
-      — varredura planejada em λ ∈ {0,005; 0,01; 0,02; 0,05}
-
-Pesos de partida definidos empiricamente pela campanha (melhor configuração
-adotada no confronto misto):
-`w_vida = 0,092 | w_cobertura = 0,307 | w_proximidade = 0,495 | w_risco = −0,228`
+## Fase 4 — Modelo Proposto ✅ concluída
+- [x] Implementação da IA híbrida (`ai/ai_hybrid.gd`) com integração do custo
+      computacional abstrato (`ScoreAção = ValorEstratégico − λ × Custo`),
+      onde o custo é o de avaliar a própria ação — ver `modelo_proposto.md`
+- [x] Poda por orçamento de operações: candidatas ordenadas por promessa e
+      avaliadas enquanto houver orçamento, convertendo a penalidade formal
+      em economia real de processamento
+- [x] Pesos de partida herdados do aprendizado da campanha
+      (`w = 0,092 / 0,307 / 0,495 / −0,228`)
+- [x] Varredura de λ e do orçamento nas 200 *seeds* de tuning (isoladas do
+      benchmark, contra *overfitting*) — ver `resultados_hibrido.md`
+- [x] λ e orçamento ajustáveis por linha de comando (`lambda=`, `budget=`)
 
 Meta quantitativa (critério de sucesso da hipótese): pontuação média ≥ −0,59
 com custo < 1811, idealmente próximo do patamar da reativa (~1360).

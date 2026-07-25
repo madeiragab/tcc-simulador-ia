@@ -192,6 +192,12 @@ func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
 	file.store_line("aprendizado: hill-climbing entre partidas (janela=%d, passo=%.2f); evolução em aprendizado.csv; instâncias resetam ao fim do lote" % [
 		heuristic.LEARN_WINDOW, heuristic.LEARN_STEP,
 	])
+	var hybrid = preload("res://ai/ai_hybrid.gd")
+	file.store_line("hibrida_lambda: %.4f" % hybrid.lambda_atual)
+	file.store_line("hibrida_budget: %d operações de avaliação por turno (0 = sem poda)" % hybrid.budget_atual)
+	file.store_line("hibrida_pesos_iniciais: vida=%.3f cobertura=%.3f proximidade=%.3f risco=%.3f (aprendidos no confronto misto)" % [
+		hybrid.W_VIDA_INICIAL, hybrid.W_COBERTURA_INICIAL, hybrid.W_PROXIMIDADE_INICIAL, hybrid.W_RISCO_INICIAL,
+	])
 	file.store_line("")
 	file.store_line("[metricas]")
 	file.store_line("formulas: docs/metricas.md (implementação literal em core/metrics.gd, epsilon=%d)" % Metrics.EPSILON)
