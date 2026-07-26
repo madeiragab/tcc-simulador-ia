@@ -1,6 +1,6 @@
 extends "res://ai/ai_heuristic.gd"
 
-# Modelo Proposto — IA Híbrida (docs/modelo_proposto.md).
+# Art3miz 0.1 — modelo híbrido proposto (docs/modelo_proposto.md).
 #
 #   ScoreAção = ValorEstratégico − λ × CustoComputacional(ação)
 #

@@ -35,7 +35,7 @@ Em cada simulação, o modelo avaliado controla um dos agentes; os outros dois e
 - IA Aleatória
 - IA Reativa
 - IA Heurística
-- Modelo Proposto (híbrido)
+- Art3miz 0.1 (híbrido)
 
 ## Coleta de Dados
 

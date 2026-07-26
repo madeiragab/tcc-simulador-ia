@@ -72,4 +72,4 @@ data/runs/<data-hora>_<banco>_<N>/
 └── turnos.csv     # (opcional) log turno a turno
 ```
 
-Os recortes por modelo (aleatoria, reativa, heuristica, modelo_proposto) são derivados de `partidas.csv` filtrando a coluna `modelo_ia` na etapa de análise.
+Os recortes por modelo (aleatoria, reativa, heuristica, art3miz_0.1) são derivados de `partidas.csv` filtrando a coluna `modelo_ia` na etapa de análise.

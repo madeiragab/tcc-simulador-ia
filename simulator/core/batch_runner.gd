@@ -192,11 +192,11 @@ func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
 	file.store_line("aprendizado: hill-climbing entre partidas (janela=%d, passo=%.2f); evolução em aprendizado.csv; instâncias resetam ao fim do lote" % [
 		heuristic.LEARN_WINDOW, heuristic.LEARN_STEP,
 	])
-	var hybrid = preload("res://ai/ai_hybrid.gd")
-	file.store_line("hibrida_lambda: %.4f" % hybrid.lambda_atual)
-	file.store_line("hibrida_budget: %d operações de avaliação por turno (0 = sem poda)" % hybrid.budget_atual)
-	file.store_line("hibrida_pesos_iniciais: vida=%.3f cobertura=%.3f proximidade=%.3f risco=%.3f (aprendidos no confronto misto)" % [
-		hybrid.W_VIDA_INICIAL, hybrid.W_COBERTURA_INICIAL, hybrid.W_PROXIMIDADE_INICIAL, hybrid.W_RISCO_INICIAL,
+	var art3miz = preload("res://ai/ai_art3miz.gd")
+	file.store_line("art3miz_lambda: %.4f" % art3miz.lambda_atual)
+	file.store_line("art3miz_budget: %d operações de avaliação por turno (0 = sem poda)" % art3miz.budget_atual)
+	file.store_line("art3miz_pesos_iniciais: vida=%.3f cobertura=%.3f proximidade=%.3f risco=%.3f (aprendidos no confronto misto)" % [
+		art3miz.W_VIDA_INICIAL, art3miz.W_COBERTURA_INICIAL, art3miz.W_PROXIMIDADE_INICIAL, art3miz.W_RISCO_INICIAL,
 	])
 	file.store_line("")
 	file.store_line("[metricas]")

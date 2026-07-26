@@ -1,7 +1,11 @@
-# Modelo Proposto — IA Híbrida
+# Art3miz 0.1 — Modelo Proposto
 
-Contribuição central do trabalho. Implementação: `simulator/ai/ai_hybrid.gd`.
-Calibração e evidências: `resultados_hibrido.md`. Resultados: `resultados_finais.md`.
+Contribuição central do trabalho: um modelo híbrido de decisão que pondera valor estratégico contra custo computacional.
+
+Implementação: `simulator/ai/ai_art3miz.gd` · Identificador na linha de comando: `art3miz`
+Calibração e evidências: `resultados_hibrido.md` · Resultados: `resultados_finais.md`
+
+O sufixo de versão é intencional: registra que os resultados reportados correspondem a esta configuração específica (λ = 0,005, pesos calibrados, regime econômico com recuo). Ajustes futuros no mecanismo produzem versões subsequentes, mantendo cada conjunto de dados rastreável à versão que o gerou.
 
 ## 1. Formulação inicial e por que ela não funciona
 
@@ -56,16 +60,16 @@ Os pesos continuam sendo refinados pelo aprendizado entre partidas (`ia.md` §6.
 
 ## 5. Resultados
 
-Em autoconfronto (1000 partidas), o modelo proposto obtém o **maior StrategicScore do estudo (0,497)**, contra 0,473 da reativa e 0,438 da heurística, exigindo **379 operações por partida — 51% menos que a heurística**. É também o mais decisivo (5,7% de empates) e o mais rápido a vencer (29,3 turnos).
+Em autoconfronto (1000 partidas), o Art3miz 0.1 obtém o **maior StrategicScore do estudo (0,497)**, contra 0,473 da reativa e 0,438 da heurística, exigindo **379 operações por partida — 51% menos que a heurística**. É também o mais decisivo (5,7% de empates) e o mais rápido a vencer (29,3 turnos).
 
 Em confronto direto contra oponentes de custo pleno, vence menos (0,225 contra ~0,33). A hipótese de eficiência confirma-se; a de superioridade competitiva, não. Análise completa em `resultados_finais.md`.
 
 ## 6. Uso
 
 ```bash
-# Benchmark oficial com o modelo proposto
-godot --headless --path simulator -- batch 1000 benchmark verde=hibrida
+# Benchmark oficial com o Art3miz 0.1
+godot --headless --path simulator -- batch 1000 benchmark verde=art3miz
 
 # Calibração (λ e orçamento ajustáveis por linha de comando)
-godot --headless --path simulator -- batch 200 tuning verde=hibrida lambda=0.005 budget=0
+godot --headless --path simulator -- batch 200 tuning verde=art3miz lambda=0.005 budget=0
 ```

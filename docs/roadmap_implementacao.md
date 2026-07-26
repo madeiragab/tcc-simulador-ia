@@ -31,7 +31,7 @@
 - [x] Campanha de coleta das etapas 1 e 2 (4 lotes × 1000 partidas) — ver
       `resultados_campanha.md`
 
-## Fase 4 — Modelo Proposto ✅ concluída
+## Fase 4 — Art3miz 0.1 ✅ concluída
 - [x] Implementação da IA híbrida (`ai/ai_hybrid.gd`) com integração do custo
       computacional abstrato (`ScoreAção = ValorEstratégico − λ × Custo`),
       onde o custo é o de avaliar a própria ação — ver `modelo_proposto.md`

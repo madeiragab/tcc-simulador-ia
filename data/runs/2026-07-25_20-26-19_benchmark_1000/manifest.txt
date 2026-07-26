@@ -10,7 +10,7 @@ log_por_turno: nao
 duracao_segundos: 1064.1
 
 [modelos]
-verde: modelo_proposto
+verde: art3miz_0.1
 vermelho: reativa
 azul: reativa
 

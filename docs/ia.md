@@ -72,9 +72,9 @@ Essa abordagem caracteriza um processo de otimização local, comum em agentes r
 
 ---
 
-## 6. Extensão do Modelo (Modelo Proposto - Híbrido)
+## 6. Extensão do Modelo (Art3miz 0.1 - Híbrido)
 
-Diferenciando-se objetiva e metodologicamente da *IA Heurística* padrão, o modelo matemático proposto adiciona restrição de esforço algorítmico abstrato. Portanto, no *Modelo Proposto (Híbrido)*, essa estrutura é estendida para considerar o próprio *custo computacional determinístico* (proxy de processamento) da simulação na sua respectiva equação decisória final:
+Diferenciando-se objetiva e metodologicamente da *IA Heurística* padrão, o modelo matemático proposto adiciona restrição de esforço algorítmico abstrato. Portanto, no *Art3miz 0.1 (Híbrido)*, essa estrutura é estendida para considerar o próprio *custo computacional determinístico* (proxy de processamento) da simulação na sua respectiva equação decisória final:
 
 ScoreFinal = ValorEstratégico − λ × CustoComputacional
 

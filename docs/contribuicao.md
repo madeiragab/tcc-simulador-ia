@@ -6,7 +6,7 @@ Propor um modelo de tomada de decisão para agentes em ambientes táticos que eq
 
 ## Modelo
 
-O modelo proposto é definido pela seguinte função:
+O Art3miz 0.1 é definido pela seguinte função:
 
 ScoreAção = ValorEstratégico − λ × CustoComputacional
 

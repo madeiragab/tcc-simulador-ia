@@ -44,9 +44,9 @@ dentro da flutuação esperada de ±1,5 pp para N=1000).
 | **Aleatória** | Sorteia entre as ações válidas — piso absoluto de referência |
 | **Reativa** | Regras fixas: atacar se há linha de tiro, senão aproximar ou caçar |
 | **Heurística** | Utility AI multicritério + hill-climbing nos pesos entre partidas |
-| **Híbrida** | Modelo proposto — decide *se vale deliberar* antes de deliberar |
+| **Art3miz 0.1** | Modelo proposto — decide *se vale deliberar* antes de deliberar |
 
-## O modelo proposto
+## O Art3miz 0.1
 
 A formulação de partida penalizava cada ação pelo custo de avaliá-la:
 
@@ -86,9 +86,9 @@ agentes) e 3 confrontos diretos.
 | Aleatória | 0,000 | 100% | 2323 | 0,145 |
 | Reativa | 0,312 | 6,5% | 437 | 0,473 |
 | Heurística | 0,295 | 11,6% | 777 | 0,438 |
-| **Híbrida (proposto)** | **0,314** | **5,7%** | **379** | **0,497** |
+| **Art3miz 0.1** | **0,314** | **5,7%** | **379** | **0,497** |
 
-O modelo proposto obtém **o maior StrategicScore do estudo**, liderando quatro
+O Art3miz 0.1 obtém **o maior StrategicScore do estudo**, liderando quatro
 das cinco dimensões: vence mais, usa mais cobertura, decide as partidas mais
 rápido (29 turnos contra 45 da heurística) e gasta **51% menos** que ela.
 Em eficiência — vitórias por mil operações — entrega 0,829 contra 0,380 da
@@ -102,7 +102,7 @@ heurística: mais que o dobro.
 | Custo | **510** | 719 | 484 |
 | StrategicScore | 0,426 | 0,467 | **0,472** |
 
-Contra adversários que pagam o custo pleno da análise, **o modelo proposto vence
+Contra adversários que pagam o custo pleno da análise, **o Art3miz 0.1 vence
 menos**. A economia tem preço: ao pular a deliberação, o agente às vezes perde a
 posição que a avaliação completa encontraria.
 
@@ -130,12 +130,12 @@ godot --path simulator
 Modo headless em lote (coleta de dados):
 
 ```bash
-godot --headless --path simulator -- batch 1000 benchmark verde=hibrida vermelho=heuristica azul=reativa
+godot --headless --path simulator -- batch 1000 benchmark verde=art3miz vermelho=heuristica azul=reativa
 ```
 
 Argumentos: `batch <N> <banco>` onde `banco` é `benchmark` (1000 seeds) ou
 `tuning` (200 seeds), seguido da escalação `<cor>=<modelo>` para `verde`,
-`vermelho` e `azul`. Modelos: `aleatoria`, `reativa`, `heuristica`, `hibrida`.
+`vermelho` e `azul`. Modelos: `aleatoria`, `reativa`, `heuristica`, `art3miz`.
 Opcionais: `turnos` (log turno a turno), `lambda=<v>` e `budget=<n>` (calibração
 do modelo híbrido).
 
@@ -188,7 +188,7 @@ A pasta [`docs/`](docs) contém a base teórica e metodológica completa —
 ## Status
 
 **Fases 1 a 5 concluídas**: ambiente, infraestrutura experimental, os três
-modelos base, o modelo proposto calibrado e o benchmark oficial de 7.000
+modelos base, o Art3miz 0.1 calibrado e o benchmark oficial de 7.000
 partidas, com resultados analisados. Detalhes em
 [roadmap_implementacao.md](docs/roadmap_implementacao.md).
 

@@ -2,7 +2,7 @@
 
 ## 1. Objetivo
 
-Definir modelos de IA com diferentes níveis de complexidade para comparação experimental com o modelo proposto.
+Definir modelos de IA com diferentes níveis de complexidade para comparação experimental com o Art3miz 0.1.
 
 Os modelos permitem analisar o impacto da estratégia e do custo computacional no desempenho.
 
@@ -65,7 +65,7 @@ A ação com maior valor é escolhida.
 #### Características
 
 - Considera múltiplos critérios de cenário (vida, posicionamento, distância)
-- Decisão estritamente local focada em ganho tático puramente abstrato (ValorEstratégico puro), em contrapartida ao Modelo Proposto, que restringe essas mesmas escolhas à penalidade de recursos computacionais
+- Decisão estritamente local focada em ganho tático puramente abstrato (ValorEstratégico puro), em contrapartida ao Art3miz 0.1, que restringe essas mesmas escolhas à penalidade de recursos computacionais
 - Complexidade moderada
 
 #### Objetivo
@@ -129,7 +129,7 @@ Os resultados permitirão:
 
 ---
 
-## 7. Relação com o Modelo Proposto
+## 7. Relação com o Art3miz 0.1
 
 O modelo híbrido foi comparado com os modelos baseline (ver `resultados_finais.md`) para verificar:
 
