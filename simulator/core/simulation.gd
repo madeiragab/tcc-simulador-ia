@@ -28,7 +28,7 @@ const AI_BY_NAME = {
 	"aleatoria": preload("res://ai/ai_random.gd"),
 	"reativa": preload("res://ai/ai_reactive.gd"),
 	"heuristica": preload("res://ai/ai_heuristic.gd"),
-	"hibrida": preload("res://ai/ai_hybrid.gd"),
+	"art3miz": preload("res://ai/ai_art3miz.gd"),
 }
 
 # Sobrescreve a IA de jogadores específicos em tempo de execução
@@ -205,8 +205,8 @@ static func model_name(player_id):
 			return "aleatoria"
 		"ai_heuristic.gd":
 			return "heuristica"
-		"ai_hybrid.gd":
-			return "modelo_proposto"
+		"ai_art3miz.gd":
+			return "art3miz_0.1"
 	return file.trim_suffix(".gd")
 
 # Estatísticas brutas de um jogador ao fim da partida — a matéria-prima

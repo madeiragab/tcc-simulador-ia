@@ -8,7 +8,7 @@ Gabriel Madeira · Orientador: Ricardo Martins · Coorientador: Diego Penha
 > **Mensagem central**: os modelos de referência foram caracterizados
 > experimentalmente. Existe um gradiente de inteligência — e ele **custa caro**.
 > A medição revela exatamente *onde* o custo mora, e essa descoberta orienta o
-> desenho do modelo proposto.
+> desenho do Art3miz 0.1.
 
 ---
 
@@ -157,7 +157,7 @@ Registro auditável da calibração automática dos pesos ao longo de mil partid
 
 Melhor configuração encontrada: menos peso em vida, **mais aversão a risco**.
 
-Esses pesos alimentam o modelo proposto na etapa seguinte — a solução é derivada
+Esses pesos alimentam o Art3miz 0.1 na etapa seguinte — a solução é derivada
 dos dados, não arbitrada.
 
 ---

@@ -10,7 +10,7 @@ log_por_turno: nao
 duracao_segundos: 966.3
 
 [modelos]
-verde: modelo_proposto
+verde: art3miz_0.1
 vermelho: heuristica
 azul: reativa
 

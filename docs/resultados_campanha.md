@@ -6,7 +6,7 @@
 > não são comparáveis aos de `resultados_finais.md`, que é o documento de
 > referência dos resultados do trabalho. Mantido pelo valor metodológico da
 > análise de decomposição de custo (seção 2.1), que orientou o desenho do
-> modelo proposto.
+> Art3miz 0.1.
 
 Campanha executada em 21/07/2026 sobre o banco oficial de 1000 *seeds* de benchmark, sob o conjunto final de regras (percepção por cone de 120°, tiro em linha reta, cobertura direcional, pontuação +3/−1/−3, aprendizado entre partidas). 4 lotes × 1000 partidas × 3 agentes = 12.000 registros por jogador. Runs completas em `data/runs/`:
 
