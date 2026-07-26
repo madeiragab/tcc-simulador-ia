@@ -14,7 +14,7 @@ Antes de comparar modelos de IA, é preciso provar que o ambiente de simulação
 
 ## Configuração
 
-- 1000 partidas sobre o banco oficial de *seeds* de benchmark (`experiments/configs/seeds_benchmark.txt`)
+- 1000 partidas sobre o banco oficial de *seeds* de benchmark (`experiments/seeds_benchmark.txt`)
 - 3 jogadores independentes (verde, vermelho, azul), todos controlados pela **mesma IA Reativa**
 - Mapas gerados proceduralmente por *seed* (4 setores, spawn sorteado — `geracao_mapas.md`)
 - Rotação de iniciativa: a partida *i* inicia pelo jogador *i* mod 3

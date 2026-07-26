@@ -17,7 +17,7 @@
 - [x] Modo de execução rápida sem animação (embrião do modo *headless* em lote)
 - [x] Contadores de custo computacional abstrato por agente (LOS, nodos de busca, ações avaliadas)
 - [x] Rotação uniforme da ordem inicial entre os 3 jogadores (partida i inicia pelo jogador i mod 3)
-- [x] Banco fixo de 1000 *seeds* de benchmark + 200 de validação (`experiments/configs/`)
+- [x] Banco fixo de 1000 *seeds* de benchmark + 200 de validação (`experiments/`)
 - [x] Execução em lote de múltiplas simulações (`godot --headless -- batch <N> [banco]`)
 - [x] Exportação CSV (`data/partidas.csv`, uma linha por jogador por partida)
 - [x] Métricas agregadas com StrategicScore literal (`core/metrics.gd`, fórmula de `metricas.md`)

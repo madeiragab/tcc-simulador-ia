@@ -63,3 +63,6 @@ experiments/results/*
 # Optional large binaries (uncomment if needed)
 # diagrams/*.png
 # presentation/*.pptx
+
+# Godot editor cache
+simulator/.godot/

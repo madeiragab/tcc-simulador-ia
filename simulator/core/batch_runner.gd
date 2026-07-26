@@ -217,7 +217,7 @@ func print_aggregates(metric_rows):
 		print("  StrategicScore:   %.4f" % agg["strategic_score"])
 
 func load_seeds(bank):
-	var path = repo_root().path_join("experiments/configs/seeds_%s.txt" % bank)
+	var path = repo_root().path_join("experiments/seeds_%s.txt" % bank)
 	if not FileAccess.file_exists(path):
 		return []
 	var file = FileAccess.open(path, FileAccess.READ)
