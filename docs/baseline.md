@@ -80,19 +80,28 @@ Representar um agente com comportamento estratégico básico.
 
 #### Descrição
 
-O MCTS é um algoritmo de busca baseado em simulação que avalia ações por meio da exploração de múltiplos cenários futuros.
+O MCTS é um algoritmo de busca baseado em simulação que avalia ações explorando múltiplos cenários futuros, equilibrando exploração e aproveitamento (BROWNE et al., 2012). Implementação: `simulator/ai/ai_mcts.gd`.
 
-Ele equilibra exploração e exploração para encontrar decisões com melhor valor esperado.
+#### Papel no estudo
 
-#### Características
+**Ancora o extremo superior do espectro de compromisso.** Assim como a IA Aleatória estabelece o piso de desempenho, o MCTS estabelece a referência do que se obtém quando a qualidade da decisão é buscada sem restrição de processamento. Sem esse ponto, a curva de compromisso entre qualidade e custo ficaria aberta em uma das pontas.
+
+#### Implementação
+
+Quatro fases padrão — seleção por UCT (constante √2), expansão, simulação e retropropagação — com 60 simulações por decisão e profundidade de 6 turnos por *rollout*.
+
+Duas adaptações ao domínio merecem registro:
+
+- **Opera sobre o modelo de mundo percebido**, não sobre o estado real. Como a percepção é limitada, a busca considera apenas os inimigos que o agente enxerga — do contrário, o MCTS seria onisciente e a comparação, injusta.
+- **Cada operação da busca é contabilizada** pelo mesmo medidor de custo dos demais modelos, nos mesmos termos.
+
+#### Características observadas
 
 - Considera múltiplos turnos futuros
-- Alta qualidade estratégica
-- Alto custo computacional
+- Maior taxa de vitória entre os modelos avaliados
+- **Custo computacional muito superior** — cerca de seis vezes o do Art3miz 0.1
 
-#### Observação
-
-O MCTS não será implementado neste trabalho, sendo utilizado apenas como referência teórica de modelos avançados de tomada de decisão.
+Resultados quantitativos em `resultados_finais.md`.
 
 ---
 

@@ -23,9 +23,13 @@ argmax[ Valor(A) − λk ] = argmax[ Valor(A) ]
 
 Experimentalmente, λ = 0 e λ = 0,005 produziram resultados idênticos. **A penalização por ação só discrimina quando as ações diferem entre si em custo** — condição que este domínio não satisfaz.
 
+**1.3 A teoria antecipa esse resultado.** O achado não é anômalo: é corolário do princípio central do metarraciocínio. Russell e Wefald (1991) estabelecem que *uma computação só tem valor na medida em que altera a ação externa que o agente executaria*. Descontar um custo uniforme de todas as candidatas não altera qual delas é escolhida e, portanto, não pode produzir efeito — nem sobre a qualidade da decisão, nem sobre o processamento, já que o custo foi pago antes do desconto. Ver `fundamentacao_teorica.md`.
+
 ## 2. Reformulação: o compromisso decide *se* deliberar
 
 Se o custo não distingue ações entre si, ele distingue **procedimentos de decisão**. A reformulação aplica o mesmo compromisso um nível acima: antes de avaliar, o agente decide se a análise se justifica.
+
+Essa é a formulação clássica do **metarraciocínio racional** (RUSSELL; WEFALD, 1991): decidir se deliberar, comparando o valor esperado da deliberação ao seu custo. O Art3miz 0.1 implementa uma **aproximação míope** dessa regra de parada — estima o valor em jogo por heurística de situação, em vez de calcular a esperança sobre a distribuição de resultados possíveis.
 
 O agente delibera — executa a avaliação posicional completa — se, e somente se:
 

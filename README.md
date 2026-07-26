@@ -45,6 +45,7 @@ dentro da flutuação esperada de ±1,5 pp para N=1000).
 | **Reativa** | Regras fixas: atacar se há linha de tiro, senão aproximar ou caçar |
 | **Heurística** | Utility AI multicritério + hill-climbing nos pesos entre partidas |
 | **Art3miz 0.1** | Modelo proposto — decide *se vale deliberar* antes de deliberar |
+| **MCTS** | Busca em árvore Monte Carlo — ancora o extremo de alta qualidade e alto custo |
 
 ## O Art3miz 0.1
 
@@ -135,8 +136,9 @@ godot --headless --path simulator -- batch 1000 benchmark verde=art3miz vermelho
 
 Argumentos: `batch <N> <banco>` onde `banco` é `benchmark` (1000 seeds) ou
 `tuning` (200 seeds), seguido da escalação `<cor>=<modelo>` para `verde`,
-`vermelho` e `azul`. Modelos: `aleatoria`, `reativa`, `heuristica`, `art3miz`.
-Opcionais: `turnos` (log turno a turno), `lambda=<v>` e `budget=<n>` (calibração
+`vermelho` e `azul`. Modelos: `aleatoria`, `reativa`, `heuristica`, `art3miz`, `mcts`.
+Opcionais: `turnos` (log turno a turno), `mapa=<n>` (tamanho do grid),
+`lambda=<v>` e `budget=<n>` (calibração
 do modelo híbrido).
 
 Cada execução grava uma pasta em `data/runs/<timestamp>_<banco>_<N>/` com
@@ -154,6 +156,7 @@ A pasta [`docs/`](docs) contém a base teórica e metodológica completa —
 
 | Doc | Assunto |
 |---|---|
+| [fundamentacao_teorica.md](docs/fundamentacao_teorica.md) | **Racionalidade limitada e metarraciocínio** — a base teórica |
 | [problema.md](docs/problema.md) | Contexto, questão de pesquisa e hipótese |
 | [contribuicao.md](docs/contribuicao.md) | A contribuição central do trabalho |
 | [arquitetura.md](docs/arquitetura.md) | Separação entre Core, Mapa, Agentes, IA, Turnos e Coleta |
@@ -165,6 +168,9 @@ A pasta [`docs/`](docs) contém a base teórica e metodológica completa —
 | [metodologia.md](docs/metodologia.md) | Configuração experimental |
 | [resultados_hibrido.md](docs/resultados_hibrido.md) | Calibração do λ e o resultado negativo da formulação direta |
 | [resultados_finais.md](docs/resultados_finais.md) | **Benchmark oficial e conclusões** |
+| [analise_estatistica.md](docs/analise_estatistica.md) | Testes de significância sobre os dados brutos |
+| [sensibilidade_pesos.md](docs/sensibilidade_pesos.md) | Robustez do ranking à escolha dos pesos da métrica |
+| [generalizacao.md](docs/generalizacao.md) | Replicação em três escalas de mapa |
 | [roadmap_implementacao.md](docs/roadmap_implementacao.md) | Fases e status |
 
 ## Estrutura do repositório

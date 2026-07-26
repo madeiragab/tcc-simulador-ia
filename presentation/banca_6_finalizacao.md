@@ -75,6 +75,31 @@ contribuição científica: delimita a condição de aplicabilidade da formulaç
 
 ---
 
+## Slide 4.5 — Isso tem nome na literatura: metarraciocínio
+
+O resultado do slide anterior **não é uma anomalia — é uma predição da teoria**.
+
+Russell e Wefald, em *Principles of Metareasoning* (1991), estabelecem o
+princípio central:
+
+> Uma computação só tem valor na medida em que **altera a ação externa** que o
+> agente executaria.
+
+Descontar um custo uniforme de todas as candidatas não muda qual delas vence o
+*argmax* — logo, não pode ter efeito algum. O que medimos empiricamente é o que
+o arcabouço prevê analiticamente.
+
+**Linhagem teórica do trabalho**: Simon (1955) e a racionalidade limitada →
+Russell & Wefald (1991) e o valor da computação → Zilberstein (1996) e os
+algoritmos *anytime* → racionalidade computacional (Gershman, Horvitz e
+Tenenbaum, 2015).
+
+*Fala*: mencionar que Russell é o mesmo autor do livro-texto já citado no
+referencial. A reformulação do modelo não foi improviso — reencontrou um
+problema clássico.
+
+---
+
 ## Slide 5 — A reformulação
 
 Se o custo não distingue *ações*, ele distingue **procedimentos de decisão**.
@@ -212,6 +237,86 @@ Em confronto direto, vence menos que os modelos de referência.
 Maior eficiência do confronto direto. Em ambientes com percepção limitada e
 horizonte curto, regras simples bem escolhidas são difíceis de superar — a
 sofisticação analítica precisa justificar o custo que impõe.
+
+---
+
+## Slide 11.5 — Rigor estatístico
+
+Todas as afirmações comparativas foram submetidas a teste formal. O delineamento
+é **pareado** — todos os modelos enfrentam as mesmas *seeds* —, o que permite
+testes mais potentes que os de amostras independentes.
+
+| Afirmação | Teste | Resultado |
+|---|---|---|
+| O ambiente é neutro | Qui-quadrado | χ² = 1,32 · p = 0,516 · **sem viés detectável** |
+| As taxas de vitória diferem | Qui-quadrado | χ² = 26,96 · **p < 0,001** |
+| Art3miz supera a heurística no escore | *Bootstrap* (IC 95%) | [0,479; 0,509] vs [0,421; 0,454] · **não se sobrepõem** |
+| Art3miz é mais barato que a heurística | t pareado | −208,5 ops · **p < 0,001** |
+| Heurística vence mais que a reativa | Binomial | p = 0,757 · **NÃO significativo** |
+
+*Fala*: dois pontos merecem destaque. A neutralidade do ambiente deixou de ser
+"os números parecem próximos" e passou a ser um teste com resultado. E a última
+linha corrige uma expectativa nossa: a heurística **não** se mostrou
+significativamente melhor que a reativa — apenas mais cara.
+
+---
+
+## Slide 11.6 — O espectro completo e o valor marginal da computação
+
+Com o MCTS implementado, o extremo caro deixa de ser teórico. Confronto de mil
+partidas:
+
+| | MCTS | Heurística | Art3miz 0.1 |
+|---|---|---|---|
+| WinRate | **0,379** | 0,292 | 0,236 |
+| Custo | 2794 | 681 | **471** |
+| Eficiência (vit./mil ops) | 0,136 | 0,429 | **0,501** |
+
+**Quanto custa cada vitória adicional:**
+
+- Art3miz → Heurística: ≈ **3.750 operações**
+- Heurística → MCTS: ≈ **24.300 operações**
+
+Retorno fortemente decrescente. Este número é a tese do trabalho em uma linha:
+não existe modelo melhor em absoluto — existe um compromisso, e ele é mensurável.
+
+---
+
+## Slide 11.7 — Generalização e a faixa de aplicabilidade
+
+Replicação em três escalas de mapa:
+
+| Escala | Economia sobre a Heurística |
+|---|---|
+| 25×25 | −16% |
+| 40×40 | −29% |
+| **60×60** | **−49%** |
+
+**A economia triplica com a escala** — coerente com o mecanismo: mapas maiores
+têm mais turnos sem contato, e é aí que a deliberação é dispensada.
+
+**Mas há um limite honesto**: em 25×25 a IA Reativa é *simultaneamente* mais
+barata e mais eficaz que o modelo proposto. Em ambientes pequenos, onde toda
+situação é crítica, não há o que economizar.
+
+*Fala*: apresentar a limitação de frente. Delimitar a faixa de aplicabilidade de
+um modelo é resultado, não fraqueza — e mostra domínio sobre o próprio trabalho.
+
+---
+
+## Slide 11.8 — Os pesos da métrica são arbitrários?
+
+Crítica legítima: por que 30/20/20/20/10? Resposta empírica, não retórica.
+
+| Exame | Resultado |
+|---|---|
+| 6 ponderações alternativas (incl. todas iguais) | Art3miz lidera em **todas** |
+| 10.000 vetores aleatórios do simplex | Art3miz lidera em **100%** |
+| Perturbação de cada peso em ±50% | Liderança **não muda** |
+| Peso necessário para trocar o líder | **97%** concentrado em vitória |
+
+A liderança só se desfaz sob concentração extrema de peso numa única dimensão —
+configuração que descaracterizaria a métrica como instrumento multidimensional.
 
 ---
 

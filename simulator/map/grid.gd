@@ -3,8 +3,12 @@ extends Node
 const COVER_LIGHT_REDUCTION = 10
 const COVER_HEAVY_REDUCTION = 20
 
-var width = 40
-var height = 40
+# Dimensão do grid. Configurável por linha de comando (mapa=NN) para
+# os testes de generalização.
+static var default_size = 40
+
+var width = default_size
+var height = default_size
 
 var grid = []
 

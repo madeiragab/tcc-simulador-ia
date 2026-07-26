@@ -49,6 +49,63 @@ O modelo avaliado contra oponentes de custo pleno.
 
 **Em competição direta o Art3miz 0.1 vence menos** (0,225–0,248 contra ~0,33 dos dois baselines), ainda que mantendo o menor custo entre os modelos analíticos e o maior uso de cobertura do confronto triplo.
 
+## 2.3 Significância estatística
+
+Todas as afirmações comparativas desta seção foram submetidas a teste formal. O relatório completo, com os testes escolhidos e sua justificativa, está em `analise_estatistica.md`; os resultados essenciais:
+
+| Comparação | Teste | Resultado |
+|---|---|---|
+| As três taxas de vitória diferem entre si? | Qui-quadrado (df = 2) | χ² = 26,96 · **p < 0,001** · significativo |
+| Art3miz 0.1 vs Heurística (vitórias) | Binomial condicional | **p < 0,001** · a heurística vence mais |
+| Art3miz 0.1 vs Reativa (vitórias) | Binomial condicional | **p < 0,001** · a reativa vence mais |
+| **Heurística vs Reativa (vitórias)** | Binomial condicional | **p = 0,757 · NÃO significativo** |
+| Custo: Art3miz 0.1 vs Heurística | t pareado por *seed* | −208,5 ops · **p < 0,001** · efeito pequeno (d = −0,39) |
+| Custo: Art3miz 0.1 vs Reativa | t pareado por *seed* | +26,0 ops · p = 0,082 · **sem diferença detectável** |
+
+Dois desses resultados exigem revisão de afirmações que os dados brutos sugeriam:
+
+**O "gradiente de inteligência" entre heurística e reativa não se sustenta.** A diferença de 0,339 contra 0,330 nas taxas de vitória é compatível com flutuação amostral (p = 0,757). Não há evidência de que a avaliação multicritério da heurística produza mais vitórias que as regras simples da reativa — apenas de que custa significativamente mais (+234,5 operações, p < 0,001, efeito médio). É um resultado desfavorável à sofisticação analítica, e deve ser reportado como tal.
+
+**No confronto direto, o custo do Art3miz 0.1 não difere do da reativa** (p = 0,082). Sua economia é demonstrável em relação à heurística e ao MCTS, não em relação ao baseline mais simples.
+
+### 2.4 StrategicScore com intervalo de confiança
+
+Intervalos obtidos por *bootstrap* percentílico (2000 reamostragens) sobre os autoconfrontos:
+
+| Modelo | StrategicScore | IC 95% |
+|---|---|---|
+| Aleatória | 0,134 | [0,114; 0,150] |
+| Heurística | 0,438 | [0,421; 0,454] |
+| Reativa | 0,469 | [0,453; 0,484] |
+| **Art3miz 0.1** | **0,494** | **[0,479; 0,509]** |
+
+O intervalo do Art3miz 0.1 **não se sobrepõe** ao da heurística — a superioridade no escore composto é estatisticamente distinguível. Já a sobreposição com a reativa (0,479–0,484) indica que, entre esses dois, **a diferença não é conclusiva**.
+
+## 2.5 O espectro completo — confronto com o MCTS
+
+Com o MCTS implementado, o extremo de alta qualidade e alto custo deixa de ser referência teórica e passa a ser ponto medido. Confronto de mil partidas entre MCTS, Art3miz 0.1 e IA Heurística:
+
+| Métrica | MCTS | Heurística | Art3miz 0.1 |
+|---|---|---|---|
+| WinRate | **0,379** | 0,292 | 0,236 |
+| Custo computacional | 2794,5 | 680,8 | **471,0** |
+| **Eficiência** (vitórias/mil ops) | 0,136 | 0,429 | **0,501** |
+
+O ordenamento inverte-se conforme a dimensão observada, e é exatamente esse contraste que o trabalho investiga: **o MCTS vence mais, o Art3miz 0.1 vence mais barato**.
+
+### 2.5.1 O valor marginal da computação
+
+A comparação permite quantificar diretamente o conceito central da fundamentação teórica — quanto vale cada unidade adicional de processamento:
+
+| Passagem | Vitórias adicionais | Custo adicional | **Custo por vitória adicional** |
+|---|---|---|---|
+| Art3miz 0.1 → Heurística | +56 | +209.800 ops | ≈ 3.750 operações |
+| Heurística → MCTS | +87 | +2.113.700 ops | ≈ 24.300 operações |
+
+O retorno é **fortemente decrescente**: a primeira parcela de sofisticação analítica custa cerca de 3.750 operações por vitória adicional; a segunda, mais de seis vezes isso. Em termos do arcabouço de Russell e Wefald (1991), o valor marginal da computação cai rapidamente à medida que se sobe no espectro — e o ponto em que deixa de compensar depende do orçamento de processamento disponível, que é precisamente o que o parâmetro λ do modelo proposto torna explícito.
+
+Este é o resultado que sustenta a tese do trabalho: **não existe um modelo melhor em absoluto; existe um compromisso, e ele pode ser medido, quantificado e controlado.**
+
 ## 3. Interpretação
 
 Os resultados sustentam três conclusões, e é importante enunciá-las com precisão.
@@ -57,7 +114,9 @@ Os resultados sustentam três conclusões, e é importante enunciá-las com prec
 
 **A hipótese de superioridade competitiva não se confirma.** Quando enfrenta oponentes que pagam o custo pleno da análise, o Art3miz 0.1 vence menos (≈0,23 contra ≈0,33). A economia obtida ao deliberar seletivamente tem preço: nos turnos em que opta pelo regime econômico, o agente ocasionalmente perde a posição que a avaliação completa teria encontrado, e adversários que sempre deliberam exploram essa diferença.
 
-**A IA Reativa revela-se um baseline notavelmente forte.** Com 484 operações e WinRate 0,330 no confronto triplo, apresenta a maior eficiência do confronto direto (0,682 vitórias por mil operações). Este é um resultado relevante em si: em ambientes táticos com percepção limitada e horizonte curto, regras simples e bem escolhidas são difíceis de superar — a sofisticação analítica precisa justificar seu custo, e nem sempre justifica.
+**A IA Reativa revela-se um baseline notavelmente forte.** Com 484 operações e WinRate 0,330 no confronto triplo, apresenta a maior eficiência do confronto direto (0,682 vitórias por mil operações). O teste formal reforça a conclusão: **a heurística não vence significativamente mais que a reativa** (p = 0,757), embora gaste 48% mais operações (p < 0,001). Em ambientes táticos com percepção limitada e horizonte curto, regras simples e bem escolhidas são difíceis de superar — a sofisticação analítica precisa justificar seu custo, e neste domínio não justificou.
+
+**A vantagem tem faixa de aplicabilidade, e ela foi delimitada.** A replicação em três escalas de mapa (`generalizacao.md`) mostra que a economia sobre a heurística **cresce com o tamanho do ambiente** — de 16% em 25×25 para 49% em 60×60 —, o que confirma o mecanismo: quanto maior o mapa, mais turnos sem contato visual, mais oportunidades de dispensar a deliberação. Em contrapartida, em mapas pequenos a IA Reativa **domina** o modelo proposto, sendo simultaneamente mais barata e mais eficaz. O modelo compensa em ambientes que ofereçam períodos de baixa criticidade; onde toda situação é crítica, não há o que economizar.
 
 ### 3.1 Síntese
 

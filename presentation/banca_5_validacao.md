@@ -95,7 +95,7 @@ condições simétricas; o confronto misto mede eficácia relativa.
 
 ---
 
-## Slide 7 — RESULTADO 1: o gradiente de inteligência
+## Slide 7 — RESULTADO 1: o gradiente de inteligência (com ressalva)
 
 Confronto direto, mil partidas, uma IA de cada:
 
@@ -103,13 +103,18 @@ Confronto direto, mil partidas, uma IA de cada:
 |---|---|---|---|
 | Taxa de vitória | 0,027 | 0,150 | **0,190** |
 | Pontuação média | −1,57 | −0,83 | **−0,59** |
-| Razão de dano | 0,11 | 11,17 | **13,08** |
 | **Custo** | 1520 | **1358** | 1811 |
 
-O gradiente aparece em **todas** as métricas de eficácia, na ordem esperada.
+A aleatória fica muito atrás das duas — essa diferença é inequívoca.
 
-**Mas**: a heurística vence 27% mais que a reativa **pagando 33% mais operações**.
-Esse é o trade-off central da pesquisa, agora medido.
+**A ressalva que o teste estatístico impõe**: a diferença entre heurística e
+reativa **não é estatisticamente significativa** (p = 0,757). A heurística parece
+melhor nos números brutos, mas com mil observações essa vantagem é compatível
+com flutuação amostral. O que é significativo é o custo: ela gasta 33% mais
+(p < 0,001).
+
+*Fala*: apresentar a ressalva de frente. É um resultado desfavorável à
+sofisticação analítica, e reportá-lo é o que dá credibilidade ao trabalho.
 
 ---
 
@@ -170,9 +175,10 @@ dos dados, não arbitrada.
 | Coletar métricas estratégicas e computacionais | ✔ 12.000 registros documentados |
 | Análise estatística (média e desvio padrão) | ✔ Em todas as métricas |
 
-**Quatro achados**: o gradiente de inteligência existe e custa caro; a aleatória
-é o pior negócio possível; 84% do custo está na busca de caminho; e o aprendizado
-automático melhora o desempenho de forma mensurável.
+**Quatro achados**: a sofisticação analítica custa caro sem ganho de vitória
+estatisticamente demonstrável sobre regras simples; a aleatória é o pior negócio
+possível; 84% do custo está na busca de caminho; e o aprendizado automático
+melhora o desempenho de forma mensurável.
 
 ---
 
