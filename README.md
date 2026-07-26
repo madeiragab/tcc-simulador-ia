@@ -179,9 +179,9 @@ A pasta [`docs/`](docs) contém a base teórica e metodológica completa —
 │  └─ tools/                → geradores auxiliares e recálculo de resumos
 ├─ docs/                    → base teórica, metodologia e resultados
 ├─ diagrams/                → arquitetura, fluxo, decisão e métricas
-├─ experiments/configs/     → bancos de seeds (benchmark e tuning)
+├─ experiments/             → bancos de seeds (benchmark e tuning)
 ├─ data/runs/               → execuções oficiais (CSV + manifest)
-├─ monografia/              → texto do TCC
+├─ monografia/              → monografia final (PDF) e referências da banca
 └─ presentation/            → apresentação de banca
 ```
 
