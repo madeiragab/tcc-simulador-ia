@@ -58,7 +58,7 @@ Onde:
 
 A formulação original somava grandezas em escalas incompatíveis, o que fazia os pesos nominais divergirem radicalmente do efeito real. Medido no confronto triplo do benchmark oficial, o termo de dano — nominalmente 20% — contribuía com 0,85 a 1,12 do escore, enquanto o WinRate — nominalmente 30% — contribuía com 0,07 a 0,10, e o custo — nominalmente 10% — contribuía com 0,0002, cerca de quatro mil vezes menos que o previsto. Na prática, o escore media quase exclusivamente a razão de dano e era cego à eficiência computacional, justamente a dimensão central da pesquisa.
 
-A correção atua **apenas sobre a escala dos termos**: os pesos permanecem exatamente os originalmente definidos (0,30 / 0,20 / 0,20 / 0,20 / 0,10), preservando a intenção do projeto de pesquisa e afastando qualquer suspeita de ajuste da métrica em favor do modelo proposto. Como a alteração incide sobre a agregação e não sobre a coleta, os escores de todas as execuções já realizadas foram recalculados a partir dos dados brutos preservados, sem necessidade de repetir simulações.
+A correção atua **apenas sobre a escala dos termos**: os pesos permanecem exatamente os originalmente definidos (0,30 / 0,20 / 0,20 / 0,20 / 0,10), preservando a intenção do projeto de pesquisa e afastando qualquer suspeita de ajuste da métrica em favor do Art3miz 0.1. Como a alteração incide sobre a agregação e não sobre a coleta, os escores de todas as execuções já realizadas foram recalculados a partir dos dados brutos preservados, sem necessidade de repetir simulações.
 
 - ε = 1 permanece como piso contra divisão por zero no cálculo do DamageRatio individual.
 

@@ -10,9 +10,9 @@ log_por_turno: nao
 duracao_segundos: 637.4
 
 [modelos]
-verde: modelo_proposto
-vermelho: modelo_proposto
-azul: modelo_proposto
+verde: art3miz_0.1
+vermelho: art3miz_0.1
+azul: art3miz_0.1
 
 [constantes_de_jogo]
 dano_base: 30
