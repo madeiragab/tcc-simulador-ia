@@ -169,6 +169,8 @@ A pasta [`docs/`](docs) contém a base teórica e metodológica completa —
 | [resultados_hibrido.md](docs/resultados_hibrido.md) | Calibração do λ e o resultado negativo da formulação direta |
 | [resultados_finais.md](docs/resultados_finais.md) | **Benchmark oficial e conclusões** |
 | [analise_estatistica.md](docs/analise_estatistica.md) | Testes de significância sobre os dados brutos |
+| [sensibilidade_pesos.md](docs/sensibilidade_pesos.md) | Robustez do ranking à escolha dos pesos da métrica |
+| [generalizacao.md](docs/generalizacao.md) | Replicação em três escalas de mapa |
 | [roadmap_implementacao.md](docs/roadmap_implementacao.md) | Fases e status |
 
 ## Estrutura do repositório
