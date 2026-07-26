@@ -40,6 +40,9 @@ func _ready():
 			elif extra.begins_with("lambda="):
 				# Calibração do modelo híbrido: lambda=0.02
 				preload("res://ai/ai_art3miz.gd").lambda_atual = float(extra.split("=")[1])
+			elif extra.begins_with("mapa="):
+				# Generalização: tamanho do grid (mapa=25, mapa=60)
+				preload("res://map/grid.gd").default_size = int(extra.split("=")[1])
 			elif extra.begins_with("budget="):
 				# Orçamento de avaliação do híbrido (0 = sem poda)
 				preload("res://ai/ai_art3miz.gd").budget_atual = int(extra.split("=")[1])

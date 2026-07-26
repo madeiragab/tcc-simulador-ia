@@ -29,6 +29,7 @@ const AI_BY_NAME = {
 	"reativa": preload("res://ai/ai_reactive.gd"),
 	"heuristica": preload("res://ai/ai_heuristic.gd"),
 	"art3miz": preload("res://ai/ai_art3miz.gd"),
+	"mcts": preload("res://ai/ai_mcts.gd"),
 }
 
 # Sobrescreve a IA de jogadores específicos em tempo de execução
@@ -207,6 +208,8 @@ static func model_name(player_id):
 			return "heuristica"
 		"ai_art3miz.gd":
 			return "art3miz_0.1"
+		"ai_mcts.gd":
+			return "mcts"
 	return file.trim_suffix(".gd")
 
 # Estatísticas brutas de um jogador ao fim da partida — a matéria-prima

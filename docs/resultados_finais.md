@@ -49,6 +49,38 @@ O modelo avaliado contra oponentes de custo pleno.
 
 **Em competição direta o Art3miz 0.1 vence menos** (0,225–0,248 contra ~0,33 dos dois baselines), ainda que mantendo o menor custo entre os modelos analíticos e o maior uso de cobertura do confronto triplo.
 
+## 2.3 Significância estatística
+
+Todas as afirmações comparativas desta seção foram submetidas a teste formal. O relatório completo, com os testes escolhidos e sua justificativa, está em `analise_estatistica.md`; os resultados essenciais:
+
+| Comparação | Teste | Resultado |
+|---|---|---|
+| As três taxas de vitória diferem entre si? | Qui-quadrado (df = 2) | χ² = 26,96 · **p < 0,001** · significativo |
+| Art3miz 0.1 vs Heurística (vitórias) | Binomial condicional | **p < 0,001** · a heurística vence mais |
+| Art3miz 0.1 vs Reativa (vitórias) | Binomial condicional | **p < 0,001** · a reativa vence mais |
+| **Heurística vs Reativa (vitórias)** | Binomial condicional | **p = 0,757 · NÃO significativo** |
+| Custo: Art3miz 0.1 vs Heurística | t pareado por *seed* | −208,5 ops · **p < 0,001** · efeito pequeno (d = −0,39) |
+| Custo: Art3miz 0.1 vs Reativa | t pareado por *seed* | +26,0 ops · p = 0,082 · **sem diferença detectável** |
+
+Dois desses resultados exigem revisão de afirmações que os dados brutos sugeriam:
+
+**O "gradiente de inteligência" entre heurística e reativa não se sustenta.** A diferença de 0,339 contra 0,330 nas taxas de vitória é compatível com flutuação amostral (p = 0,757). Não há evidência de que a avaliação multicritério da heurística produza mais vitórias que as regras simples da reativa — apenas de que custa significativamente mais (+234,5 operações, p < 0,001, efeito médio). É um resultado desfavorável à sofisticação analítica, e deve ser reportado como tal.
+
+**No confronto direto, o custo do Art3miz 0.1 não difere do da reativa** (p = 0,082). Sua economia é demonstrável em relação à heurística e ao MCTS, não em relação ao baseline mais simples.
+
+### 2.4 StrategicScore com intervalo de confiança
+
+Intervalos obtidos por *bootstrap* percentílico (2000 reamostragens) sobre os autoconfrontos:
+
+| Modelo | StrategicScore | IC 95% |
+|---|---|---|
+| Aleatória | 0,134 | [0,114; 0,150] |
+| Heurística | 0,438 | [0,421; 0,454] |
+| Reativa | 0,469 | [0,453; 0,484] |
+| **Art3miz 0.1** | **0,494** | **[0,479; 0,509]** |
+
+O intervalo do Art3miz 0.1 **não se sobrepõe** ao da heurística — a superioridade no escore composto é estatisticamente distinguível. Já a sobreposição com a reativa (0,479–0,484) indica que, entre esses dois, **a diferença não é conclusiva**.
+
 ## 3. Interpretação
 
 Os resultados sustentam três conclusões, e é importante enunciá-las com precisão.
@@ -57,7 +89,7 @@ Os resultados sustentam três conclusões, e é importante enunciá-las com prec
 
 **A hipótese de superioridade competitiva não se confirma.** Quando enfrenta oponentes que pagam o custo pleno da análise, o Art3miz 0.1 vence menos (≈0,23 contra ≈0,33). A economia obtida ao deliberar seletivamente tem preço: nos turnos em que opta pelo regime econômico, o agente ocasionalmente perde a posição que a avaliação completa teria encontrado, e adversários que sempre deliberam exploram essa diferença.
 
-**A IA Reativa revela-se um baseline notavelmente forte.** Com 484 operações e WinRate 0,330 no confronto triplo, apresenta a maior eficiência do confronto direto (0,682 vitórias por mil operações). Este é um resultado relevante em si: em ambientes táticos com percepção limitada e horizonte curto, regras simples e bem escolhidas são difíceis de superar — a sofisticação analítica precisa justificar seu custo, e nem sempre justifica.
+**A IA Reativa revela-se um baseline notavelmente forte.** Com 484 operações e WinRate 0,330 no confronto triplo, apresenta a maior eficiência do confronto direto (0,682 vitórias por mil operações). O teste formal reforça a conclusão: **a heurística não vence significativamente mais que a reativa** (p = 0,757), embora gaste 48% mais operações (p < 0,001). Em ambientes táticos com percepção limitada e horizonte curto, regras simples e bem escolhidas são difíceis de superar — a sofisticação analítica precisa justificar seu custo, e neste domínio não justificou.
 
 ### 3.1 Síntese
 

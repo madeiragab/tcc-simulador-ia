@@ -75,6 +75,31 @@ contribuição científica: delimita a condição de aplicabilidade da formulaç
 
 ---
 
+## Slide 4.5 — Isso tem nome na literatura: metarraciocínio
+
+O resultado do slide anterior **não é uma anomalia — é uma predição da teoria**.
+
+Russell e Wefald, em *Principles of Metareasoning* (1991), estabelecem o
+princípio central:
+
+> Uma computação só tem valor na medida em que **altera a ação externa** que o
+> agente executaria.
+
+Descontar um custo uniforme de todas as candidatas não muda qual delas vence o
+*argmax* — logo, não pode ter efeito algum. O que medimos empiricamente é o que
+o arcabouço prevê analiticamente.
+
+**Linhagem teórica do trabalho**: Simon (1955) e a racionalidade limitada →
+Russell & Wefald (1991) e o valor da computação → Zilberstein (1996) e os
+algoritmos *anytime* → racionalidade computacional (Gershman, Horvitz e
+Tenenbaum, 2015).
+
+*Fala*: mencionar que Russell é o mesmo autor do livro-texto já citado no
+referencial. A reformulação do modelo não foi improviso — reencontrou um
+problema clássico.
+
+---
+
 ## Slide 5 — A reformulação
 
 Se o custo não distingue *ações*, ele distingue **procedimentos de decisão**.
@@ -212,6 +237,27 @@ Em confronto direto, vence menos que os modelos de referência.
 Maior eficiência do confronto direto. Em ambientes com percepção limitada e
 horizonte curto, regras simples bem escolhidas são difíceis de superar — a
 sofisticação analítica precisa justificar o custo que impõe.
+
+---
+
+## Slide 11.5 — Rigor estatístico
+
+Todas as afirmações comparativas foram submetidas a teste formal. O delineamento
+é **pareado** — todos os modelos enfrentam as mesmas *seeds* —, o que permite
+testes mais potentes que os de amostras independentes.
+
+| Afirmação | Teste | Resultado |
+|---|---|---|
+| O ambiente é neutro | Qui-quadrado | χ² = 1,32 · p = 0,516 · **sem viés detectável** |
+| As taxas de vitória diferem | Qui-quadrado | χ² = 26,96 · **p < 0,001** |
+| Art3miz supera a heurística no escore | *Bootstrap* (IC 95%) | [0,479; 0,509] vs [0,421; 0,454] · **não se sobrepõem** |
+| Art3miz é mais barato que a heurística | t pareado | −208,5 ops · **p < 0,001** |
+| Heurística vence mais que a reativa | Binomial | p = 0,757 · **NÃO significativo** |
+
+*Fala*: dois pontos merecem destaque. A neutralidade do ambiente deixou de ser
+"os números parecem próximos" e passou a ser um teste com resultado. E a última
+linha corrige uma expectativa nossa: a heurística **não** se mostrou
+significativamente melhor que a reativa — apenas mais cara.
 
 ---
 

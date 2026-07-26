@@ -8,11 +8,16 @@ extends RefCounted
 const MAX_ATTEMPTS = 25
 const SPAWN_CLEARANCE = 2
 const PLAYER_COUNT = 3
-const SECTOR_SIZE = 20
+
+# Tamanho do setor: metade do lado do mapa (4 setores). Derivado do
+# grid para que a divisão em setores acompanhe mapas de qualquer escala.
+var sector_size = 20
 
 func generate(grid, seed_value):
 	var rng = RandomNumberGenerator.new()
 	rng.seed = seed_value
+
+	sector_size = grid.width / 2
 
 	for attempt in range(MAX_ATTEMPTS):
 		clear_grid(grid)
@@ -43,23 +48,24 @@ func pick_spawns(rng):
 	var spawns = []
 	for i in range(PLAYER_COUNT):
 		var sector = sectors[i]
-		var origin_x = (sector % 2) * SECTOR_SIZE
-		var origin_y = (sector / 2) * SECTOR_SIZE
-		var spawn_x = origin_x + rng.randi_range(5, SECTOR_SIZE - 6)
-		var spawn_y = origin_y + rng.randi_range(5, SECTOR_SIZE - 6)
+		var origin_x = (sector % 2) * sector_size
+		var origin_y = (sector / 2) * sector_size
+		var spawn_x = origin_x + rng.randi_range(5, sector_size - 6)
+		var spawn_y = origin_y + rng.randi_range(5, sector_size - 6)
 		spawns.append(Vector2i(spawn_x, spawn_y))
 	return spawns
 
 func place_obstacles(grid, rng, spawns):
-	var wall_count = rng.randi_range(10, 14)
+	var escala = (grid.width * grid.height) / 1600.0   # 40x40 = referência
+	var wall_count = int(rng.randi_range(10, 14) * escala)
 	for i in range(wall_count):
 		place_wall_segment(grid, rng, spawns)
 
-	var light_count = rng.randi_range(8, 12)
+	var light_count = int(rng.randi_range(8, 12) * escala)
 	for i in range(light_count):
 		place_cover_block(grid, rng, spawns, "cover_light")
 
-	var heavy_count = rng.randi_range(4, 6)
+	var heavy_count = int(rng.randi_range(4, 6) * escala)
 	for i in range(heavy_count):
 		place_cover_block(grid, rng, spawns, "cover_heavy")
 
