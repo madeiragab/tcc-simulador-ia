@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](README.en.md)
+
 # Simulador Tático para Avaliação de IA
 
 Ambiente de simulação tática por turnos construído para **medir a qualidade

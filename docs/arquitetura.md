@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/architecture.md)
+
 # Arquitetura do Sistema
 
 ## 1. Visão Geral

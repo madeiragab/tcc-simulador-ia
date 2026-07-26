@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/map_generation.md)
+
 # Geração Procedural de Mapas (Seeds)
 
 ## 1. Objetivo

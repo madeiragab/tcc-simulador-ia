@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/baselines.md)
+
 # Modelos de Referência (Baseline)
 
 ## 1. Objetivo

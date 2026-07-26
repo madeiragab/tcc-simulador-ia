@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/theoretical_foundation.md)
+
 # Fundamentação Teórica — Racionalidade Limitada e Metarraciocínio
 
 Este documento situa o modelo proposto na literatura que o antecede. A formulação desenvolvida neste trabalho — decidir se vale a pena deliberar antes de deliberar — corresponde ao problema clássico do **metarraciocínio racional**, formalizado por Russell e Wefald (1991). O reconhecimento dessa filiação é importante em dois sentidos: fornece ancoragem teórica ao modelo e, como se verá, **explica o resultado negativo obtido na formulação inicial**.

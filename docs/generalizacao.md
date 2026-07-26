@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/generalization.md)
+
 # Generalização — O Achado se Sustenta Fora do 40×40?
 
 Os resultados do benchmark foram obtidos em um grid de 40×40. Uma conclusão obtida em uma única configuração de ambiente pode ser propriedade daquele ambiente, e não do modelo. Este experimento replica o confronto direto em **três escalas** para verificar quais achados se sustentam.

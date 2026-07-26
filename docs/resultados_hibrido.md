@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/hybrid_results.md)
+
 # Calibração do Modelo Híbrido (Fase 4)
 
 Calibração conduzida exclusivamente no banco de **200 seeds de tuning**, isolado das 1000 seeds do benchmark — o modelo nunca viu, durante o ajuste, os cenários em que seria avaliado.
