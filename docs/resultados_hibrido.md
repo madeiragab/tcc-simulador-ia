@@ -90,7 +90,9 @@ Desempenho na calibração, contra a heurística pura: **51% menos operações (
 
 O escore composto definido em `metricas.md` atribui 10% do peso ao termo `1/max(Custo, ε)`. Com custos da ordem de centenas de operações, esse termo contribui com cerca de 0,0002 para o escore, enquanto o DamageRatio contribui com valores próximos de 1,0 — ou seja, **a métrica composta é praticamente cega à eficiência computacional**, justamente a dimensão que o modelo proposto otimiza.
 
-Por essa razão, os resultados são reportados também em **eficiência estratégica** (WinRate por mil operações), que expressa diretamente o compromisso investigado. A normalização do StrategicScore está registrada como decisão pendente com a orientação; qualquer alteração será aplicada uniformemente a todos os modelos e às execuções já coletadas.
+Por essa razão, os resultados desta etapa foram reportados também em **eficiência estratégica** (WinRate por mil operações), que expressa diretamente o compromisso investigado.
+
+> **Correção aplicada posteriormente.** A normalização do StrategicScore foi implementada: todos os termos passaram a ser reduzidos ao intervalo [0, 1] antes da ponderação, preservando os pesos originais. Ver `metricas.md` para a fórmula corrigida e `resultados_finais.md` para os escores recalculados. Os valores de escore citados nas tabelas acima seguem a fórmula antiga e devem ser lidos apenas em comparação relativa dentro desta seção.
 
 ## 5. Reprodução
 
