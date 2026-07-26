@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/proposed_model.md)
+
 # Art3miz 0.1 — Modelo Proposto
 
 Contribuição central do trabalho: um modelo híbrido de decisão que pondera valor estratégico contra custo computacional.

@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/problem.md)
+
 # Problema de Pesquisa
 
 ## Contexto

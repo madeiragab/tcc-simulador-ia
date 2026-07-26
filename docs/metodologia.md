@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/methodology.md)
+
 # Metodologia Experimental
 
 ## Abordagem

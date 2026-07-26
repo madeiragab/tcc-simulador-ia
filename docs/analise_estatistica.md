@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/statistical_analysis.md)
+
 # Análise de Significância Estatística
 
 Relatório gerado automaticamente por `simulator/tools/analise_estatistica.gd` a partir dos dados brutos das execuções oficiais. Reproduzível com:
