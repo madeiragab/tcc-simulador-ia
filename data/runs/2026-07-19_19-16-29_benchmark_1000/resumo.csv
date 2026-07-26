@@ -1,4 +1,4 @@
-jogador,modelo_ia,partidas,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score
-verde,reativa,1000,0.2970,5.3193,12.0335,0.0585,0.1517,31.79,0.031453,235.89,433.78,1.171369
-vermelho,reativa,1000,0.2980,6.2411,13.3827,0.0547,0.1455,31.30,0.031949,220.56,399.27,1.355404
-azul,reativa,1000,0.3100,6.4763,13.8115,0.0527,0.1473,30.31,0.032994,235.48,430.81,1.405816
+jogador,modelo_ia,partidas,pontos_total,pontos_media,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score
+verde,reativa,1000,-1028,-1.0280,0.2970,5.3193,12.0335,0.0585,0.1517,31.79,0.682066,235.89,433.78,0.486475
+vermelho,reativa,1000,-1022,-1.0220,0.2980,6.2411,13.3827,0.0547,0.1455,31.30,0.686997,220.56,399.27,0.492053
+azul,reativa,1000,-950,-0.9500,0.3100,6.4763,13.8115,0.0527,0.1473,30.31,0.696914,235.48,430.81,0.497110
