@@ -1,0 +1,4 @@
+jogador,modelo_ia,partidas,pontos_total,pontos_media,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score
+verde,art3miz_0.1,1000,-1320,-1.3200,0.2250,3.1727,8.2754,0.0819,0.1107,62.11,0.378949,494.45,416.72,0.378648
+vermelho,heuristica,1000,-840,-0.8400,0.3050,5.0606,10.3597,0.0778,0.0992,57.44,0.425596,969.80,590.89,0.409955
+azul,reativa,1000,-840,-0.8400,0.3050,6.2101,11.6880,0.0586,0.0963,57.61,0.423936,760.40,571.04,0.417077

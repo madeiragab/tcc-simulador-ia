@@ -180,6 +180,7 @@ func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
 	file.store_line("reducao_cobertura_leve: %d" % grid_script.COVER_LIGHT_REDUCTION)
 	file.store_line("reducao_cobertura_pesada: %d" % grid_script.COVER_HEAVY_REDUCTION)
 	file.store_line("limite_turnos: %d" % turn_script.TURN_LIMIT)
+	file.store_line("grid: %dx%d" % [grid_script.default_size, grid_script.default_size])
 	file.store_line("movimento_max_celulas: 3")
 	file.store_line("hp_inicial: 100")
 	file.store_line("alcance_visao_e_ataque: 8")
