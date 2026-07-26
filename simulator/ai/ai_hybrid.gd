@@ -74,6 +74,13 @@ func decide(agent, sim):
 		if not reachable.is_empty():
 			attack = closest_of(agent, reachable)
 
+	# Caçar uma posição já vista é aproximação com propósito e merece a
+	# busca completa. Seguir indício de sensor ou vagar, não — aí o
+	# passo guloso basta. (Estender a busca ao indício foi testado e
+	# custou 22% mais operações sem ganho de eficácia.)
+	if not last_known.is_empty():
+		return {"move_to": step_towards(agent, sim, goal), "attack_target": attack}
+
 	var path = cheap_path_towards(agent, sim, goal)
 	# Recuo: o passo guloso trava diante de obstáculos que a busca
 	# completa contornaria. Só então se paga pela busca — o custo alto

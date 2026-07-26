@@ -47,6 +47,51 @@ var last_known = {}       # inimigo -> última posição vista (Vector2i)
 var patrol_target = null  # destino de exploração
 var patrol_rng = null
 
+# ---------- Sensor de proximidade ----------
+# Inspirado no detector de movimento de Alien Isolation: fora do campo
+# de visão o agente não enxerga ninguém, mas capta um indício grosseiro
+# do inimigo mais próximo — a DIREÇÃO aproximada e a FAIXA de distância,
+# nunca a posição exata. Paredes não bloqueiam o sensor (é "ruído", não
+# visão). Mecânica do ambiente: disponível igualmente a todos os
+# modelos, para que a comparação permaneça justa.
+
+const SENSOR_RANGE = 15
+const SENSOR_BAND_NEAR = 5
+const SENSOR_BAND_MID = 10
+
+# Retorna {"direcao": Vector2i, "faixa": String, "alvo": Vector2i} do
+# inimigo mais próximo dentro do alcance, ou null. "alvo" é a direção
+# projetada — um ponto aproximado, não a posição real do inimigo.
+func sensor_hint(agent, sim):
+	var nearest = null
+	var nearest_dist = INF
+	for enemy in sim.get_enemies(agent):
+		var dist = maxi(absi(enemy.x - agent.x), absi(enemy.y - agent.y))
+		if dist <= SENSOR_RANGE and dist < nearest_dist:
+			nearest_dist = dist
+			nearest = enemy
+	if nearest == null:
+		return null
+
+	if sim.grid.cost_meter != null:
+		sim.grid.cost_meter.cells_explored += 1
+
+	var direcao = Vector2i(signi(nearest.x - agent.x), signi(nearest.y - agent.y))
+	var faixa = "distante"
+	if nearest_dist <= SENSOR_BAND_NEAR:
+		faixa = "proximo"
+	elif nearest_dist <= SENSOR_BAND_MID:
+		faixa = "medio"
+
+	# O indício aponta a direção; a distância projetada é o meio da
+	# faixa, de modo que o agente sabe "para onde", não "exatamente onde".
+	var passo = SENSOR_BAND_NEAR if faixa == "proximo" else (SENSOR_BAND_MID if faixa == "medio" else SENSOR_RANGE)
+	return {
+		"direcao": direcao,
+		"faixa": faixa,
+		"alvo": Vector2i(agent.x + direcao.x * passo, agent.y + direcao.y * passo),
+	}
+
 # Inimigos vivos que o agente percebe: dentro do cone de visão
 # direcional (agent.can_see) OU revelados por terem atirado nele.
 func get_visible_enemies(agent, sim):
@@ -85,7 +130,15 @@ func pursuit_position(agent, sim):
 				best = pos
 		return best
 
-	# Exploração: sorteia destinos válidos com RNG atrelado à seed.
+	# Sem memória, o sensor de proximidade orienta a busca: seguir o
+	# indício é melhor que vagar ao acaso, e é o que dá tensão de caça
+	# ao comportamento dos agentes.
+	var hint = sensor_hint(agent, sim)
+	if hint != null:
+		return hint["alvo"]
+
+	# Fora do alcance do sensor: exploração com destinos sorteados
+	# (RNG atrelado à seed, mantendo o determinismo).
 	if patrol_rng == null:
 		patrol_rng = RandomNumberGenerator.new()
 		patrol_rng.seed = sim.map_seed * 31 + agent.team_id

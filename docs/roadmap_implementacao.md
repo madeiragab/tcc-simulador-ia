@@ -47,7 +47,7 @@
 Meta quantitativa (critério de sucesso da hipótese): pontuação média ≥ −0,59
 com custo < 1811, idealmente próximo do patamar da reativa (~1360).
 
-## Fase 5 — Benchmark Oficial
-- [ ] Execução do híbrido sobre as 1000 *seeds* reservadas
-- [ ] Geração das tabelas consolidadas
-- [ ] Análise estatística final (médias e desvios padrão)
+## Fase 5 — Benchmark Oficial ✅ concluída
+- [x] Execução do híbrido sobre as 1000 *seeds* reservadas (7.000 partidas: 3 confrontos diretos + 4 autoconfrontos)
+- [x] Tabelas consolidadas em `resultados_finais.md`
+- [x] Análise estatística final (médias e desvios padrão) e interpretação da hipótese
