@@ -37,19 +37,30 @@ Esforço algorítmico médio global (medido através de contagem computacional a
 
 ### Strategic Score
 
-A eficiência e o desempenho estratégico global serão avaliados por modelo através de uma composição linear padronizada pelas frações:
+A composição linear pondera cinco dimensões do desempenho. Para que os pesos correspondam de fato à importância pretendida, **todos os termos são normalizados ao intervalo [0, 1]** antes da ponderação, de modo que o escore final também pertence a [0, 1]:
 
 StrategicScore =
-0.3 * WinRate +
-0.2 * DamageRatio +
-0.2 * CoverUsage +
-0.2 * Efficiency +
-0.1 * (1 / max(CustoComputacionalMedio, ε))
+0.30 * WinRate +
+0.20 * DamageNorm +
+0.20 * CoverUsage +
+0.20 * EficienciaTurnos +
+0.10 * EficienciaCusto
 
 Onde:
 
-- Efficiency = 1 / max(TurnsToVictory, 1) (Usado unicamente para contornar resultados irreais)
-- ε = 1 é a constante de base técnica (*Epsilon*) fixada estritamente contra *Float Exception* quando uma IA escolhe ação em custo unitário e zero não seja formalmente processado.
+- **WinRate** ∈ [0, 1] — fração de vitórias (já normalizada por definição).
+- **DamageNorm** = DamageRatio / (1 + DamageRatio) ∈ [0, 1) — saturação suave da razão de dano. Vale 0,5 quando o agente causa exatamente o dano que recebe, tende a 1 conforme domina a troca e a 0 quando só apanha. Dispensa teto arbitrário e preserva a ordenação entre modelos.
+- **CoverUsage** ∈ [0, 1] — fração de turnos em posição protegida (já normalizada).
+- **EficienciaTurnos** = (LimiteTurnos − min(TurnsToVictory, LimiteTurnos)) / LimiteTurnos ∈ [0, 1] — fração do orçamento de turnos economizada. Vale 1 na vitória imediata e 0 no empate por esgotamento (LimiteTurnos = 100).
+- **EficienciaCusto** = CustoReferência / (CustoReferência + CustoComputacionalMedio) ∈ (0, 1) — vale 0,5 quando o modelo gasta exatamente o custo de referência (CustoReferência = 1000 operações, ordem de grandeza típica observada), tende a 1 conforme decide mais barato e a 0 conforme encarece.
+
+#### Justificativa da normalização
+
+A formulação original somava grandezas em escalas incompatíveis, o que fazia os pesos nominais divergirem radicalmente do efeito real. Medido no confronto triplo do benchmark oficial, o termo de dano — nominalmente 20% — contribuía com 0,85 a 1,12 do escore, enquanto o WinRate — nominalmente 30% — contribuía com 0,07 a 0,10, e o custo — nominalmente 10% — contribuía com 0,0002, cerca de quatro mil vezes menos que o previsto. Na prática, o escore media quase exclusivamente a razão de dano e era cego à eficiência computacional, justamente a dimensão central da pesquisa.
+
+A correção atua **apenas sobre a escala dos termos**: os pesos permanecem exatamente os originalmente definidos (0,30 / 0,20 / 0,20 / 0,20 / 0,10), preservando a intenção do projeto de pesquisa e afastando qualquer suspeita de ajuste da métrica em favor do modelo proposto. Como a alteração incide sobre a agregação e não sobre a coleta, os escores de todas as execuções já realizadas foram recalculados a partir dos dados brutos preservados, sem necessidade de repetir simulações.
+
+- ε = 1 permanece como piso contra divisão por zero no cálculo do DamageRatio individual.
 
 ### Agregação Oficial das Métricas
 

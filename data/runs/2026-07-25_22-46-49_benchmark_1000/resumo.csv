@@ -1,4 +1,4 @@
 jogador,modelo_ia,partidas,pontos_total,pontos_media,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score
-verde,modelo_proposto,1000,-1038,-1.0380,0.3080,5.4592,10.9310,0.1009,0.1398,29.83,0.033523,383.63,374.14,1.211392
-vermelho,modelo_proposto,1000,-1068,-1.0680,0.3030,4.7696,10.1166,0.1047,0.1466,29.76,0.033598,370.21,307.80,1.072743
-azul,modelo_proposto,1000,-894,-0.8940,0.3320,5.3174,10.7837,0.1067,0.1469,28.38,0.035232,382.24,341.13,1.191726
+verde,modelo_proposto,1000,-1038,-1.0380,0.3080,5.4592,10.9310,0.1009,0.1398,29.83,0.701699,383.63,374.14,0.494230
+vermelho,modelo_proposto,1000,-1068,-1.0680,0.3030,4.7696,10.1166,0.1047,0.1466,29.76,0.702361,370.21,307.80,0.490630
+azul,modelo_proposto,1000,-894,-0.8940,0.3320,5.3174,10.7837,0.1067,0.1469,28.38,0.716170,382.24,341.13,0.504853

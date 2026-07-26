@@ -12,18 +12,25 @@ extends RefCounted
 #                  se empate; derrotas não entram (a métrica é "turnos
 #                  necessários para vencer").
 #
-# Agregado sobre N partidas (docs/metricas.md, "Agregação Oficial"):
-#   WinRate    = vitórias / N
-#   Efficiency = 1 / max(TurnsToVictory médio, 1)
-#   StrategicScore =
-#       0.3 * WinRate +
-#       0.2 * DamageRatio médio +
-#       0.2 * CoverUsage médio +
-#       0.2 * Efficiency +
-#       0.1 * (1 / max(CustoComputacionalMedio, EPSILON))
+# Agregado sobre N partidas (docs/metricas.md). Todos os termos são
+# normalizados a [0,1] antes da ponderação, para que os pesos
+# correspondam à importância pretendida — o escore final também fica
+# em [0,1]:
+#   WinRate          = vitórias / N
+#   DamageNorm       = DR / (1 + DR)
+#   CoverUsage       = fração de turnos protegido
+#   EficienciaTurnos = (LIMITE - min(TTV, LIMITE)) / LIMITE
+#   EficienciaCusto  = CUSTO_REF / (CUSTO_REF + custo médio)
+#   StrategicScore   = 0.30*WinRate + 0.20*DamageNorm + 0.20*CoverUsage
+#                    + 0.20*EficienciaTurnos + 0.10*EficienciaCusto
 
 const EPSILON = 1
 const TURN_LIMIT_PENALTY = 100
+
+# Custo de referência da normalização: ordem de grandeza típica
+# observada. EficienciaCusto vale 0,5 quando o modelo gasta exatamente
+# este valor.
+const CUSTO_REFERENCIA = 1000.0
 
 # Pontuação de partida (docs/metricas.md): empate é penalizado de
 # propósito — sobreviver sem decidir a partida não é eficácia.
@@ -89,17 +96,21 @@ static func aggregate(rows):
 
 	var win_rate = float(wins) / max(n, 1)
 	var ttv_mean = mean(ttv_values) if not ttv_values.is_empty() else float(TURN_LIMIT_PENALTY)
-	var efficiency = 1.0 / max(ttv_mean, 1.0)
 	var dr_mean = mean(dr_values)
 	var cu_mean = mean(cu_values)
 	var cost_mean = mean(cost_values)
 
+	# Normalizações para [0,1] (docs/metricas.md).
+	var damage_norm = dr_mean / (1.0 + dr_mean)
+	var efficiency = (TURN_LIMIT_PENALTY - minf(ttv_mean, TURN_LIMIT_PENALTY)) / float(TURN_LIMIT_PENALTY)
+	var cost_efficiency = CUSTO_REFERENCIA / (CUSTO_REFERENCIA + maxf(cost_mean, 0.0))
+
 	var strategic_score = (
-		0.3 * win_rate +
-		0.2 * dr_mean +
-		0.2 * cu_mean +
-		0.2 * efficiency +
-		0.1 * (1.0 / max(cost_mean, EPSILON))
+		0.30 * win_rate +
+		0.20 * damage_norm +
+		0.20 * cu_mean +
+		0.20 * efficiency +
+		0.10 * cost_efficiency
 	)
 
 	return {
@@ -112,7 +123,9 @@ static func aggregate(rows):
 		"cover_usage_mean": cu_mean,
 		"cover_usage_std": std_dev(cu_values),
 		"turns_to_victory_mean": ttv_mean,
+		"damage_norm": damage_norm,
 		"efficiency": efficiency,
+		"cost_efficiency": cost_efficiency,
 		"custo_mean": cost_mean,
 		"custo_std": std_dev(cost_values),
 		"strategic_score": strategic_score,
