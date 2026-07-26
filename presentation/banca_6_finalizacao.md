@@ -261,6 +261,65 @@ significativamente melhor que a reativa — apenas mais cara.
 
 ---
 
+## Slide 11.6 — O espectro completo e o valor marginal da computação
+
+Com o MCTS implementado, o extremo caro deixa de ser teórico. Confronto de mil
+partidas:
+
+| | MCTS | Heurística | Art3miz 0.1 |
+|---|---|---|---|
+| WinRate | **0,379** | 0,292 | 0,236 |
+| Custo | 2794 | 681 | **471** |
+| Eficiência (vit./mil ops) | 0,136 | 0,429 | **0,501** |
+
+**Quanto custa cada vitória adicional:**
+
+- Art3miz → Heurística: ≈ **3.750 operações**
+- Heurística → MCTS: ≈ **24.300 operações**
+
+Retorno fortemente decrescente. Este número é a tese do trabalho em uma linha:
+não existe modelo melhor em absoluto — existe um compromisso, e ele é mensurável.
+
+---
+
+## Slide 11.7 — Generalização e a faixa de aplicabilidade
+
+Replicação em três escalas de mapa:
+
+| Escala | Economia sobre a Heurística |
+|---|---|
+| 25×25 | −16% |
+| 40×40 | −29% |
+| **60×60** | **−49%** |
+
+**A economia triplica com a escala** — coerente com o mecanismo: mapas maiores
+têm mais turnos sem contato, e é aí que a deliberação é dispensada.
+
+**Mas há um limite honesto**: em 25×25 a IA Reativa é *simultaneamente* mais
+barata e mais eficaz que o modelo proposto. Em ambientes pequenos, onde toda
+situação é crítica, não há o que economizar.
+
+*Fala*: apresentar a limitação de frente. Delimitar a faixa de aplicabilidade de
+um modelo é resultado, não fraqueza — e mostra domínio sobre o próprio trabalho.
+
+---
+
+## Slide 11.8 — Os pesos da métrica são arbitrários?
+
+Crítica legítima: por que 30/20/20/20/10? Resposta empírica, não retórica.
+
+| Exame | Resultado |
+|---|---|
+| 6 ponderações alternativas (incl. todas iguais) | Art3miz lidera em **todas** |
+| 10.000 vetores aleatórios do simplex | Art3miz lidera em **100%** |
+| Perturbação de cada peso em ±50% | Liderança **não muda** |
+| Peso necessário para trocar o líder | **97%** concentrado em vitória |
+
+A liderança só se desfaz sob concentração extrema de peso numa única dimensão —
+configuração que descaracterizaria a métrica como instrumento multidimensional.
+
+---
+
 ## Slide 12 — Contribuições do trabalho
 
 1. **Um ambiente de avaliação** determinístico, reprodutível e com neutralidade
