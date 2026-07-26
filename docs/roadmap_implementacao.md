@@ -51,3 +51,10 @@ com custo < 1811, idealmente próximo do patamar da reativa (~1360).
 - [x] Execução do híbrido sobre as 1000 *seeds* reservadas (7.000 partidas: 3 confrontos diretos + 4 autoconfrontos)
 - [x] Tabelas consolidadas em `resultados_finais.md`
 - [x] Análise estatística final (médias e desvios padrão) e interpretação da hipótese
+
+## Fase 6 — Rigor científico ✅ concluída
+- [x] Fundamentação em metarraciocínio e racionalidade limitada (`fundamentacao_teorica.md`)
+- [x] Testes de significância sobre os dados brutos (`analise_estatistica.md`)
+- [x] MCTS implementado para ancorar o extremo de alto custo (`ai/ai_mcts.gd`)
+- [x] Análise de sensibilidade dos pesos da métrica (`sensibilidade_pesos.md`)
+- [x] Replicação em três escalas de mapa (`generalizacao.md`)

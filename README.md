@@ -77,8 +77,10 @@ posição já conhecida.
 
 ## Resultados
 
-**7.000 partidas** no banco oficial: 4 autoconfrontos (mesmo modelo nos 3
-agentes) e 3 confrontos diretos.
+**Mais de 14.000 partidas** no banco oficial, distribuídas em autoconfrontos,
+confrontos diretos, replicação em três escalas de mapa e calibração. Todas as
+afirmações comparativas foram submetidas a **teste de significância**
+([análise completa](docs/analise_estatistica.md)).
 
 ### Autoconfronto — desempenho global
 
@@ -97,7 +99,7 @@ heurística: mais que o dobro.
 
 ### Confronto direto — o contraponto honesto
 
-| Métrica | Híbrida | Heurística | Reativa |
+| Métrica | Art3miz 0.1 | Heurística | Reativa |
 |---|---|---|---|
 | WinRate | 0,225 | **0,339** | 0,330 |
 | Custo | **510** | 719 | 484 |
@@ -107,14 +109,42 @@ Contra adversários que pagam o custo pleno da análise, **o Art3miz 0.1 vence
 menos**. A economia tem preço: ao pular a deliberação, o agente às vezes perde a
 posição que a avaliação completa encontraria.
 
+### O espectro completo — e o valor marginal da computação
+
+Com o MCTS ancorando o extremo caro, é possível medir quanto custa cada ganho:
+
+| | MCTS | Heurística | Art3miz 0.1 |
+|---|---|---|---|
+| WinRate | **0,379** | 0,292 | 0,236 |
+| Custo | 2794 | 681 | **471** |
+| Eficiência (vit./mil ops) | 0,136 | 0,429 | **0,501** |
+
+**Custo por vitória adicional**: ≈ 3.750 operações de Art3miz para Heurística,
+≈ 24.300 de Heurística para MCTS. **Retorno fortemente decrescente** — este é o
+compromisso central do trabalho, quantificado.
+
+### Generalização — e o limite do modelo
+
+Replicando em três escalas, a economia sobre a heurística **cresce com o
+tamanho do mapa**: −16% (25×25), −29% (40×40), **−49%** (60×60). Coerente com o
+mecanismo: mapas maiores têm mais turnos sem contato visual, e é aí que a
+deliberação é dispensada.
+
+**Mas há um limite honesto**: em mapas 25×25 a IA Reativa é *simultaneamente*
+mais barata e mais eficaz que o modelo proposto. Onde toda situação é crítica,
+não há o que economizar. O modelo tem [faixa de aplicabilidade](docs/generalizacao.md),
+e ela está delimitada.
+
 **Conclusão**: a hipótese de eficiência confirma-se; a de superioridade
 competitiva, não. O trabalho demonstra que o compromisso entre qualidade e custo
 é mensurável, controlável por λ e explicitável como decisão de projeto — um
 controle que os modelos de referência não oferecem.
 
-Um achado adicional: a **IA Reativa mostrou-se um baseline notavelmente forte**
-(maior eficiência do confronto direto). Em ambientes com percepção limitada e
-horizonte curto, regras simples bem escolhidas são difíceis de superar.
+Dois achados adicionais, ambos com respaldo estatístico: a **IA Reativa é um
+baseline notavelmente forte** — a heurística **não vence significativamente
+mais** que ela (p = 0,757) embora custe 48% a mais; e a liderança do Art3miz no
+escore composto é **robusta à escolha dos pesos** da métrica (lidera em 100% de
+10.000 ponderações aleatórias — [análise](docs/sensibilidade_pesos.md)).
 
 Análise completa: [resultados_finais.md](docs/resultados_finais.md).
 
