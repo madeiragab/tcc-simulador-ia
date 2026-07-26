@@ -131,7 +131,7 @@ Os resultados permitirão:
 
 ## 7. Relação com o Modelo Proposto
 
-O modelo híbrido será comparado com os modelos baseline para verificar:
+O modelo híbrido foi comparado com os modelos baseline (ver `resultados_finais.md`) para verificar:
 
 - ganhos de desempenho
 - eficiência computacional
