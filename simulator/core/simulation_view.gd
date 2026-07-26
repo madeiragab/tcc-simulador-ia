@@ -91,6 +91,7 @@ func _draw():
 	for agent in simulation.agents:
 		if agent.is_alive:
 			draw_agent(cell_center(agent.x, agent.y), PLAYER_COLORS[agent.team_id])
+			draw_sensor_hint(agent)
 
 func cell_center(x, y):
 	return Vector2(x * CELL_SIZE + CELL_SIZE / 2.0, y * CELL_SIZE + CELL_SIZE / 2.0)
@@ -106,6 +107,45 @@ func draw_agent(center, color):
 func draw_dead_agent(center):
 	draw_circle(center, AGENT_RADIUS * 0.9, COLOR_DEAD)
 	draw_circle(center, AGENT_RADIUS * 0.45, COLOR_DEAD.darkened(0.35))
+
+# Indício do sensor de proximidade (estilo detector de movimento):
+# arco na borda do agente apontando a direção do inimigo mais próximo,
+# com intensidade conforme a faixa de distância. Não revela a posição.
+func draw_sensor_hint(agent):
+	var enemies = []
+	for other in simulation.agents:
+		if other != agent and other.is_alive:
+			enemies.append(other)
+	if enemies.is_empty():
+		return
+
+	var nearest_dist = INF
+	var nearest = null
+	for enemy in enemies:
+		var dist = max(abs(enemy.x - agent.x), abs(enemy.y - agent.y))
+		if dist < nearest_dist:
+			nearest_dist = dist
+			nearest = enemy
+	if nearest == null or nearest_dist > 15:
+		return
+
+	var intensidade = 0.85 if nearest_dist <= 5 else (0.55 if nearest_dist <= 10 else 0.3)
+	var color = PLAYER_COLORS[agent.team_id]
+	var center = cell_center(agent.x, agent.y)
+	var dir = Vector2(nearest.x - agent.x, nearest.y - agent.y).normalized()
+	var base = center + dir * (AGENT_RADIUS * 2.3)
+
+	# Três traços curtos perpendiculares à direção, como um "eco".
+	var perp = Vector2(-dir.y, dir.x)
+	for i in range(3):
+		var offset = dir * (i * 3.5)
+		var largura = AGENT_RADIUS * (0.75 - i * 0.18)
+		draw_line(
+			base + offset + perp * largura,
+			base + offset - perp * largura,
+			Color(color.r, color.g, color.b, intensidade * (1.0 - i * 0.28)),
+			2.0
+		)
 
 # Leque translúcido na cor do jogador, indicando para onde ele olha.
 func draw_vision_cone(agent):

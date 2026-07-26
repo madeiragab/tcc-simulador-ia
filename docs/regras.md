@@ -49,7 +49,10 @@ Os agentes **não são oniscientes**. Um agente só conhece a posição de um in
 Sem nenhum inimigo à vista, o agente age com base em memória e busca:
 
 - **Memória tática**: guarda a última posição onde viu cada inimigo e caça a mais próxima; ao chegar lá e não encontrar nada, esquece
-- **Exploração**: sem memória alguma, percorre destinos sorteados do mapa (RNG semeado pela *seed* da partida — o comportamento permanece determinístico e reprodutível)
+- **Sensor de proximidade**: capta um indício grosseiro do inimigo mais próximo dentro de 15 células — a **direção aproximada** (em oito octantes) e a **faixa de distância** (próximo ≤5, médio ≤10, distante ≤15), nunca a posição exata. Paredes não bloqueiam o sensor, que representa ruído e não visão. Inspirado no detector de movimento de *Alien Isolation*, dá ao agente rumo de caça sem entregar o alvo
+- **Exploração**: fora do alcance do sensor, percorre destinos sorteados do mapa (RNG semeado pela *seed* da partida — o comportamento permanece determinístico e reprodutível)
+
+O sensor é mecânica do ambiente, disponível igualmente a todos os modelos, preservando a equidade da comparação. Cada consulta é contabilizada no custo computacional.
 
 ---
 
