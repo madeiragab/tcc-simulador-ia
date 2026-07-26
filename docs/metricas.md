@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/metrics.md)
+
 # Métricas de Avaliação
 
 ## Objetivo

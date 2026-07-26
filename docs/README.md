@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/README.md)
+
 # Documentação do Projeto
 
 Este diretório concentra a base teórica, as definições de arquitetura e a configuração metodológica do simulador e dos experimentos de avaliação dos modelos de IA.

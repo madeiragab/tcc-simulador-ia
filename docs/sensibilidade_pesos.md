@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/weight_sensitivity.md)
+
 # Análise de Sensibilidade dos Pesos do StrategicScore
 
 Relatório gerado por `simulator/tools/sensibilidade_pesos.gd` a partir dos dados brutos dos autoconfrontos. Reproduzível com:

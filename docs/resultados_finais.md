@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/final_results.md)
+
 # Resultados Finais — Benchmark Oficial (Fase 5)
 
 Execução final sobre o banco oficial de 1000 *seeds* de benchmark, sob o conjunto definitivo de regras (percepção por cone de 120°, sensor de proximidade, tiro em linha reta, cobertura direcional, pontuação +3/−1/−3, aprendizado entre partidas). **7.000 partidas** em 7 lotes, todos documentados em `data/runs/`.

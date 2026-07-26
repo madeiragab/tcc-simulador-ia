@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/rules.md)
+
 # Regras do Simulador Tático
 
 ## 1. Ambiente
