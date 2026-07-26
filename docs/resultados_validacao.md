@@ -1,5 +1,11 @@
 # Resultados Preliminares — Validação do Ambiente
 
+> **Documento histórico.** Primeira validação de neutralidade, executada sobre a
+> versão inicial das mecânicas (antes da percepção limitada, do sensor de
+> proximidade e do tiro em linha reta). A validação definitiva, sob as regras
+> finais, está na seção 5.1 de `resultados_finais.md`. Mantido como registro do
+> percurso metodológico.
+
 ## Objetivo do experimento
 
 Antes de comparar modelos de IA, é preciso provar que o ambiente de simulação não introduz viés — ou seja, que nenhum jogador vence mais por causa do mapa, do setor de nascimento ou da ordem de turno. Este é o "experimento zero" do trabalho: a validação do instrumento de medição.

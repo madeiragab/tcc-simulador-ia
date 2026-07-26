@@ -19,7 +19,17 @@ Este diretório concentra a base teórica, as definições de arquitetura e a co
 - **experiments.md**: Planejamento dos experimentos em lote (1000 *seeds* de benchmark + 200 de validação).
 - **coleta_dados.md**: Estrutura de registro dos resultados em `data/` em formato CSV.
 - **metricas.md**: Fórmulas das métricas individuais e da métrica composta (*Strategic Score*), com proteções numéricas (ε contra divisão por zero).
-- **resultados_validacao.md**: Experimento zero — validação da neutralidade do ambiente com 1000 simulações (3 IAs idênticas, WinRates estatisticamente equivalentes) e achados preliminares.
+
+### 5. Resultados
+
+Os documentos abaixo estão em ordem cronológica; **`resultados_finais.md` é o
+documento de referência** — os anteriores registram etapas do percurso e foram
+coletados sob versões anteriores das regras.
+
+- **resultados_validacao.md**: Experimento zero — primeira validação da neutralidade do ambiente (versão inicial das mecânicas). Superado pela seção 5.1 de `resultados_finais.md`.
+- **resultados_campanha.md**: Campanha de caracterização dos modelos base (etapas 1 e 2 do protocolo), anterior à introdução do sensor de proximidade e à correção da métrica composta. Mantido pelo valor metodológico da análise de decomposição de custo.
+- **resultados_hibrido.md**: Calibração do modelo proposto — inclui o resultado negativo da formulação direta e a varredura do parâmetro λ.
+- **resultados_finais.md**: **Benchmark oficial** — 7.000 partidas sob as regras definitivas, com a métrica corrigida. Documento de referência para os resultados do trabalho.
 
 ### 3. Concepção das Inteligências
 - **ia.md**: O paradigma reativo de Utility AI, geração/filtragem/avaliação de ações e seleção da melhor.

@@ -1,53 +1,71 @@
 # Modelo Proposto — IA Híbrida
 
 Contribuição central do trabalho. Implementação: `simulator/ai/ai_hybrid.gd`.
+Calibração e evidências: `resultados_hibrido.md`. Resultados: `resultados_finais.md`.
 
-## Ideia central
+## 1. Formulação inicial e por que ela não funciona
 
-Combinar valor estratégico e custo computacional na tomada de decisão, penalizando explicitamente as avaliações caras:
+A leitura direta do compromisso entre valor e custo penaliza cada ação candidata pelo custo de avaliá-la:
 
 Score(A) = ValorEstratégico(A) − λ × CustoComputacional(A)
 
-Com λ = 0 o modelo colapsa na IA Heurística pura; com λ grande, aproxima-se do comportamento reativo. O parâmetro converte operações em unidades de valor estratégico.
+Implementada e submetida a varredura de λ, **essa formulação mostrou-se inócua neste domínio**. O resultado negativo é uma contribuição do trabalho, pois delimita a condição de aplicabilidade da forma ingênua do compromisso. Duas causas, ambas medidas:
 
-## Componentes
+**1.1 O alvo da penalização é minoria do custo.** A decomposição do custo da IA Heurística mostrou que o loop de avaliação posicional responde por 16% do consumo (cálculos de linha de visão e ações avaliadas), enquanto 84% concentra-se na busca de caminho, executada em todo turno — inclusive nos muitos turnos sem contato visual. Nenhum valor de λ poderia economizar além dessa fração minoritária.
 
-**ValorEstratégico(A)** — herdado da IA Heurística (`docs/ia.md` §4): vida, cobertura, proximidade, risco e o incentivo de movimentação.
+**1.2 Custos uniformes tornam o termo inerte.** Avaliar qualquer posição custa praticamente o mesmo. Sendo Custo(A) ≈ k para toda ação A, o termo −λk é uma constante somada a todas as candidatas e não altera qual delas tem o maior score:
 
-**CustoComputacional(A)** — o custo, em operações contadas, de **avaliar aquela ação específica**: o delta do medidor (`cost_meter`) durante a avaliação da candidata. Essa definição foi escolhida a partir da evidência da campanha de coleta (`docs/resultados_campanha.md` §2.1): o custo marginal da heurística sobre a reativa concentra-se no loop de avaliação posicional (180 cálculos de LOS por partida contra 12 da reativa). Penalizar o custo *da ação* — e não o acumulado do turno — mantém a comparação entre candidatas justa e independente da ordem de avaliação.
+argmax[ Valor(A) − λk ] = argmax[ Valor(A) ]
 
-## Dois mecanismos
+Experimentalmente, λ = 0 e λ = 0,005 produziram resultados idênticos. **A penalização por ação só discrimina quando as ações diferem entre si em custo** — condição que este domínio não satisfaz.
 
-### 1. Penalização (o modelo formal)
+## 2. Reformulação: o compromisso decide *se* deliberar
 
-Cada candidata é pontuada e tem descontado o custo de tê-la avaliado. Ações que exigem muitas verificações para serem julgadas precisam entregar valor proporcionalmente maior.
+Se o custo não distingue ações entre si, ele distingue **procedimentos de decisão**. A reformulação aplica o mesmo compromisso um nível acima: antes de avaliar, o agente decide se a análise se justifica.
 
-### 2. Poda por orçamento (a economia real)
+O agente delibera — executa a avaliação posicional completa — se, e somente se:
 
-A penalização sozinha escolhe melhor, mas não economiza: o custo já foi pago quando a ação é descartada. Por isso o modelo ordena as candidatas por promessa — distância ao inimigo mais próximo, cálculo barato — e avalia apenas enquanto houver orçamento de operações no turno (`budget`, padrão 120). O restante fica sem avaliar.
+**ValorEmJogo − λ × CustoEstimado > 0**
 
-É esse mecanismo que converte a formulação teórica em redução mensurável de processamento, mantendo a qualidade das decisões: as candidatas mais promissoras são sempre avaliadas primeiro.
+**ValorEmJogo** = n × (Proximidade + Vulnerabilidade), onde n é o número de inimigos visíveis, Proximidade é o inverso da distância ao mais próximo e Vulnerabilidade é a fração de vida perdida. Cresce nas situações em que decidir bem tem maior consequência.
 
-## Parâmetros
+**CustoEstimado** = células candidatas × (inimigos visíveis + 1), o custo previsto da avaliação completa.
+
+Sem inimigos à vista, o valor em jogo é nulo e o regime econômico é sempre escolhido. O parâmetro percorre todo o espectro: **λ = 0 delibera sempre** (equivale à IA Heurística pura); **λ alto nunca delibera** (equivale à IA Reativa).
+
+## 3. Regime econômico
+
+Quando não compensa deliberar, o agente se desloca por **passo guloso**: caminha até 3 células na direção do objetivo verificando apenas as células do próprio caminho (3 a 6 operações), em vez de expandir toda a vizinhança alcançável (~25 nós).
+
+Duas salvaguardas preservam a qualidade:
+
+- **Caça mantém a busca completa.** Aproximar-se de uma posição onde um inimigo foi visto é aproximação com propósito e justifica o gasto; apenas a exploração às cegas usa o passo guloso.
+- **Recuo por obstáculo.** Se o caminho guloso trava diante de um obstáculo que a busca contornaria, o agente recorre à busca completa.
+
+A economia é **medida, não presumida**: cada verificação do passo guloso é contabilizada pelo mesmo medidor de custo (`grid.check_walkable`), e o caminho traçado é validado em tempo constante por passo (`agent.move_along`), sem refazer a busca.
+
+## 4. Parâmetros
 
 | Parâmetro | Valor | Origem |
 |---|---|---|
-| λ | 0,02 | Varredura em {0,005; 0,01; 0,02; 0,05; 0,1} no banco de tuning (200 seeds) |
-| budget | 120 operações/turno | Varredura no banco de tuning |
-| Pesos iniciais | 0,092 / 0,307 / 0,495 / −0,228 | Melhor configuração aprendida no confronto misto de 1000 partidas (`docs/resultados_campanha.md` §2.2) |
+| λ | 0,005 | Varredura em {0; 0,002; 0,005; 0,01; 0,02} nas 200 seeds de tuning — joelho da curva de compromisso |
+| budget | 0 (desativado) | Poda de candidatas testada e descartada: reduziu eficácia sem economia relevante |
+| Pesos | 0,092 / 0,307 / 0,495 / −0,228 | Melhor configuração aprendida no confronto misto da campanha |
 
-Os pesos continuam sendo refinados pelo aprendizado entre partidas (`docs/ia.md` §6.5) — o híbrido herda o mecanismo da heurística.
+Os pesos continuam sendo refinados pelo aprendizado entre partidas (`ia.md` §6.5), herdado da heurística.
 
-## Uso
+## 5. Resultados
+
+Em autoconfronto (1000 partidas), o modelo proposto obtém o **maior StrategicScore do estudo (0,497)**, contra 0,473 da reativa e 0,438 da heurística, exigindo **379 operações por partida — 51% menos que a heurística**. É também o mais decisivo (5,7% de empates) e o mais rápido a vencer (29,3 turnos).
+
+Em confronto direto contra oponentes de custo pleno, vence menos (0,225 contra ~0,33). A hipótese de eficiência confirma-se; a de superioridade competitiva, não. Análise completa em `resultados_finais.md`.
+
+## 6. Uso
 
 ```bash
-# Benchmark com o híbrido no verde
+# Benchmark oficial com o modelo proposto
 godot --headless --path simulator -- batch 1000 benchmark verde=hibrida
 
 # Calibração (λ e orçamento ajustáveis por linha de comando)
-godot --headless --path simulator -- batch 200 tuning verde=hibrida lambda=0.02 budget=120
+godot --headless --path simulator -- batch 200 tuning verde=hibrida lambda=0.005 budget=0
 ```
-
-## Hipótese
-
-O modelo híbrido produz decisões de qualidade equivalente ou superior à heurística pura com custo computacional significativamente menor. Critério quantitativo de sucesso, fixado a partir da campanha: pontuação média ≥ −0,59 (desempenho da heurística no confronto misto) com custo < 1811 operações por partida.
