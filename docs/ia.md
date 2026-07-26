@@ -1,3 +1,5 @@
+> 🇧🇷 **Português** · 🇬🇧 [English](en/ai.md)
+
 # Modelo de Tomada de Decisão da IA
 
 ## 1. Visão Geral
