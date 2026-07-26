@@ -88,7 +88,7 @@ Desempenho na calibração, contra a heurística pura: **51% menos operações (
 
 ## 4. Nota sobre o StrategicScore
 
-O escore composto definido em `metricas.md` atribui 10% do peso ao termo `1/max(Custo, ε)`. Com custos da ordem de centenas de operações, esse termo contribui com cerca de 0,0002 para o escore, enquanto o DamageRatio contribui com valores próximos de 1,0 — ou seja, **a métrica composta é praticamente cega à eficiência computacional**, justamente a dimensão que o modelo proposto otimiza.
+O escore composto definido em `metricas.md` atribui 10% do peso ao termo `1/max(Custo, ε)`. Com custos da ordem de centenas de operações, esse termo contribui com cerca de 0,0002 para o escore, enquanto o DamageRatio contribui com valores próximos de 1,0 — ou seja, **a métrica composta é praticamente cega à eficiência computacional**, justamente a dimensão que o Art3miz 0.1 otimiza.
 
 Por essa razão, os resultados desta etapa foram reportados também em **eficiência estratégica** (WinRate por mil operações), que expressa diretamente o compromisso investigado.
 
@@ -101,5 +101,5 @@ Por essa razão, os resultados desta etapa foram reportados também em **eficiê
 godot --headless --path simulator -- batch 200 tuning verde=heuristica
 
 # Varredura de λ
-godot --headless --path simulator -- batch 200 tuning verde=hibrida lambda=0.005 budget=0
+godot --headless --path simulator -- batch 200 tuning verde=art3miz lambda=0.005 budget=0
 ```

@@ -5,7 +5,7 @@ Gabriel Madeira · Orientador: Ricardo Martins · Coorientador: Diego Penha
 
 > **Identidade visual**: manter o template das bancas anteriores.
 
-> **Mensagem central**: o modelo proposto foi construído a partir dos dados,
+> **Mensagem central**: o Art3miz 0.1 foi construído a partir dos dados,
 > calibrado e avaliado em 7.000 partidas. A hipótese de eficiência confirma-se;
 > a de superioridade competitiva, não. E essa distinção é o que dá seriedade ao
 > trabalho.
@@ -17,7 +17,7 @@ Gabriel Madeira · Orientador: Ricardo Martins · Coorientador: Diego Penha
 **Avaliação Experimental de um Modelo Híbrido para Decisão Estratégica em
 Simulações de Combate Baseadas em Turnos**
 
-Subtítulo: *Passo 03 — Modelo Proposto e Resultados Finais*
+Subtítulo: *Passo 03 — Art3miz 0.1 e Resultados Finais*
 
 ---
 
@@ -28,7 +28,7 @@ Subtítulo: *Passo 03 — Modelo Proposto e Resultados Finais*
 | Banca 3 | Protótipo e protocolo experimental proposto |
 | Banca 4 | Ambiente completo, instrumentação e **neutralidade validada** |
 | Banca 5 | Modelos de referência caracterizados e **o custo localizado** |
-| **Banca 6** | **Modelo proposto, calibração e resultados finais** |
+| **Banca 6** | **Art3miz 0.1, calibração e resultados finais** |
 
 *Fala*: 30 segundos. A banca precisa ver o fio, não reouvir o detalhe.
 
@@ -149,7 +149,7 @@ justamente a dimensão central da pesquisa.
 
 **Correção**: todos os termos normalizados a [0,1] antes da ponderação,
 **preservando exatamente os pesos originais**. Atua sobre a escala, não sobre a
-intenção — o que afasta qualquer suspeita de ajuste em favor do modelo proposto.
+intenção — o que afasta qualquer suspeita de ajuste em favor do Art3miz 0.1.
 
 Como a mudança recai sobre a agregação e não sobre a coleta, **todos os escores
 foram recalculados a partir dos dados brutos preservados**, sem repetir
@@ -166,9 +166,9 @@ Mil partidas por modelo, três instâncias iguais por partida:
 | Aleatória | 0,000 | 100% | 2323 | 0,145 |
 | Reativa | 0,312 | 6,5% | 437 | 0,473 |
 | Heurística | 0,295 | 11,6% | 777 | 0,438 |
-| **Modelo Proposto** | **0,314** | **5,7%** | **379** | **0,497** |
+| **Art3miz 0.1** | **0,314** | **5,7%** | **379** | **0,497** |
 
-**O modelo proposto obtém o maior escore do estudo**, liderando quatro das cinco
+**O Art3miz 0.1 obtém o maior escore do estudo**, liderando quatro das cinco
 dimensões: vence mais, usa mais cobertura, decide mais rápido (29 turnos contra
 45 da heurística) e gasta **51% menos** que ela.
 
@@ -179,13 +179,13 @@ heurística: mais que o dobro.
 
 ## Slide 10 — RESULTADO 2: confronto direto
 
-| Métrica | Modelo Proposto | Heurística | Reativa |
+| Métrica | Art3miz 0.1 | Heurística | Reativa |
 |---|---|---|---|
 | Taxa de vitória | 0,225 | **0,339** | 0,330 |
 | Custo | **510** | 719 | 484 |
 | Strategic Score | 0,426 | 0,467 | **0,472** |
 
-**Contra adversários que pagam o custo pleno da análise, o modelo proposto vence
+**Contra adversários que pagam o custo pleno da análise, o Art3miz 0.1 vence
 menos.**
 
 A economia tem preço: ao pular a deliberação, o agente ocasionalmente deixa de
@@ -200,7 +200,7 @@ clareza é o que dá credibilidade a todo o resto.
 ## Slide 11 — Conclusões
 
 **1. A hipótese de eficiência confirma-se.**
-O modelo proposto opera com pouco mais da metade do custo da heurística e obtém o
+O Art3miz 0.1 opera com pouco mais da metade do custo da heurística e obtém o
 maior escore composto em condições simétricas. A formalização explícita do
 compromisso produz um agente mensuravelmente mais eficiente, e λ permite percorrer
 esse compromisso de forma previsível.
@@ -243,10 +243,10 @@ sofisticação analítica precisa justificar o custo que impõe.
 
 ## Slide 14 — Encerramento
 
-> O trabalho não demonstra que o modelo proposto seja o melhor jogador.
+> O trabalho não demonstra que o Art3miz 0.1 seja o melhor jogador.
 > Demonstra que o compromisso entre qualidade estratégica e custo computacional
 > é **mensurável, controlável e explicitável como decisão de projeto** — e que,
-> sob avaliação multidimensional, o modelo proposto apresenta o melhor
+> sob avaliação multidimensional, o Art3miz 0.1 apresenta o melhor
 > desempenho global do conjunto avaliado.
 
 Repositório público: `github.com/madeiragab/tcc-simulador-ia`
@@ -259,7 +259,7 @@ Repositório público: `github.com/madeiragab/tcc-simulador-ia`
 
 ## Antecipação de perguntas da banca
 
-**"Então o modelo proposto falhou?"**
+**"Então o Art3miz 0.1 falhou?"**
 Não. A hipótese central — eficiência — confirmou-se: maior escore composto, metade
 do custo, menor taxa de empates. O que não se confirmou foi a superioridade em
 confronto direto, que era secundária. A hipótese registrada no projeto falava em

@@ -11,7 +11,7 @@ Definir como os experimentos serão conduzidos para avaliar o desempenho dos mod
 - IA Aleatória
 - IA Reativa
 - IA Heurística
-- Modelo Proposto (híbrido)
+- Art3miz 0.1 (híbrido)
 
 Em cada simulação, o modelo avaliado controla um agente; os outros dois agentes executam a IA Reativa como adversário padrão, garantindo oposição idêntica para todos os modelos.
 
@@ -84,7 +84,7 @@ Permitindo, de forma reprodutível:
 
 ## 9. Resultado Esperado
 
-Espera-se que o modelo proposto apresente:
+Espera-se que o Art3miz 0.1 apresente:
 
 - desempenho superior aos modelos simples
 - melhor equilíbrio entre estratégia e custo computacional
