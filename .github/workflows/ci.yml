@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  # O projeto declara features "4.7" em simulator/project.godot. Abrir com
+  # outra minor reimporta recurso e muda comportamento sem avisar, então a
+  # versão fica presa aqui.
+  GODOT_VERSION: 4.7.1-stable
+
+jobs:
+  estatistica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: cache do Godot headless
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: baixar o Godot headless
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot
+          curl -sSfL -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot
+          mv ~/godot/Godot_v${GODOT_VERSION}_linux.x86_64 ~/godot/godot
+          chmod +x ~/godot/godot
+
+      # A primeira abertura importa os recursos e escreve .godot/. Sem isso o
+      # --script roda antes do projeto existir e falha por caminho não
+      # resolvido, não por teste quebrado. O `|| true` é porque a importação
+      # sai com código diferente de zero em ambiente sem display mesmo quando
+      # dá certo — o que vale é o passo seguinte.
+      - name: importar os recursos
+        run: ~/godot/godot --headless --path simulator --import || true
+
+      - name: regressão dos testes de significância
+        run: ~/godot/godot --headless --path simulator --script res://tests/test_stats.gd

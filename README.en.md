@@ -2,6 +2,8 @@
 
 # Tactical Simulator for AI Evaluation
 
+[![ci](https://github.com/madeiragab/tcc-simulador-ia/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/madeiragab/tcc-simulador-ia/actions/workflows/ci.yml)
+
 A turn-based tactical simulation environment built to **measure the strategic
 quality of AI agents** — not just whether they win, but how much computation
 they spend to win.
