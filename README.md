@@ -2,6 +2,8 @@
 
 # Simulador Tático para Avaliação de IA
 
+[![ci](https://github.com/madeiragab/tcc-simulador-ia/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/madeiragab/tcc-simulador-ia/actions/workflows/ci.yml)
+
 Ambiente de simulação tática por turnos construído para **medir a qualidade
 estratégica de agentes de IA** — não apenas se ganham, mas quanto processamento
 gastam para ganhar.
