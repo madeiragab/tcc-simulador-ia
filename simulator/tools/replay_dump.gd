@@ -30,7 +30,21 @@ const CELULA = {
 	"cover_heavy": "H",
 }
 
-func _initialize():
+# O trabalho não cabe em _initialize(): a árvore ainda não está viva ali, e
+# um Node adicionado à raiz não recebe _ready(). O grid sai sem células, o
+# gerador escreve em um array vazio, e como erro de script no GDScript não
+# aborta nada, a partida inteira roda sobre um mapa que não existe. Então a
+# execução espera o primeiro quadro, quando add_child() já vale.
+var feito = false
+
+func _process(_delta):
+	if feito:
+		return true
+	feito = true
+	trabalhar()
+	return true
+
+func trabalhar():
 	var opcoes = ler_argumentos()
 	var raiz = ProjectSettings.globalize_path("res://").path_join("..")
 
@@ -57,7 +71,10 @@ func _initialize():
 		partidas.append(rodar(seeds[i], i, ias))
 		print("  partida %d/%d  seed %d" % [i + 1, total, seeds[i]])
 
-	var saida = raiz.path_join(opcoes["saida"])
+	# Caminho absoluto vale por si; relativo conta a partir da raiz do repo.
+	var saida = opcoes["saida"]
+	if not saida.is_absolute_path():
+		saida = raiz.path_join(saida)
 	DirAccess.make_dir_recursive_absolute(saida.get_base_dir())
 	var arquivo = FileAccess.open(saida, FileAccess.WRITE)
 	if arquivo == null:

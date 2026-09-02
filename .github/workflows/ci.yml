@@ -68,7 +68,13 @@ jobs:
               mapa = p['mapa']
               assert len(mapa['celulas']) == mapa['altura'], 'altura do mapa'
               assert all(len(l) == mapa['largura'] for l in mapa['celulas']), 'largura do mapa'
-              assert set(''.join(mapa['celulas'])) <= set('.#lH'), 'celula desconhecida'
+              celulas = ''.join(mapa['celulas'])
+              assert set(celulas) <= set('.#lH'), 'celula desconhecida'
+              # Erro de script no GDScript nao aborta a execucao: um grid que
+              # nasceu vazio produz um mapa todo "." e uma partida que parece
+              # ter rodado. O gerador sempre poe paredes e cobertura.
+              assert '#' in celulas, 'mapa sem parede -- grid vazio?'
+              assert 'l' in celulas or 'H' in celulas, 'mapa sem cobertura'
               assert p['quadros'], 'partida sem quadros'
               assert p['vencedor'] in ('verde', 'vermelho', 'azul', 'draw'), p['vencedor']
               for q in p['quadros']:
