@@ -46,3 +46,44 @@ jobs:
 
       - name: regressão dos testes de significância
         run: ~/godot/godot --headless --path simulator --script res://tests/test_stats.gd
+
+      # O site de demonstração desenha o que esta ferramenta grava. Se ela
+      # quebrar, o site passa a mostrar dados velhos sem avisar ninguém —
+      # então duas partidas rodam a cada push, e o JSON é conferido.
+      - name: exportar partidas para o site
+        run: |
+          ~/godot/godot --headless --path simulator \
+            --script res://tools/replay_dump.gd -- partidas=2 saida=/tmp/replays.json
+
+      - name: conferir o JSON exportado
+        run: |
+          python3 - <<'PY'
+          import json, sys
+
+          d = json.load(open('/tmp/replays.json'))
+          assert d['escalacao'] == ['art3miz', 'heuristica', 'reativa'], d['escalacao']
+          assert len(d['partidas']) == 2, len(d['partidas'])
+
+          for p in d['partidas']:
+              mapa = p['mapa']
+              assert len(mapa['celulas']) == mapa['altura'], 'altura do mapa'
+              assert all(len(l) == mapa['largura'] for l in mapa['celulas']), 'largura do mapa'
+              celulas = ''.join(mapa['celulas'])
+              assert set(celulas) <= set('.#lH'), 'celula desconhecida'
+              # Erro de script no GDScript nao aborta a execucao: um grid que
+              # nasceu vazio produz um mapa todo "." e uma partida que parece
+              # ter rodado. O gerador sempre poe paredes e cobertura.
+              assert '#' in celulas, 'mapa sem parede -- grid vazio?'
+              assert 'l' in celulas or 'H' in celulas, 'mapa sem cobertura'
+              assert p['quadros'], 'partida sem quadros'
+              assert p['vencedor'] in ('verde', 'vermelho', 'azul', 'draw'), p['vencedor']
+              for q in p['quadros']:
+                  assert len(q['agentes']) == 3, 'quadro sem os tres agentes'
+                  for a in q['agentes']:
+                      assert 0 <= a['x'] < mapa['largura'], 'agente fora do mapa'
+                      assert 0 <= a['y'] < mapa['altura'], 'agente fora do mapa'
+                      assert 0 <= a['hp'] <= 100, a['hp']
+
+          print('ok: %d partidas, %d quadros' % (
+              len(d['partidas']), sum(len(p['quadros']) for p in d['partidas'])))
+          PY
