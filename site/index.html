@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simulador Tático para Avaliação de IA</title>
+<meta name="description" content="Ambiente de simulação tática por turnos para medir a qualidade estratégica de agentes de IA — eficácia e custo computacional lado a lado. TCC, Ciência da Computação, IFSulDeMinas." />
+<link rel="stylesheet" href="estilo.css" />
+</head>
+<body>
+
+<header class="topo">
+  <div class="faixa">
+    <p class="olho" data-t="olho">TCC · Ciência da Computação · IFSulDeMinas</p>
+    <div class="idiomas">
+      <button type="button" class="idioma ativo" data-idioma="pt">PT</button>
+      <button type="button" class="idioma" data-idioma="en">EN</button>
+    </div>
+  </div>
+  <h1 data-t="titulo">Simulador Tático para Avaliação de IA</h1>
+  <p class="subtitulo" data-t="subtitulo">
+    Comparar IA em jogos costuma parar no WinRate. Isso esconde duas coisas: um agente pode
+    vencer por sorte do cenário, e pode vencer gastando um custo que o tornaria inviável.
+    Aqui eficácia e custo são medidos lado a lado.
+  </p>
+</header>
+
+<!-- ============ O REPLAY ============ -->
+<section class="secao replay-secao">
+  <div class="replay-cabeca">
+    <h2 data-t="replay.titulo">Uma partida, como ela aconteceu</h2>
+    <p class="secao-desc" data-t="replay.desc">
+      Nada aqui é reimplementado no navegador. O mapa, as posições e o HP de cada turno foram
+      gravados pelo simulador em Godot rodando headless, sobre as primeiras seeds do banco de
+      benchmark. A seed de cada partida está ao lado dos controles.
+    </p>
+  </div>
+
+  <div class="palco">
+    <canvas id="tabuleiro" width="640" height="640" aria-label="Mapa da partida"></canvas>
+
+    <aside class="painel">
+      <div class="agentes" id="agentes"></div>
+
+      <dl class="meta">
+        <div><dt data-t="replay.seed">seed</dt><dd id="metaSeed">—</dd></div>
+        <div><dt data-t="replay.turno">turno</dt><dd id="metaTurno">—</dd></div>
+        <div><dt data-t="replay.vencedor">vencedor</dt><dd id="metaVencedor">—</dd></div>
+      </dl>
+
+      <p class="evento" id="evento"></p>
+
+      <div class="controles">
+        <button type="button" id="btnTocar" data-t="replay.tocar">▶ tocar</button>
+        <button type="button" id="btnPasso" data-t="replay.passo">passo</button>
+        <button type="button" id="btnReiniciar" data-t="replay.reiniciar">reiniciar</button>
+      </div>
+
+      <label class="campo">
+        <span data-t="replay.partida">partida</span>
+        <select id="selPartida"></select>
+      </label>
+
+      <label class="campo">
+        <span data-t="replay.velocidade">velocidade</span>
+        <input type="range" id="velocidade" min="1" max="30" value="12" />
+      </label>
+
+      <input type="range" id="linhaTempo" min="0" max="0" value="0" class="linha-tempo"
+             aria-label="Linha do tempo" />
+
+      <ul class="legenda">
+        <li><i class="cel parede"></i><span data-t="legenda.parede">parede</span></li>
+        <li><i class="cel leve"></i><span data-t="legenda.leve">cobertura leve (−10)</span></li>
+        <li><i class="cel pesada"></i><span data-t="legenda.pesada">cobertura pesada (−20)</span></li>
+      </ul>
+    </aside>
+  </div>
+
+  <p class="aviso" id="semReplay" hidden data-t="replay.ausente">
+    Os replays são gerados na publicação. Para gerar localmente:
+    <code>godot --headless --path simulator --script res://tools/replay_dump.gd</code>
+  </p>
+</section>
+
+<!-- ============ AUTOCONFRONTO ============ -->
+<section class="secao">
+  <h2 data-t="auto.titulo">O preço do desempenho</h2>
+  <p class="secao-desc" data-t="auto.desc">
+    Três instâncias do mesmo modelo por partida. Em condições simétricas a taxa de vitória
+    converge para cerca de 1/3 em qualquer modelo que funcione — o que a comparação revela é
+    quanto cada um gasta para chegar lá, e se consegue decidir a partida antes do limite de
+    turnos.
+  </p>
+  <div class="rolagem"><table id="tabelaAuto"></table></div>
+  <p class="nota" data-t="auto.nota">
+    Custo é o número de operações de avaliação que a IA gasta por partida para decidir —
+    medido dentro do turno de decisão, não na execução da ação.
+  </p>
+</section>
+
+<!-- ============ CONFRONTO DIRETO ============ -->
+<section class="secao">
+  <h2 data-t="direto.titulo">E quando eles se enfrentam</h2>
+  <p class="secao-desc" data-t="direto.desc">
+    O modelo proposto contra os dois baselines de custo pleno, na mesma partida.
+  </p>
+  <div class="rolagem"><table id="tabelaDireto"></table></div>
+  <div class="destaque" data-t-html="direto.honesto">
+    <strong>O resultado desfavorável fica aqui, não numa nota de rodapé.</strong>
+    Em competição direta o Art3miz 0.1 vence <em>menos</em> — 0,225 contra ~0,33 dos dois
+    baselines — ainda que mantendo o menor custo entre os modelos analíticos. Um modelo que
+    domina o autoconfronto e perde o confronto direto é um resultado sobre a métrica tanto
+    quanto sobre o modelo.
+  </div>
+</section>
+
+<!-- ============ SIGNIFICÂNCIA ============ -->
+<section class="secao">
+  <h2 data-t="sig.titulo">O que sobrevive a um teste formal</h2>
+  <p class="secao-desc" data-t="sig.desc">
+    Toda afirmação comparativa foi submetida a teste. Dois resultados obrigaram a revisar o que
+    os dados brutos sugeriam.
+  </p>
+  <div class="rolagem"><table id="tabelaSig"></table></div>
+  <div class="destaque" data-t-html="sig.gradiente">
+    <strong>O “gradiente de inteligência” não se sustenta.</strong>
+    A diferença entre heurística (0,339) e reativa (0,330) é compatível com flutuação amostral
+    (p = 0,757). Não há evidência de que a avaliação multicritério produza mais vitórias que as
+    regras simples — apenas de que custa significativamente mais. É um resultado desfavorável à
+    sofisticação analítica, e está reportado como tal.
+  </div>
+</section>
+
+<!-- ============ NEUTRALIDADE ============ -->
+<section class="secao">
+  <h2 data-t="neutro.titulo">O ambiente não favorece ninguém</h2>
+  <p class="secao-desc" data-t="neutro.desc">
+    Antes de comparar modelos é preciso mostrar que a posição na mesa não decide a partida.
+    Três instâncias idênticas, mil partidas, rotação de iniciativa: as taxas de vitória ficam
+    dentro da flutuação esperada para N = 1000.
+  </p>
+  <div id="neutralidade" class="neutro"></div>
+</section>
+
+<!-- ============ REPRODUZIR ============ -->
+<section class="secao">
+  <h2 data-t="repro.titulo">Refazer qualquer número desta página</h2>
+  <p class="secao-desc" data-t="repro.desc">
+    Os mapas são gerados por seed, o combate é determinístico e os bancos de seeds estão
+    versionados. Nenhum valor acima foi digitado à mão: todos saem dos CSVs em
+    <code>data/runs/</code>.
+  </p>
+<pre><code>git clone https://github.com/madeiragab/tcc-simulador-ia
+cd tcc-simulador-ia
+
+# refazer um lote de benchmark
+godot --headless --path simulator -- batch 1000 \
+    verde=art3miz vermelho=heuristica azul=reativa
+
+# reagregar os números desta página
+python3 site/gerar_dados.py
+
+# regravar os replays
+godot --headless --path simulator --script res://tools/replay_dump.gd</code></pre>
+</section>
+
+<footer class="rodape">
+  <p>
+    <a href="https://github.com/madeiragab/tcc-simulador-ia">repositório</a> ·
+    <a href="https://github.com/madeiragab/tcc-simulador-ia/tree/main/docs">documentação</a> ·
+    <a href="https://github.com/madeiragab/tcc-simulador-ia/blob/main/docs/resultados_finais.md" data-t="rodape.resultados">resultados finais</a> ·
+    <a href="https://github.com/madeiragab/tcc-simulador-ia/blob/main/docs/analise_estatistica.md" data-t="rodape.estatistica">análise estatística</a>
+  </p>
+  <p class="fino">
+    Gabriel Madeira · <span data-t="rodape.curso">Ciência da Computação, IFSulDeMinas — Campus Muzambinho</span> ·
+    <span id="carimbo"></span>
+  </p>
+</footer>
+
+<script src="textos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
