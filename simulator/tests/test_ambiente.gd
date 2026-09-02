@@ -22,6 +22,15 @@ const AgentScript = preload("res://agents/agent.gd")
 # Seeds do banco oficial de benchmark (experiments/seeds_benchmark.txt).
 const SEEDS = [438557537, 1864560048, 990947591, 980411883, 1364875354, 1247406621]
 
+# Quantas verificacoes esta sui­te faz quando roda inteira.
+#
+# Sem este numero a sui­te mente. Erro de script no GDScript nao aborta o
+# processo: uma chamada invalida no meio de uma funcao interrompe aquela
+# funcao, o restante das verificacoes nunca acontece, e o rodape imprime
+# "todas passaram" sobre um punhado delas -- com o CI verde. Aconteceu aqui,
+# 20 de 75. O denominador anda junto do numerador.
+const VERIFICACOES_ESPERADAS = 75
+
 var falhas := 0
 var total := 0
 
@@ -46,7 +55,11 @@ func _initialize() -> void:
 	criados.clear()
 
 	print("")
-	if falhas == 0:
+	if total != VERIFICACOES_ESPERADAS:
+		print("ESPERADAS %d verificações, %d aconteceram — alguma função parou no meio"
+			% [VERIFICACOES_ESPERADAS, total])
+		quit(1)
+	elif falhas == 0:
 		print("%d verificações, todas passaram" % total)
 		quit(0)
 	else:
@@ -85,9 +98,9 @@ func novo_grid() -> Object:
 
 func gerar(seed_value: int) -> Array:
 	var grid = novo_grid()
-	var gerador = GeradorScript.new()
-	var spawns = gerador.generate(grid, seed_value)
-	gerador.free()
+	# O gerador e RefCounted: some sozinho quando a referencia sai de escopo.
+	# Chamar free() nele e erro -- e o erro aborta esta funcao no meio.
+	var spawns = GeradorScript.new().generate(grid, seed_value)
 	return [grid, spawns]
 
 
