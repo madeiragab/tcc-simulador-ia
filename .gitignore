@@ -66,3 +66,4 @@ experiments/results/*
 
 # Godot editor cache
 simulator/.godot/
+site/dados/replays.json
