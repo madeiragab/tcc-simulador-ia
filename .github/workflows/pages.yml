@@ -1,0 +1,97 @@
+name: site
+
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', 'data/runs/**', 'simulator/**', '.github/workflows/pages.yml']
+  pull_request:
+    paths: ['site/**', 'data/runs/**', 'simulator/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  GODOT_VERSION: 4.7.1-stable
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # Os agregados saem dos mesmos CSVs que a documentação lê. Se um lote
+      # sumir de data/runs/, o script falha aqui em vez de a página publicar
+      # um número velho.
+      - name: agregar os lotes oficiais
+        run: python3 site/gerar_dados.py
+
+      - name: cache do Godot headless
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: baixar o Godot headless
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot
+          curl -sSfL -o /tmp/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot
+          mv ~/godot/Godot_v${GODOT_VERSION}_linux.x86_64 ~/godot/godot
+          chmod +x ~/godot/godot
+
+      - name: importar os recursos
+        run: ~/godot/godot --headless --path simulator --import || true
+
+      # As partidas do site são gravadas aqui, pelo simulador de verdade, a
+      # cada publicação. Nada de replay commitado que envelhece em silêncio.
+      - name: gravar as partidas do replay
+        run: |
+          ~/godot/godot --headless --path simulator \
+            --script res://tools/replay_dump.gd -- partidas=6
+
+      - name: conferir o que vai ao ar
+        run: |
+          python3 - <<'PY'
+          import json
+
+          replays = json.load(open('site/dados/replays.json'))
+          assert len(replays['partidas']) == 6, len(replays['partidas'])
+          for p in replays['partidas']:
+              celulas = ''.join(p['mapa']['celulas'])
+              assert '#' in celulas, 'mapa sem parede -- grid vazio?'
+              assert p['quadros'], 'partida sem quadros'
+
+          resultados = json.load(open('site/dados/resultados.json'))
+          assert len(resultados['lotes']) == 7, len(resultados['lotes'])
+          assert len(resultados['autoconfronto']) == 4
+          print('ok: %d partidas, %d lotes' % (
+              len(replays['partidas']), len(resultados['lotes'])))
+          PY
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  publicar:
+    # Só a main publica. Em pull request o job acima roda como conferência.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
