@@ -25,6 +25,12 @@ const SEEDS = [438557537, 1864560048, 990947591, 980411883, 1364875354, 12474066
 var falhas := 0
 var total := 0
 
+# Grid e gerador sao Nodes criados fora da arvore: ninguem os libera por nos.
+# Sem esta lista o Godot fecha reclamando de instancias vazadas, e um aviso
+# ruidoso no fim do log e como um teste vermelho que todo mundo aprende a
+# ignorar.
+var criados := []
+
 
 func _initialize() -> void:
 	testar_determinismo()
@@ -34,6 +40,10 @@ func _initialize() -> void:
 	testar_linha_de_visada()
 	testar_cobertura_direcional()
 	testar_tiro_em_linha_reta()
+
+	for objeto in criados:
+		objeto.free()
+	criados.clear()
 
 	print("")
 	if falhas == 0:
@@ -69,12 +79,15 @@ func igual_int(nome: String, obtido: int, esperado: int) -> void:
 func novo_grid() -> Object:
 	var grid = GridScript.new()
 	grid.create_grid()
+	criados.append(grid)
 	return grid
 
 
 func gerar(seed_value: int) -> Array:
 	var grid = novo_grid()
-	var spawns = GeradorScript.new().generate(grid, seed_value)
+	var gerador = GeradorScript.new()
+	var spawns = gerador.generate(grid, seed_value)
+	gerador.free()
 	return [grid, spawns]
 
 
