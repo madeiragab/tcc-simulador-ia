@@ -47,6 +47,9 @@ jobs:
       - name: regressão dos testes de significância
         run: ~/godot/godot --headless --path simulator --script res://tests/test_stats.gd
 
+      - name: regressão do ambiente
+        run: ~/godot/godot --headless --path simulator --script res://tests/test_ambiente.gd
+
       # O site de demonstração desenha o que esta ferramenta grava. Se ela
       # quebrar, o site passa a mostrar dados velhos sem avisar ninguém —
       # então duas partidas rodam a cada push, e o JSON é conferido.
