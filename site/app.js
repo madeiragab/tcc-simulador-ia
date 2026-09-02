@@ -215,6 +215,9 @@ function desenhar() {
   }
 
   const quadro = partida.quadros[estado.quadro];
+  desenharRastro(quadro, lado);
+  desenharTiros(quadro, lado);
+
   quadro.agentes.forEach((agente, i) => {
     if (!agente.vivo) return;
     const cx = (agente.x + 0.5) * lado;
@@ -247,6 +250,68 @@ function desenhar() {
   });
 
   renderPainel(partida, quadro);
+}
+
+/* De onde o agente da vez saiu ate onde parou. Sem isso o unico sinal de
+   movimento e um circulo teleportando entre dois quadros. */
+function desenharRastro(quadro, lado) {
+  const time = quadro.vez;
+  if (time < 0 || !quadro.saiu_de) return;
+  const [ox, oy] = quadro.saiu_de;
+  if (ox < 0) return;
+  const agente = quadro.agentes[time];
+  if (ox === agente.x && oy === agente.y) return;
+
+  ctx.save();
+  ctx.setLineDash([3, 3]);
+  ctx.strokeStyle = CORES[time];
+  ctx.globalAlpha = 0.5;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo((ox + 0.5) * lado, (oy + 0.5) * lado);
+  ctx.lineTo((agente.x + 0.5) * lado, (agente.y + 0.5) * lado);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/* O tiro que acertou neste turno: linha do atirador ao alvo, mais um alvo
+   marcado no ponto de impacto. So chega aqui tiro que causou dano. */
+function desenharTiros(quadro, lado) {
+  for (const tiro of quadro.tiros || []) {
+    const de = { x: (tiro.de[0] + 0.5) * lado, y: (tiro.de[1] + 0.5) * lado };
+    const para = { x: (tiro.para[0] + 0.5) * lado, y: (tiro.para[1] + 0.5) * lado };
+
+    ctx.save();
+    ctx.strokeStyle = CORES[tiro.time];
+    ctx.lineCap = 'round';
+
+    ctx.globalAlpha = 0.22;
+    ctx.lineWidth = 7;
+    ctx.beginPath();
+    ctx.moveTo(de.x, de.y);
+    ctx.lineTo(para.x, para.y);
+    ctx.stroke();
+
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(de.x, de.y);
+    ctx.lineTo(para.x, para.y);
+    ctx.stroke();
+
+    const r = lado * 0.55;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(para.x, para.y, r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(para.x - r * 1.4, para.y);
+    ctx.lineTo(para.x + r * 1.4, para.y);
+    ctx.moveTo(para.x, para.y - r * 1.4);
+    ctx.lineTo(para.x, para.y + r * 1.4);
+    ctx.stroke();
+    ctx.restore();
+  }
 }
 
 function renderPainel(partida, quadro) {
@@ -282,7 +347,16 @@ function passo(delta) {
 
 function laco(agora) {
   if (!estado.tocando) return;
-  const intervalo = 1000 / Number(document.getElementById('velocidade').value);
+
+  // O controle e em turnos por segundo, nao em quadros por segundo: e o
+  // turno que a pessoa esta tentando acompanhar.
+  let intervalo = 1000 / Number(document.getElementById('velocidade').value);
+
+  // Turno com tiro fica mais tempo na tela. Sem isso o unico quadro que
+  // explica a partida e o que passa mais rapido.
+  const atual = replays.partidas[estado.partida].quadros[estado.quadro];
+  if (atual && atual.tiros && atual.tiros.length) intervalo *= 2.2;
+
   if (agora - estado.ultimo >= intervalo) {
     estado.ultimo = agora;
     passo(1);
