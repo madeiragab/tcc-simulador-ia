@@ -62,14 +62,16 @@
       </label>
 
       <label class="campo">
-        <span data-t="replay.velocidade">velocidade</span>
-        <input type="range" id="velocidade" min="1" max="30" value="12" />
+        <span data-t="replay.velocidade">turnos por segundo</span>
+        <input type="range" id="velocidade" min="1" max="8" value="2" step="0.5" />
       </label>
 
       <input type="range" id="linhaTempo" min="0" max="0" value="0" class="linha-tempo"
              aria-label="Linha do tempo" />
 
       <ul class="legenda">
+        <li><i class="cel tiro"></i><span data-t="legenda.tiro">tiro que acertou</span></li>
+        <li><i class="cel rastro"></i><span data-t="legenda.rastro">movimento do turno</span></li>
         <li><i class="cel parede"></i><span data-t="legenda.parede">parede</span></li>
         <li><i class="cel leve"></i><span data-t="legenda.leve">cobertura leve (−10)</span></li>
         <li><i class="cel pesada"></i><span data-t="legenda.pesada">cobertura pesada (−20)</span></li>

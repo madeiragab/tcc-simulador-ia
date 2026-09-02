@@ -99,14 +99,23 @@ func rodar(seed_value, indice, ias):
 	root.add_child(sim)
 	sim.setup(seed_value, indice % 3, ias)
 
-	var quadros = [instantaneo(sim, 0, -1, "inicio")]
+	var quadros = [instantaneo(sim, 0, -1, "", Vector2i(-1, -1))]
 	var resultado = sim.check_victory()
 	while resultado == "":
 		var agente = sim.turn_system.get_current_agent()
 		var time_da_vez = agente.team_id if agente != null else -1
+		var origem = Vector2i(agente.x, agente.y) if agente != null else Vector2i(-1, -1)
+
+		# A simulação não limpa nenhum dos dois: sem zerar aqui, todo quadro
+		# herdaria o último tiro e a última frase de combate, e o site
+		# desenharia um tiro por turno em uma partida que teve poucos.
+		sim.recent_shots.clear()
+		sim.last_event = ""
+
 		sim.run_turn()
 		resultado = sim.check_victory()
-		quadros.append(instantaneo(sim, sim.turn_system.turn_count, time_da_vez, sim.last_event))
+		quadros.append(instantaneo(
+			sim, sim.turn_system.turn_count, time_da_vez, sim.last_event, origem))
 
 	for p in range(ias.size()):
 		var venceu = resultado == SimulationScript.PLAYER_NAMES[p]
@@ -127,7 +136,7 @@ func rodar(seed_value, indice, ias):
 
 # Estado dos três agentes no fim de um turno. O site interpola nada: cada
 # quadro é uma posição que a simulação realmente ocupou.
-func instantaneo(sim, turno, time_da_vez, evento):
+func instantaneo(sim, turno, time_da_vez, evento, origem):
 	var agentes = []
 	for agente in sim.agents:
 		agentes.append({
@@ -136,10 +145,24 @@ func instantaneo(sim, turno, time_da_vez, evento):
 			"hp": agente.hp,
 			"vivo": agente.is_alive,
 		})
+
+	# Os tiros deste turno, como a view do simulador os desenha: origem,
+	# alvo e de quem partiu. Só entram os que causaram dano -- tiro sem
+	# linha de visada ou fora da linha reta nem chega a virar evento.
+	var tiros = []
+	for tiro in sim.recent_shots:
+		tiros.append({
+			"de": [tiro["from"].x, tiro["from"].y],
+			"para": [tiro["to"].x, tiro["to"].y],
+			"time": tiro["team_id"],
+		})
+
 	return {
 		"turno": turno,
 		"vez": time_da_vez,
 		"evento": evento,
+		"saiu_de": [origem.x, origem.y],
+		"tiros": tiros,
 		"agentes": agentes,
 	}
 
