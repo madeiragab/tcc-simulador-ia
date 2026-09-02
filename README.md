@@ -4,6 +4,10 @@
 
 [![ci](https://github.com/madeiragab/tcc-simulador-ia/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/madeiragab/tcc-simulador-ia/actions/workflows/ci.yml)
 
+[![demo](https://img.shields.io/badge/demo-assista%20uma%20partida-f0a830?style=for-the-badge&logo=godotengine&logoColor=white)](https://madeiragab.github.io/tcc-simulador-ia/)
+
+> Uma partida real rodando no navegador, e os numeros do benchmark ao lado.
+
 Ambiente de simulação tática por turnos construído para **medir a qualidade
 estratégica de agentes de IA** — não apenas se ganham, mas quanto processamento
 gastam para ganhar.
