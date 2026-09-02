@@ -4,6 +4,7 @@
    Nenhum número é calculado aqui: a página desenha o que os arquivos trazem. */
 
 const CORES = ['#4ade80', '#f87171', '#60a5fa'];
+const NOMES_JOGADOR = ['verde', 'vermelho', 'azul'];
 
 const NOMES_MODELO = {
   pt: { 'art3miz_0.1': 'Art3miz 0.1', heuristica: 'Heurística', reativa: 'Reativa', aleatoria: 'Aleatória' },
@@ -18,6 +19,12 @@ let replays = null;
 
 function t(chave) {
   return (TEXTOS[idioma] && TEXTOS[idioma][chave]) || TEXTOS.pt[chave] || chave;
+}
+
+/* verde/vermelho/azul sao os nomes dos jogadores no simulador, e aparecem
+   crus no vencedor e no log de combate. Em ingles eles tambem traduzem. */
+function nomeJogador(bruto) {
+  return t(`jogador.${bruto}`) || bruto;
 }
 
 function nomeModelo(bruto) {
@@ -314,6 +321,34 @@ function desenharTiros(quadro, lado) {
   }
 }
 
+/* A frase de combate do turno, montada a partir da perda de HP entre este
+   quadro e o anterior. O simulador tambem escreve uma, mas em portugues e em
+   prosa: reaproveitar aquela deixaria metade da frase sem traduzir na versao
+   em ingles, e reescreve-la no navegador seria adivinhar. O dano medido esta
+   nos proprios dados. */
+function frase(partida, indiceQuadro) {
+  if (indiceQuadro === 0) return '';
+  const quadro = partida.quadros[indiceQuadro];
+  const antes = partida.quadros[indiceQuadro - 1];
+  const partes = [];
+
+  quadro.agentes.forEach((agente, i) => {
+    const dano = antes.agentes[i].hp - agente.hp;
+    if (dano <= 0) return;
+    const alvo = nomeJogador(NOMES_JOGADOR[i]);
+    if (agente.hp === 0) {
+      const autor = quadro.vez >= 0 ? nomeJogador(NOMES_JOGADOR[quadro.vez]) : '';
+      partes.push(t('evento.eliminado')
+        .replace('{alvo}', alvo).replace('{dano}', dano).replace('{autor}', autor));
+    } else {
+      partes.push(t('evento.dano')
+        .replace('{alvo}', alvo).replace('{dano}', dano).replace('{hp}', agente.hp));
+    }
+  });
+
+  return partes.join(' · ');
+}
+
 function renderPainel(partida, quadro) {
   document.getElementById('agentes').innerHTML = quadro.agentes
     .map((agente, i) => `
@@ -331,10 +366,10 @@ function renderPainel(partida, quadro) {
 
   const fim = estado.quadro === partida.quadros.length - 1;
   document.getElementById('metaVencedor').textContent = fim
-    ? (partida.vencedor === 'draw' ? t('replay.empate') : partida.vencedor)
+    ? (partida.vencedor === 'draw' ? t('replay.empate') : nomeJogador(partida.vencedor))
     : t('replay.emCurso');
 
-  document.getElementById('evento').textContent = quadro.evento || '';
+  document.getElementById('evento').textContent = frase(partida, estado.quadro);
   document.getElementById('linhaTempo').value = estado.quadro;
 }
 
@@ -387,11 +422,21 @@ function carregarPartida(indice) {
   desenhar();
 }
 
+function rotularPartidas() {
+  const seletor = document.getElementById('selPartida');
+  const escolhido = seletor.value;
+  seletor.innerHTML = replays.partidas
+    .map((p, i) => {
+      const desfecho = p.vencedor === 'draw' ? t('replay.empate') : nomeJogador(p.vencedor);
+      return `<option value="${i}">#${i + 1} · seed ${p.seed} · ${desfecho} · ${p.turnos}t</option>`;
+    })
+    .join('');
+  seletor.value = escolhido || String(estado.partida);
+}
+
 function montarReplay() {
   const seletor = document.getElementById('selPartida');
-  seletor.innerHTML = replays.partidas
-    .map((p, i) => `<option value="${i}">#${i + 1} · seed ${p.seed}</option>`)
-    .join('');
+  rotularPartidas();
   seletor.addEventListener('change', () => carregarPartida(Number(seletor.value)));
 
   document.getElementById('btnTocar').addEventListener('click', () => {
@@ -419,6 +464,7 @@ function montarReplay() {
 /* ============ arranque ============ */
 
 function renderTudo() {
+  if (replays && replays.partidas.length) rotularPartidas();
   if (resultados) {
     renderAutoconfronto();
     renderConfrontoDireto();
