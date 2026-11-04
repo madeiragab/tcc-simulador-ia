@@ -5,6 +5,11 @@ Gabriel Madeira · Orientador: Ricardo Martins · Coorientador: Diego Penha
 
 > **Identidade visual**: manter o template das bancas anteriores.
 
+> **Atenção**: este roteiro contém números imprecisos (dados sem sensor de
+> proximidade, p-valor de outra execução, decomposição de custo não
+> reproduzida). O que foi de fato apresentado e as correções estão em
+> `banca_5_registro.md`.
+
 > **Mensagem central**: os modelos de referência foram caracterizados
 > experimentalmente. Existe um gradiente de inteligência — e ele **custa caro**.
 > A medição revela exatamente *onde* o custo mora, e essa descoberta orienta o
