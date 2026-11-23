@@ -158,7 +158,10 @@ Análise completa: [resultados_finais.md](docs/resultados_finais.md).
 
 ## Como executar
 
-Requer [Godot 4](https://godotengine.org/).
+> 📘 **Passo a passo completo**, do que instalar até a reprodução de cada tabela da
+> monografia: **[COMO_RODAR.md](COMO_RODAR.md)**.
+
+Requer [Godot 4.7.1](https://github.com/godotengine/godot/releases/tag/4.7.1-stable).
 
 Modo visual (assistir partidas em loop):
 
@@ -174,7 +177,7 @@ godot --headless --path simulator -- batch 1000 benchmark verde=art3miz vermelho
 
 Argumentos: `batch <N> <banco>` onde `banco` é `benchmark` (1000 seeds) ou
 `tuning` (200 seeds), seguido da escalação `<cor>=<modelo>` para `verde`,
-`vermelho` e `azul`. Modelos: `aleatoria`, `reativa`, `heuristica`, `art3miz`, `mcts`.
+`vermelho` e `azul`. Modelos: `aleatoria`, `reativa`, `reativa_gulosa`, `heuristica`, `art3miz`, `mcts`.
 Opcionais: `turnos` (log turno a turno), `mapa=<n>` (tamanho do grid),
 `lambda=<v>` e `budget=<n>` (calibração
 do modelo híbrido).
