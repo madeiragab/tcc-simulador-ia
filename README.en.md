@@ -161,7 +161,10 @@ random weightings — [analysis](docs/en/weight_sensitivity.md)).
 
 ## Running it
 
-Requires [Godot 4](https://godotengine.org/).
+> 📘 **Full step-by-step guide** (in Portuguese), from installation to reproducing
+> every table of the thesis: **[COMO_RODAR.md](COMO_RODAR.md)**.
+
+Requires [Godot 4.7.1](https://github.com/godotengine/godot/releases/tag/4.7.1-stable).
 
 Visual mode (watch matches in a loop):
 

@@ -27,6 +27,7 @@ const PLAYER_AI_SCRIPTS = [
 const AI_BY_NAME = {
 	"aleatoria": preload("res://ai/ai_random.gd"),
 	"reativa": preload("res://ai/ai_reactive.gd"),
+	"reativa_gulosa": preload("res://ai/ai_reactive_greedy.gd"),
 	"heuristica": preload("res://ai/ai_heuristic.gd"),
 	"art3miz": preload("res://ai/ai_art3miz.gd"),
 	"mcts": preload("res://ai/ai_mcts.gd"),
@@ -151,10 +152,16 @@ func log_turn(agent, action, protegido):
 		"y": agent.y,
 		"protegido": protegido,
 		"inimigos_visiveis": visiveis,
+		"regime": ais[agent.team_id].get("regime") if ais[agent.team_id].get("regime") != null else "",
+		"dano_tiro": last_attack,
 	})
 
 # Aplica a ação sugerida pela IA: primeiro o movimento, depois o ataque.
+# Dano do disparo do turno: -1 = não tentou; 0 = tentou e não acertou.
+var last_attack = -1
+
 func apply_action(agent, action):
+	last_attack = -1
 	if action == null:
 		return
 
@@ -171,6 +178,7 @@ func apply_action(agent, action):
 	var target = action.get("attack_target")
 	if target != null:
 		var damage = agent.attack(target)
+		last_attack = damage
 		if damage > 0:
 			recent_shots.append({
 				"from": Vector2i(agent.x, agent.y),
@@ -202,6 +210,8 @@ static func model_name(player_id):
 	match file:
 		"ai_reactive.gd":
 			return "reativa"
+		"ai_reactive_greedy.gd":
+			return "reativa_gulosa"
 		"ai_random.gd":
 			return "aleatoria"
 		"ai_heuristic.gd":
