@@ -35,6 +35,21 @@ static var lambda_atual = LAMBDA_PADRAO
 const BUDGET_PADRAO = 0
 static var budget_atual = BUDGET_PADRAO
 
+# Variantes da revisão pós-banca (desligadas por padrão, para que o
+# benchmark oficial continue reprodutível bit a bit):
+#   fix_alvo=1       — no regime econômico, o alvo do ataque é escolhido
+#                      a partir da posição de CHEGADA (antes era a de
+#                      partida, e o disparo podia perder o alinhamento).
+#   gatilho=exposicao — o valor em jogo soma a fração de inimigos à vista
+#                      que têm linha de tiro para a posição atual, de modo
+#                      que entrar no alcance de tiro dispara a deliberação.
+static var fix_alvo = false
+static var gatilho_exposicao = false
+#   pesos=padrao     — usa os pesos-padrão da heurística (definidos no
+#                      banco de calibração) em vez dos herdados do lote
+#                      misto, eliminando o contato com o banco de avaliação.
+static var pesos_padrao = false
+
 # Pesos iniciais aprendidos no confronto misto de 1000 partidas.
 const W_VIDA_INICIAL = 0.092
 const W_COBERTURA_INICIAL = 0.307
@@ -43,7 +58,12 @@ const W_RISCO_INICIAL = -0.228
 
 func _init():
 	weights = [W_VIDA_INICIAL, W_COBERTURA_INICIAL, W_PROXIMIDADE_INICIAL, W_RISCO_INICIAL]
+	if pesos_padrao:
+		weights = [W_VIDA, W_COBERTURA, W_PROXIMIDADE, W_RISCO]
 	best_weights = weights.duplicate()
+
+# Regime do último turno (só para o registro turno a turno; não afeta a decisão).
+var regime = ""
 
 func decide(agent, sim):
 	visited[Vector2i(agent.x, agent.y)] = true
@@ -58,12 +78,14 @@ func decide(agent, sim):
 	# (equivale à heurística pura); com λ alto, nunca (equivale à
 	# reativa). O parâmetro percorre todo o espectro.
 	if not enemies.is_empty():
-		var stakes = tactical_stakes(agent, enemies)
+		var stakes = tactical_stakes(agent, enemies, sim)
 		var estimated_cost = candidate_estimate(enemies)
 		if stakes - lambda_atual * estimated_cost > 0.0:
+			regime = "deliberou"
 			return super.decide(agent, sim)
 
 	# Regime econômico: deslocamento sem análise fina.
+	regime = "economico_sem_contato" if enemies.is_empty() else "economico_contato"
 	var goal = pursuit_position(agent, sim) if enemies.is_empty() else Vector2i(closest_of(agent, enemies).x, closest_of(agent, enemies).y)
 	if goal == null:
 		return {"move_to": null, "attack_target": null}
@@ -79,26 +101,46 @@ func decide(agent, sim):
 	# passo guloso basta. (Estender a busca ao indício foi testado e
 	# custou 22% mais operações sem ganho de eficácia.)
 	if not last_known.is_empty():
-		return {"move_to": step_towards(agent, sim, goal), "attack_target": attack}
+		var dest = step_towards(agent, sim, goal)
+		return {"move_to": dest, "attack_target": attack_from_arrival(agent, sim, dest, enemies, attack)}
 
 	var path = cheap_path_towards(agent, sim, goal)
 	# Recuo: o passo guloso trava diante de obstáculos que a busca
 	# completa contornaria. Só então se paga pela busca — o custo alto
 	# fica reservado às situações em que o caminho barato falha.
 	if path.size() < 3:
-		return {"move_to": step_towards(agent, sim, goal), "attack_target": attack}
-	return {"move_path": path, "attack_target": attack}
+		var dest2 = step_towards(agent, sim, goal)
+		return {"move_to": dest2, "attack_target": attack_from_arrival(agent, sim, dest2, enemies, attack)}
+	return {"move_path": path, "attack_target": attack_from_arrival(agent, sim, path[path.size() - 1], enemies, attack)}
+
+# Com fix_alvo desligado, mantém o comportamento original (alvo escolhido
+# na posição de partida). Ligado, escolhe o alvo a partir da posição de
+# chegada, onde o disparo é de fato validado.
+func attack_from_arrival(agent, sim, dest, enemies, original):
+	if not fix_alvo or enemies.is_empty():
+		return original
+	var cell = dest if dest != null else Vector2i(agent.x, agent.y)
+	return best_attack_from(agent, sim, cell, enemies)
 
 # Valor estratégico em jogo no turno: cresce com o número de inimigos
 # à vista, com a proximidade do mais próximo e com a própria
 # vulnerabilidade — as situações em que decidir bem importa mais.
-func tactical_stakes(agent, enemies):
+func tactical_stakes(agent, enemies, sim = null):
 	var nearest = INF
 	for enemy in enemies:
 		nearest = minf(nearest, maxi(absi(enemy.x - agent.x), absi(enemy.y - agent.y)))
 	var proximidade = 1.0 / maxf(nearest, 1.0)
 	var vulnerabilidade = 1.0 - float(agent.hp) / agent.max_hp
-	return enemies.size() * (proximidade + vulnerabilidade)
+	var stakes = enemies.size() * (proximidade + vulnerabilidade)
+	if gatilho_exposicao and sim != null:
+		var expostos = 0
+		for enemy in enemies:
+			var dx = agent.x - enemy.x
+			var dy = agent.y - enemy.y
+			if maxi(absi(dx), absi(dy)) <= enemy.vision_range and agent.is_straight_line(dx, dy) 					and sim.grid.has_line_of_sight(enemy.x, enemy.y, agent.x, agent.y):
+				expostos += 1
+		stakes += float(expostos) / enemies.size()
+	return stakes
 
 # Custo estimado da avaliação completa: uma verificação de linha de
 # visão por inimigo, mais a ação, para cada célula candidata.

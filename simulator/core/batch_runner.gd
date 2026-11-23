@@ -17,7 +17,7 @@ const Metrics = preload("res://core/metrics.gd")
 const SimulationScript = preload("res://core/simulation.gd")
 
 const MATCH_HEADER = "id_simulacao,seed,jogador_inicial,jogador,modelo_ia,vencedor,venceu,pontos,turnos,dano_causado,dano_recebido,damage_ratio,cover_usage,custo_total,custo_los,custo_nodos,custo_acoes"
-const TURN_HEADER = "id_simulacao,seed,turno,jogador,acao,x,y,protegido,inimigos_visiveis"
+const TURN_HEADER = "id_simulacao,seed,turno,jogador,acao,x,y,protegido,inimigos_visiveis,regime,dano_tiro"
 const SUMMARY_HEADER = "jogador,modelo_ia,partidas,pontos_total,pontos_media,win_rate,damage_ratio_media,damage_ratio_dp,cover_usage_media,cover_usage_dp,turns_to_victory_media,efficiency,custo_medio,custo_dp,strategic_score"
 
 # bank: "benchmark" ou "tuning"; count: quantas seeds do banco rodar.
@@ -67,9 +67,10 @@ func run(bank, count, log_turns = false):
 			ais[p].learn(Metrics.match_points(venceu, result == "draw"))
 		if turn_csv != null:
 			for row in sim.turn_log:
-				turn_csv.store_line("%d,%d,%d,%s,%s,%d,%d,%d,%d" % [
+				turn_csv.store_line("%d,%d,%d,%s,%s,%d,%d,%d,%d,%s,%d" % [
 					i + 1, sim.map_seed, row["turno"], row["jogador"], row["acao"],
 					row["x"], row["y"], 1 if row["protegido"] else 0, row["inimigos_visiveis"],
+					row["regime"], row["dano_tiro"],
 				])
 
 		remove_child(sim)
@@ -196,6 +197,9 @@ func write_manifest(run_dir, bank, count, seeds, log_turns, duration):
 	var art3miz = preload("res://ai/ai_art3miz.gd")
 	file.store_line("art3miz_lambda: %.4f" % art3miz.lambda_atual)
 	file.store_line("art3miz_budget: %d operações de avaliação por turno (0 = sem poda)" % art3miz.budget_atual)
+	file.store_line("art3miz_fix_alvo: %s" % ("sim" if art3miz.fix_alvo else "nao"))
+	file.store_line("art3miz_gatilho_exposicao: %s" % ("sim" if art3miz.gatilho_exposicao else "nao"))
+	file.store_line("art3miz_pesos_padrao: %s" % ("sim" if art3miz.pesos_padrao else "nao"))
 	file.store_line("art3miz_pesos_iniciais: vida=%.3f cobertura=%.3f proximidade=%.3f risco=%.3f (aprendidos no confronto misto)" % [
 		art3miz.W_VIDA_INICIAL, art3miz.W_COBERTURA_INICIAL, art3miz.W_PROXIMIDADE_INICIAL, art3miz.W_RISCO_INICIAL,
 	])

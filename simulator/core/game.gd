@@ -43,6 +43,15 @@ func _ready():
 			elif extra.begins_with("mapa="):
 				# Generalização: tamanho do grid (mapa=25, mapa=60)
 				preload("res://map/grid.gd").default_size = int(extra.split("=")[1])
+			elif extra.begins_with("fix_alvo="):
+				# Revisão pós-banca: alvo escolhido na posição de chegada
+				preload("res://ai/ai_art3miz.gd").fix_alvo = extra.split("=")[1] == "1"
+			elif extra.begins_with("gatilho="):
+				# Revisão pós-banca: gatilho=exposicao
+				preload("res://ai/ai_art3miz.gd").gatilho_exposicao = extra.split("=")[1] == "exposicao"
+			elif extra.begins_with("pesos="):
+				# Revisão pós-banca: pesos=padrao
+				preload("res://ai/ai_art3miz.gd").pesos_padrao = extra.split("=")[1] == "padrao"
 			elif extra.begins_with("budget="):
 				# Orçamento de avaliação do híbrido (0 = sem poda)
 				preload("res://ai/ai_art3miz.gd").budget_atual = int(extra.split("=")[1])
