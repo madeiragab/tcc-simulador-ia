@@ -39,7 +39,7 @@ const TEXTOS = {
     'auto.nota': 'Custo é o número de operações de avaliação que a IA gasta por partida para decidir — medido dentro do turno de decisão, não na execução da ação.',
 
     'direto.titulo': 'E quando eles se enfrentam',
-    'direto.desc': 'O modelo proposto contra os dois baselines de custo pleno, na mesma partida.',
+    'direto.desc': 'O modelo proposto contra os dois baselines, na mesma partida.',
     'direto.honesto': '<strong>O resultado desfavorável fica aqui, não numa nota de rodapé.</strong> Em competição direta o Art3miz 0.1 vence <em>menos</em> — 0,225 contra ~0,33 dos dois baselines — ainda que mantendo o menor custo entre os modelos analíticos. Um modelo que domina o autoconfronto e perde o confronto direto é um resultado sobre a métrica tanto quanto sobre o modelo.',
 
     'sig.titulo': 'O que sobrevive a um teste formal',
@@ -128,7 +128,7 @@ const TEXTOS = {
     'auto.nota': 'Cost is the number of evaluation operations the AI spends per match to decide — measured inside the decision turn, not in carrying the action out.',
 
     'direto.titulo': 'And when they face each other',
-    'direto.desc': 'The proposed model against both full-cost baselines, in the same match.',
+    'direto.desc': 'The proposed model against both baselines, in the same match.',
     'direto.honesto': '<strong>The unfavourable result goes here, not in a footnote.</strong> In direct competition Art3miz 0.1 wins <em>less</em> — 0.225 against roughly 0.33 for both baselines — while still holding the lowest cost among the analytical models. A model that dominates self-play and loses head-to-head is a result about the metric as much as about the model.',
 
     'sig.titulo': 'What survives a formal test',

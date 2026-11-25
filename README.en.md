@@ -13,7 +13,7 @@ quality of AI agents** — not just whether they win, but how much computation
 they spend to win.
 
 > Undergraduate thesis — Computer Science, IFSulDeMinas.
-> Author: **Gabriel Madeira**.
+> Author: **Gabriel Madeira Lourenço Silva**.
 
 ## The problem
 
@@ -23,7 +23,7 @@ cost that would make it impractical in production.
 
 This work builds a **neutral, deterministic and reproducible** environment where
 effectiveness and cost are measured side by side, and uses it to investigate a
-**hybrid decision model** balancing the two.
+**metalevel decision model** that decides whether deliberating is worth it before deliberating.
 
 ## The environment
 
@@ -65,10 +65,10 @@ ActionScore = StrategicValue − λ × ComputationalCost
 ```
 
 **This formulation does not work in this domain, and why is one of the findings
-of this work.** Two measured reasons: the evaluation loop accounts for only 16%
-of the cost (84% is pathfinding, run every turn); and since evaluating any
-position costs roughly the same, the term becomes a constant added to every
-candidate — formally, `argmax[Value − λk] = argmax[Value]`. λ is inert.
+of this work.** Two measured reasons: action evaluation accounts for only 12% of
+the heuristic's cost (76% is pathfinding); and since evaluating any position
+costs roughly the same, the term becomes a constant added to every candidate —
+formally, `argmax[Value − λk] = argmax[Value]`. λ is inert.
 
 The reformulation applies the same trade-off one level up, to the decision about
 the decision procedure itself:
@@ -79,85 +79,102 @@ ValueAtStake − λ × EstimatedCost > 0   →   deliberate
 
 The agent estimates what is at stake (visible enemies, proximity, own
 vulnerability) and only pays for full positional evaluation when it is worth it.
-With λ = 0 it always deliberates (equivalent to the heuristic); with λ high,
-never (equivalent to reactive). Outside the deliberation regime it moves by
-greedy stepping (~4 operations instead of ~25 search nodes), falling back to full
-search only when hunting a known position.
+Outside the deliberation regime it moves by **greedy stepping** (3 to 6
+operations instead of ~25 search nodes). The model therefore has two sources of
+savings: the deliberation criterion (governed by λ) and the cheap movement
+(independent of λ). With λ = 0 it deliberates whenever an enemy is in sight but
+still moves greedily — it is not equivalent to the pure heuristic.
 
-**This is classical rational metareasoning** (Russell & Wefald, 1991) — and the
-theory *predicts* the negative result above: a computation only has value
-insofar as it changes the action the agent would take. See
+The framing is that of **rational metareasoning** (Russell & Wefald, 1991): a
+computation only has value insofar as it can change the chosen action. See
 [theoretical_foundation.md](docs/en/theoretical_foundation.md).
 
 ## Results
 
-**Over 14,000 matches** on the official seed bank, spanning self-play, direct
-confrontation, replication across three map scales, and calibration. Every
-comparative claim was subjected to **significance testing**
-([full analysis](docs/en/statistical_analysis.md)).
+**28,400 matches**: 11,000 in the official benchmark (self-play, direct
+confrontation, MCTS and three map scales) and 17,400 in complementary
+experiments (ablation, model variants, λ recalibration and re-runs with
+turn-by-turn logging). Every comparative claim was subjected to **significance
+testing** with Holm correction ([full analysis](docs/en/statistical_analysis.md)).
 
-### Self-play — overall performance
+### Self-play — three instances of the same model
 
 | Model | Win rate | Draws | Cost | **StrategicScore** |
 |---|---|---|---|---|
-| Random | 0.000 | 100% | 2323 | 0.145 |
-| Reactive | 0.312 | 6.5% | 437 | 0.473 |
+| Random | 0.000 | 100% | 2323 | 0.147 |
+| MCTS | 0.313 | 6.0% | 2301 | 0.435 |
 | Heuristic | 0.295 | 11.6% | 777 | 0.438 |
-| **Art3miz 0.1** | **0.314** | **5.7%** | **379** | **0.497** |
+| Reactive | 0.312 | 6.5% | 437 | 0.473 |
+| **Art3miz 0.1** | 0.314 | 5.7% | 379 | **0.497** |
 
-Art3miz 0.1 achieves **the highest StrategicScore in the study**, leading four of
-five dimensions: it wins more, uses more cover, decides matches faster (29 turns
-against 45 for the heuristic) and spends **51% less** than it. In efficiency —
-wins per thousand operations — it delivers 0.829 against 0.380: more than double.
+Among the five models, Art3miz 0.1 has the highest composite score and the
+lowest cost — **51% below the heuristic**. In self-play the win rate is fixed by
+symmetry (about one third), and the score separates models by cost, pace and use
+of terrain.
+
+### Ablation — where the savings come from
+
+| Model | Cost | StrategicScore |
+|---|---|---|
+| Heuristic | 777 | 0.438 |
+| Art3miz, λ = 0 (greedy stepping only) | 456 | 0.483 |
+| Art3miz 0.1, λ = 0.005 | 379 | 0.497 |
+| Reactive | 437 | 0.473 |
+| Greedy reactive (reactive + greedy stepping) | **150** | **0.505** |
+
+**About 81% of the savings come from greedy stepping, not from the deliberation
+criterion.** Applied to the Reactive AI, the same movement yields a score with no
+detectable difference from Art3miz 0.1's at less than half the cost.
 
 ### Direct confrontation — the honest counterpoint
 
 | Metric | Art3miz 0.1 | Heuristic | Reactive |
 |---|---|---|---|
 | Win rate | 0.225 | **0.339** | 0.330 |
-| Cost | **510** | 719 | 484 |
+| Cost | 510 | 719 | **484** |
 | StrategicScore | 0.426 | 0.467 | **0.472** |
 
-Against opponents paying the full price of analysis, **Art3miz 0.1 wins less**.
-The savings have a price: by skipping deliberation, the agent sometimes misses
-the position full evaluation would have found.
+When the three play the same match, **Art3miz 0.1 wins less** (p < 0.001) and its
+cost does not differ from the Reactive AI's. Fixing an aiming defect,
+deliberating on every contact turn (λ = 0) or changing the weights does not
+remove the disadvantage. The heuristic versus λ = 0 comparison points to the
+cheap movement as the likely origin; the exact mechanism was not identified.
 
-### The full spectrum — and the marginal value of computation
-
-With MCTS anchoring the expensive end, each gain can be priced:
+### The full spectrum — MCTS, heuristic and Art3miz in the same match
 
 | | MCTS | Heuristic | Art3miz 0.1 |
 |---|---|---|---|
 | Win rate | **0.379** | 0.292 | 0.236 |
-| Cost | 2794 | 681 | **471** |
-| Efficiency (wins/1k ops) | 0.136 | 0.429 | **0.501** |
+| Cost | 2795 | 681 | **471** |
+| Wins per thousand operations | 0.136 | 0.429 | **0.501** |
 
-**Cost per additional win**: ≈ 3,750 operations from Art3miz to Heuristic,
-≈ 24,300 from Heuristic to MCTS. **Sharply diminishing returns** — this is the
-central trade-off of the work, quantified.
+**Cost per additional win** in this match-up: ≈ 3,750 operations from Art3miz to
+the heuristic, ≈ 24,300 from the heuristic to MCTS. The return on analytical
+sophistication is sharply diminishing.
 
 ### Generalization — and the model's limit
 
-Replicating across three scales, the saving over the heuristic **grows with map
-size**: −16% (25×25), −29% (40×40), **−49%** (60×60). Consistent with the
-mechanism: larger maps have more turns without visual contact, which is exactly
-where deliberation is skipped.
+The saving over the heuristic **grows with map size**: −16% (25×25), −29%
+(40×40), **−49%** (60×60). On 25×25 maps, however, the Reactive AI is
+*simultaneously* cheaper and more effective than the proposed model: where agents
+are almost always in contact, there is little to save
+([analysis](docs/en/generalization.md)).
 
-**But there is an honest limit**: on 25×25 maps the Reactive AI is
-*simultaneously* cheaper and more effective than the proposed model. Where every
-situation is critical, there is nothing to save. The model has a
-[range of applicability](docs/en/generalization.md), and it has been delimited.
+### Conclusion
 
-**Conclusion**: the efficiency hypothesis is confirmed; the competitive
-superiority hypothesis is not. The work demonstrates that the trade-off between
-quality and cost is measurable, controllable via λ, and explicitable as a design
-decision — a control the reference models do not offer.
+- The efficiency hypothesis is **confirmed only in self-play**; the competitive
+  superiority hypothesis is **not confirmed**.
+- Per-action penalization, `S(a) = V(a) − λ·C(a)`, is inert when the
+  alternatives cost the same, and the cost of deciding lies in pathfinding.
+- The composite score measured in self-play **does not predict** performance in
+  direct confrontation: greedy stepping raises the score and still makes the
+  model win less.
+- The **Reactive AI is a remarkably strong baseline**: the heuristic does not win
+  significantly more than it (p = 0.757) despite costing 48% more. Part of that
+  strength comes from the proximity sensor, which favours the model that
+  deliberates least.
 
-Two additional findings, both statistically supported: the **Reactive AI is a
-remarkably strong baseline** — the heuristic does **not** win significantly more
-than it (p = 0.757) despite costing 48% more; and Art3miz's lead in the composite
-score is **robust to the choice of metric weights** (leading in 100% of 10,000
-random weightings — [analysis](docs/en/weight_sensitivity.md)).
+The full thesis (in Portuguese) is in [`monografia/`](monografia/).
 
 ## Running it
 

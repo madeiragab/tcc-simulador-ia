@@ -1,5 +1,7 @@
 > 🇧🇷 [Português](../modelo_proposto.md) · 🇬🇧 **English**
 
+> **Note:** development record. The final numbers and conclusions (definitive environment, 28,400 matches, ablation) are in the [thesis](../../monografia/) and the [README](../../README.en.md); where they differ, those prevail.
+
 # Art3miz 0.1 — The Proposed Model
 
 Central contribution of this work: a hybrid decision model weighing strategic value against computational cost.
@@ -66,9 +68,9 @@ Weights continue to be refined by between-match learning ([ai.md](ai.md) §6.5),
 
 ## 5. Results
 
-In self-play (1000 matches), Art3miz 0.1 obtains the **highest StrategicScore in the study (0.497)**, against 0.473 for the reactive and 0.438 for the heuristic, requiring **379 operations per match — 51% less than the heuristic**. It is also the most decisive (5.7% draws) and the fastest to win (29.3 turns).
+In self-play (1000 matches), Art3miz 0.1 obtains the **highest StrategicScore among the five models (0.497)**, against 0.473 for the reactive and 0.438 for the heuristic, requiring **379 operations per match — 51% less than the heuristic**. It is also the most decisive (5.7% draws) and the fastest to win (29.3 turns).
 
-In direct confrontation against full-cost opponents, it wins less (0.225 against ~0.33). The efficiency hypothesis is confirmed; competitive superiority is not. Full analysis in [final_results.md](final_results.md).
+In direct confrontation against both baselines, it wins less (0.225 against ~0.33). The efficiency hypothesis is confirmed only in self-play; competitive superiority is not. The ablation attributes about 81% of the saving to greedy stepping. Full analysis in [final_results.md](final_results.md).
 
 Its advantage has a **range of applicability**: the saving grows with map size (−16% at 25×25, −49% at 60×60), but on small maps the Reactive AI dominates the proposed model. See [generalization.md](generalization.md).
 

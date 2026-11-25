@@ -1,8 +1,10 @@
 > 🇧🇷 **Português** · 🇬🇧 [English](en/proposed_model.md)
 
+> **Nota:** registro de desenvolvimento. Os números e as conclusões finais (ambiente definitivo, 28.400 partidas, ablação) estão na [monografia](../monografia/) e no [README](../README.md); onde houver diferença, valem aqueles.
+
 # Art3miz 0.1 — Modelo Proposto
 
-Contribuição central do trabalho: um modelo híbrido de decisão que pondera valor estratégico contra custo computacional.
+Contribuição central do trabalho: um modelo de decisão no metanível, que pondera o valor de deliberar contra o custo de deliberar.
 
 Implementação: `simulator/ai/ai_art3miz.gd` · Identificador na linha de comando: `art3miz`
 Calibração e evidências: `resultados_hibrido.md` · Resultados: `resultados_finais.md`
@@ -66,9 +68,9 @@ Os pesos continuam sendo refinados pelo aprendizado entre partidas (`ia.md` §6.
 
 ## 5. Resultados
 
-Em autoconfronto (1000 partidas), o Art3miz 0.1 obtém o **maior StrategicScore do estudo (0,497)**, contra 0,473 da reativa e 0,438 da heurística, exigindo **379 operações por partida — 51% menos que a heurística**. É também o mais decisivo (5,7% de empates) e o mais rápido a vencer (29,3 turnos).
+Em autoconfronto (1000 partidas), o Art3miz 0.1 obtém o **maior StrategicScore entre os cinco modelos (0,497)**, contra 0,473 da reativa e 0,438 da heurística, exigindo **379 operações por partida — 51% menos que a heurística**. É também o mais decisivo (5,7% de empates) e o mais rápido a vencer (29,3 turnos).
 
-Em confronto direto contra oponentes de custo pleno, vence menos (0,225 contra ~0,33). A hipótese de eficiência confirma-se; a de superioridade competitiva, não. Análise completa em `resultados_finais.md`.
+Em confronto direto contra os dois baselines, vence menos (0,225 contra ~0,33). A hipótese de eficiência confirma-se apenas em autoconfronto; a de superioridade competitiva, não. A ablação atribui cerca de 81% da economia ao passo guloso. Análise completa em `resultados_finais.md`.
 
 ## 6. Uso
 
