@@ -1,5 +1,7 @@
 > 🇧🇷 **Português** · 🇬🇧 [English](en/final_results.md)
 
+> **Nota:** registro de desenvolvimento. Os números e as conclusões finais (ambiente definitivo, 28.400 partidas, ablação) estão na [monografia](../monografia/) e no [README](../README.md); onde houver diferença, valem aqueles.
+
 # Resultados Finais — Benchmark Oficial (Fase 5)
 
 Execução final sobre o banco oficial de 1000 *seeds* de benchmark, sob o conjunto definitivo de regras (percepção por cone de 120°, sensor de proximidade, tiro em linha reta, cobertura direcional, pontuação +3/−1/−3, aprendizado entre partidas). **7.000 partidas** em 7 lotes, todos documentados em `data/runs/`.
@@ -19,7 +21,7 @@ Três instâncias do mesmo modelo por partida. Em condições simétricas, a tax
 
 Achados:
 
-- **O Art3miz 0.1 obtém o maior StrategicScore (0,497)**, à frente da reativa (0,473) e da heurística (0,438). Vence em quatro das cinco dimensões da métrica: taxa de vitória, uso de cobertura, rapidez para decidir a partida e economia computacional.
+- **O Art3miz 0.1 obtém o maior StrategicScore entre os cinco modelos (0,497)**, à frente da reativa (0,473) e da heurística (0,438). A ablação posterior mostrou que a reativa gulosa (reativa + passo guloso) chega a 0,505 com custo 150, sem diferença detectável.
 - **É o mais econômico entre todos os modelos funcionais**: 379 operações por partida, contra 437 da reativa (−13%) e 777 da heurística (−51%).
 - **É o mais decisivo**: apenas 5,7% de empates, contra 11,6% da heurística — que, sendo mutuamente cautelosa, frequentemente se anula até o limite de turnos. Também vence mais rápido (29,3 turnos contra 35,5 e 45,1).
 - Em eficiência estratégica (vitórias por mil operações), a ordem é **Art3miz 0.1 com 0,829 > reativa 0,714 > heurística 0,380**: mais de **duas vezes** a eficiência da heurística.
@@ -27,7 +29,7 @@ Achados:
 
 ## 2. Confronto direto
 
-O modelo avaliado contra oponentes de custo pleno.
+O modelo avaliado contra os dois baselines, na mesma partida.
 
 ### 2.1 Confronto triplo (decisivo)
 
@@ -112,9 +114,9 @@ Este é o resultado que sustenta a tese do trabalho: **não existe um modelo mel
 
 Os resultados sustentam três conclusões, e é importante enunciá-las com precisão.
 
-**A hipótese de eficiência confirma-se.** O Art3miz 0.1 reduz o custo computacional em 51% em relação à heurística pura e é o modelo funcional mais barato do estudo. Em condições simétricas, entrega desempenho equivalente ou superior aos demais (WinRate 0,314; menor taxa de empates; menor número de turnos até a vitória) por uma fração do processamento, alcançando o **maior StrategicScore do estudo (0,497)** e mais que o dobro da eficiência estratégica da heurística. A formalização do compromisso entre valor e custo produz, portanto, um agente mensuravelmente mais eficiente.
+**A hipótese de eficiência confirma-se apenas em autoconfronto.** O Art3miz 0.1 reduz o custo computacional em 51% em relação à heurística pura e tem o maior StrategicScore entre os cinco modelos (0,497). A ablação mostrou que cerca de 81% dessa economia vem do passo guloso, e não do critério de deliberação. No confronto direto há perda significativa de vitórias, de modo que a hipótese não se sustenta nas duas condições.
 
-**A hipótese de superioridade competitiva não se confirma.** Quando enfrenta oponentes que pagam o custo pleno da análise, o Art3miz 0.1 vence menos (≈0,23 contra ≈0,33). A economia obtida ao deliberar seletivamente tem preço: nos turnos em que opta pelo regime econômico, o agente ocasionalmente perde a posição que a avaliação completa teria encontrado, e adversários que sempre deliberam exploram essa diferença.
+**A hipótese de superioridade competitiva não se confirma.** No confronto direto, o Art3miz 0.1 vence menos (≈0,23 contra ≈0,33), e seu custo não difere do da reativa. A comparação entre a heurística e o modelo com λ = 0 aponta o passo guloso como origem provável da desvantagem; o mecanismo exato não foi identificado.
 
 **A IA Reativa revela-se um baseline notavelmente forte.** Com 484 operações e WinRate 0,330 no confronto triplo, apresenta a maior eficiência do confronto direto (0,682 vitórias por mil operações). O teste formal reforça a conclusão: **a heurística não vence significativamente mais que a reativa** (p = 0,757), embora gaste 48% mais operações (p < 0,001). Em ambientes táticos com percepção limitada e horizonte curto, regras simples e bem escolhidas são difíceis de superar — a sofisticação analítica precisa justificar seu custo, e neste domínio não justificou.
 

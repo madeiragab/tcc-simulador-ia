@@ -1,5 +1,7 @@
 > 🇧🇷 **Português** · 🇬🇧 [English](en/hybrid_results.md)
 
+> **Nota:** registro de desenvolvimento. Os números e as conclusões finais (ambiente definitivo, 28.400 partidas, ablação) estão na [monografia](../monografia/) e no [README](../README.md); onde houver diferença, valem aqueles.
+
 # Calibração do Modelo Híbrido (Fase 4)
 
 Calibração conduzida exclusivamente no banco de **200 seeds de tuning**, isolado das 1000 seeds do benchmark — o modelo nunca viu, durante o ajuste, os cenários em que seria avaliado.
@@ -53,7 +55,7 @@ onde:
 - **ValorEmJogo** = *n* × (Proximidade + Vulnerabilidade), com *n* = inimigos visíveis, Proximidade = inverso da distância ao mais próximo e Vulnerabilidade = fração de vida perdida. Cresce nas situações em que decidir bem importa mais.
 - **CustoEstimado** = células candidatas × (inimigos visíveis + 1), o custo previsto da avaliação completa.
 
-Não havendo inimigos à vista, o valor em jogo é nulo e o regime econômico é sempre escolhido. O parâmetro percorre todo o espectro descrito na fundamentação do trabalho: **λ = 0 delibera sempre (equivale à heurística pura); λ alto nunca delibera (equivale à reativa)**.
+Não havendo inimigos à vista, o valor em jogo é nulo e o regime econômico é sempre escolhido. O parâmetro percorre todo o espectro descrito na fundamentação do trabalho: **λ = 0 delibera sempre que há inimigo à vista; λ alto nunca delibera.** Como o deslocamento fora da deliberação continua sendo o passo guloso, λ = 0 não equivale à heurística pura.
 
 ### 2.1 Regime econômico
 

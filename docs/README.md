@@ -20,7 +20,7 @@ Este diretório concentra a base teórica, as definições de arquitetura e a co
 
 ### 2. Metodologia Científica e Analítica
 - **problema.md**: Contexto, problema de pesquisa, questão central e hipótese.
-- **contribuicao.md**: A contribuição central do trabalho — o modelo híbrido de decisão baseado em equilíbrio entre valor estratégico e custo computacional.
+- **contribuicao.md**: A contribuição central do trabalho — o simulador com custo medido, o resultado negativo da penalização por ação e a decisão de deliberar no metanível (Art3miz 0.1).
 - **metodologia.md**: Configuração experimental padronizada para garantir reprodutibilidade.
 - **experiments.md**: Planejamento dos experimentos em lote (1000 *seeds* de benchmark + 200 de validação).
 - **coleta_dados.md**: Estrutura de registro dos resultados em `data/` em formato CSV.

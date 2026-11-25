@@ -13,7 +13,7 @@ estratégica de agentes de IA** — não apenas se ganham, mas quanto processame
 gastam para ganhar.
 
 > Trabalho de Conclusão de Curso — Ciência da Computação, IFSulDeMinas.
-> Autor: **Gabriel Madeira**.
+> Autor: **Gabriel Madeira Lourenço Silva**.
 
 ## O problema
 
@@ -23,7 +23,7 @@ custo computacional que o tornaria inviável na prática.
 
 Este trabalho constrói um ambiente **neutro, determinístico e reprodutível** onde
 eficácia e custo são medidos lado a lado, e usa essa base para investigar um
-**modelo híbrido de decisão** que equilibra os dois.
+**modelo de decisão no metanível**, que decide se vale a pena deliberar antes de deliberar.
 
 ## O ambiente
 
@@ -64,9 +64,9 @@ ScoreAção = ValorEstratégico − λ × CustoComputacional
 ```
 
 **Essa formulação não funciona neste domínio, e o porquê é um dos resultados do
-trabalho.** Duas razões medidas: o loop de avaliação responde por apenas 16% do
-custo (84% é a busca de caminho, executada todo turno); e como avaliar qualquer
-posição custa praticamente o mesmo, o termo vira uma constante somada a todas as
+trabalho.** Duas razões medidas: a avaliação das ações responde por apenas 12% do
+custo da heurística (76% é busca de caminho); e como avaliar qualquer posição
+custa praticamente o mesmo, o termo vira uma constante somada a todas as
 candidatas — formalmente, `argmax[Valor − λk] = argmax[Valor]`. O λ é inerte.
 
 A reformulação aplica o mesmo compromisso um nível acima, na decisão sobre o
@@ -78,83 +78,102 @@ ValorEmJogo − λ × CustoEstimado > 0   →   delibera
 
 O agente estima o que está em jogo (inimigos à vista, proximidade, própria
 vulnerabilidade) e só paga pela avaliação posicional completa quando compensa.
-Com λ = 0 delibera sempre (equivale à heurística); com λ alto, nunca (equivale à
-reativa). Fora do regime de deliberação, move-se por passo guloso (~4 operações
-em vez de ~25 nós de busca), recorrendo à busca completa apenas ao caçar uma
-posição já conhecida.
+Fora do regime de deliberação, move-se por **passo guloso** (3 a 6 operações em
+vez de ~25 nós de busca). O modelo tem, portanto, dois mecanismos de economia: o
+critério de deliberação (governado por λ) e o deslocamento econômico (que não
+depende de λ). Com λ = 0, delibera sempre que há inimigo à vista, mas continua se
+deslocando de forma econômica — não equivale à heurística pura.
+
+O enquadramento é o do **metarraciocínio racional** (Russell & Wefald, 1991):
+uma computação só tem valor na medida em que pode mudar a ação escolhida. Ver
+[fundamentacao_teorica.md](docs/fundamentacao_teorica.md).
 
 ## Resultados
 
-**Mais de 14.000 partidas** no banco oficial, distribuídas em autoconfrontos,
-confrontos diretos, replicação em três escalas de mapa e calibração. Todas as
-afirmações comparativas foram submetidas a **teste de significância**
-([análise completa](docs/analise_estatistica.md)).
+**28.400 partidas**: 11.000 no *benchmark* oficial (autoconfrontos, confrontos
+diretos, MCTS e três escalas de mapa) e 17.400 em experimentos complementares
+(ablação, variantes do modelo, recalibração de λ e reexecuções com registro turno
+a turno). Todas as afirmações comparativas foram submetidas a **teste de
+significância** com correção de Holm ([análise completa](docs/analise_estatistica.md)).
 
-### Autoconfronto — desempenho global
+### Autoconfronto — três instâncias do mesmo modelo
 
 | Modelo | WinRate | Empates | Custo | **StrategicScore** |
 |---|---|---|---|---|
-| Aleatória | 0,000 | 100% | 2323 | 0,145 |
-| Reativa | 0,312 | 6,5% | 437 | 0,473 |
+| Aleatória | 0,000 | 100% | 2323 | 0,147 |
+| MCTS | 0,313 | 6,0% | 2301 | 0,435 |
 | Heurística | 0,295 | 11,6% | 777 | 0,438 |
-| **Art3miz 0.1** | **0,314** | **5,7%** | **379** | **0,497** |
+| Reativa | 0,312 | 6,5% | 437 | 0,473 |
+| **Art3miz 0.1** | 0,314 | 5,7% | 379 | **0,497** |
 
-O Art3miz 0.1 obtém **o maior StrategicScore do estudo**, liderando quatro
-das cinco dimensões: vence mais, usa mais cobertura, decide as partidas mais
-rápido (29 turnos contra 45 da heurística) e gasta **51% menos** que ela.
-Em eficiência — vitórias por mil operações — entrega 0,829 contra 0,380 da
-heurística: mais que o dobro.
+Entre os cinco modelos, o Art3miz 0.1 tem o maior escore composto e o menor
+custo — **51% abaixo da heurística**. Em autoconfronto a taxa de vitória é fixada
+pela simetria (cerca de um terço), e o escore separa os modelos por custo, ritmo
+e uso do terreno.
+
+### Ablação — de onde vem a economia
+
+| Modelo | Custo | StrategicScore |
+|---|---|---|
+| Heurística | 777 | 0,438 |
+| Art3miz, λ = 0 (só o passo guloso) | 456 | 0,483 |
+| Art3miz 0.1, λ = 0,005 | 379 | 0,497 |
+| Reativa | 437 | 0,473 |
+| Reativa gulosa (reativa + passo guloso) | **150** | **0,505** |
+
+**Cerca de 81% da economia vem do passo guloso, e não do critério de
+deliberação.** Aplicado à IA reativa, o mesmo deslocamento produz escore sem
+diferença detectável em relação ao do Art3miz 0.1 com menos da metade do custo.
 
 ### Confronto direto — o contraponto honesto
 
 | Métrica | Art3miz 0.1 | Heurística | Reativa |
 |---|---|---|---|
 | WinRate | 0,225 | **0,339** | 0,330 |
-| Custo | **510** | 719 | 484 |
+| Custo | 510 | 719 | **484** |
 | StrategicScore | 0,426 | 0,467 | **0,472** |
 
-Contra adversários que pagam o custo pleno da análise, **o Art3miz 0.1 vence
-menos**. A economia tem preço: ao pular a deliberação, o agente às vezes perde a
-posição que a avaliação completa encontraria.
+Quando os três disputam a mesma partida, **o Art3miz 0.1 vence menos** (p < 0,001)
+e seu custo não difere do da reativa. Corrigir um defeito de mira, deliberar em
+todo turno de contato (λ = 0) ou trocar os pesos não altera a desvantagem. A
+comparação entre a heurística e o modelo com λ = 0 aponta o deslocamento
+econômico como origem provável; o mecanismo exato não foi identificado.
 
-### O espectro completo — e o valor marginal da computação
-
-Com o MCTS ancorando o extremo caro, é possível medir quanto custa cada ganho:
+### O espectro completo — MCTS, heurística e Art3miz na mesma partida
 
 | | MCTS | Heurística | Art3miz 0.1 |
 |---|---|---|---|
 | WinRate | **0,379** | 0,292 | 0,236 |
-| Custo | 2794 | 681 | **471** |
-| Eficiência (vit./mil ops) | 0,136 | 0,429 | **0,501** |
+| Custo | 2795 | 681 | **471** |
+| Vitórias por mil operações | 0,136 | 0,429 | **0,501** |
 
-**Custo por vitória adicional**: ≈ 3.750 operações de Art3miz para Heurística,
-≈ 24.300 de Heurística para MCTS. **Retorno fortemente decrescente** — este é o
-compromisso central do trabalho, quantificado.
+**Custo por vitória adicional** neste confronto: ≈ 3.750 operações do Art3miz
+para a heurística, ≈ 24.300 da heurística para o MCTS. O retorno da sofisticação
+analítica é fortemente decrescente.
 
 ### Generalização — e o limite do modelo
 
-Replicando em três escalas, a economia sobre a heurística **cresce com o
-tamanho do mapa**: −16% (25×25), −29% (40×40), **−49%** (60×60). Coerente com o
-mecanismo: mapas maiores têm mais turnos sem contato visual, e é aí que a
-deliberação é dispensada.
+A economia sobre a heurística **cresce com o tamanho do mapa**: −16% (25×25),
+−29% (40×40), **−49%** (60×60). Em mapas 25×25, porém, a IA reativa é
+*simultaneamente* mais barata e mais eficaz que o modelo proposto: onde os
+agentes estão quase sempre em contato, há pouco a economizar
+([análise](docs/generalizacao.md)).
 
-**Mas há um limite honesto**: em mapas 25×25 a IA Reativa é *simultaneamente*
-mais barata e mais eficaz que o modelo proposto. Onde toda situação é crítica,
-não há o que economizar. O modelo tem [faixa de aplicabilidade](docs/generalizacao.md),
-e ela está delimitada.
+### Conclusão
 
-**Conclusão**: a hipótese de eficiência confirma-se; a de superioridade
-competitiva, não. O trabalho demonstra que o compromisso entre qualidade e custo
-é mensurável, controlável por λ e explicitável como decisão de projeto — um
-controle que os modelos de referência não oferecem.
+- A hipótese de eficiência **confirma-se apenas em autoconfronto**; a de
+  superioridade competitiva **não se confirma**.
+- A penalização por ação, `S(a) = V(a) − λ·C(a)`, é inócua quando as alternativas
+  custam o mesmo, e o custo de decidir está na busca de caminho.
+- O escore composto medido em autoconfronto **não prevê** o desempenho em
+  confronto direto: o passo guloso eleva o escore e, ainda assim, faz o modelo
+  vencer menos.
+- A **IA reativa é um baseline notavelmente forte**: a heurística não vence
+  significativamente mais que ela (p = 0,757) embora custe 48% a mais. Parte
+  dessa força vem do sensor de proximidade, que favorece o modelo que menos
+  delibera.
 
-Dois achados adicionais, ambos com respaldo estatístico: a **IA Reativa é um
-baseline notavelmente forte** — a heurística **não vence significativamente
-mais** que ela (p = 0,757) embora custe 48% a mais; e a liderança do Art3miz no
-escore composto é **robusta à escolha dos pesos** da métrica (lidera em 100% de
-10.000 ponderações aleatórias — [análise](docs/sensibilidade_pesos.md)).
-
-Análise completa: [resultados_finais.md](docs/resultados_finais.md).
+A monografia completa está em [`monografia/`](monografia/).
 
 ## Como executar
 
@@ -180,7 +199,7 @@ Argumentos: `batch <N> <banco>` onde `banco` é `benchmark` (1000 seeds) ou
 `vermelho` e `azul`. Modelos: `aleatoria`, `reativa`, `reativa_gulosa`, `heuristica`, `art3miz`, `mcts`.
 Opcionais: `turnos` (log turno a turno), `mapa=<n>` (tamanho do grid),
 `lambda=<v>` e `budget=<n>` (calibração
-do modelo híbrido).
+do Art3miz 0.1).
 
 Cada execução grava uma pasta em `data/runs/<timestamp>_<banco>_<N>/` com
 `partidas.csv` (uma linha por jogador por partida, com métricas brutas,
@@ -204,7 +223,7 @@ A pasta [`docs/`](docs) contém a base teórica e metodológica completa —
 | [regras.md](docs/regras.md) | Regras do mundo simulado |
 | [geracao_mapas.md](docs/geracao_mapas.md) | Geração procedural por seed |
 | [ia.md](docs/ia.md) | Utility AI e aprendizado entre partidas |
-| [modelo_proposto.md](docs/modelo_proposto.md) | Especificação do modelo híbrido |
+| [modelo_proposto.md](docs/modelo_proposto.md) | Especificação do Art3miz 0.1 |
 | [metricas.md](docs/metricas.md) | Métricas e o StrategicScore normalizado |
 | [metodologia.md](docs/metodologia.md) | Configuração experimental |
 | [resultados_hibrido.md](docs/resultados_hibrido.md) | Calibração do λ e o resultado negativo da formulação direta |

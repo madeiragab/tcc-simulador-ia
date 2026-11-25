@@ -1,5 +1,7 @@
 > 🇧🇷 [Português](../generalizacao.md) · 🇬🇧 **English**
 
+> **Note:** development record. The final numbers and conclusions (definitive environment, 28,400 matches, ablation) are in the [thesis](../../monografia/) and the [README](../../README.en.md); where they differ, those prevail.
+
 # Generalization — Does the Finding Hold Beyond 40×40?
 
 Benchmark results were obtained on a 40×40 grid. A conclusion drawn from a single environment configuration may be a property of that environment rather than of the model. This experiment replicates the direct confrontation at **three scales** to verify which findings hold.
@@ -37,7 +39,7 @@ Art3miz 0.1's cost reduction relative to the Heuristic, by scale:
 | 40×40 | 510 | 719 | **−29%** |
 | 60×60 | 494 | 970 | **−49%** |
 
-**The saving nearly triples** between the smallest and largest scale. This is consistent with the mechanism identified during characterization: 84% of cost concentrates in pathfinding, and larger maps demand more movement without visual contact — precisely the situations where the economic regime replaces full search with greedy stepping.
+**The saving nearly triples** between the smallest and largest scale. This is consistent with the mechanism identified during characterization: most of the cost concentrates in pathfinding (76% in the final environment), and larger maps demand more movement without visual contact — precisely the situations where the economic regime replaces full search with greedy stepping.
 
 This is the experiment's central finding: **the proposed model's advantage is not an artefact of the original configuration — it amplifies as the environment grows**, which is the relevant direction for practical application, where environments tend to be larger than the one tested.
 

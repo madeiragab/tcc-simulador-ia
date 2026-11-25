@@ -1,5 +1,7 @@
 > 🇧🇷 **Português** · 🇬🇧 [English](en/generalization.md)
 
+> **Nota:** registro de desenvolvimento. Os números e as conclusões finais (ambiente definitivo, 28.400 partidas, ablação) estão na [monografia](../monografia/) e no [README](../README.md); onde houver diferença, valem aqueles.
+
 # Generalização — O Achado se Sustenta Fora do 40×40?
 
 Os resultados do benchmark foram obtidos em um grid de 40×40. Uma conclusão obtida em uma única configuração de ambiente pode ser propriedade daquele ambiente, e não do modelo. Este experimento replica o confronto direto em **três escalas** para verificar quais achados se sustentam.
@@ -37,7 +39,7 @@ A redução de custo do Art3miz 0.1 em relação à Heurística, por escala:
 | 40×40 | 510 | 719 | **−29%** |
 | 60×60 | 494 | 970 | **−49%** |
 
-**A economia praticamente triplica** entre a menor e a maior escala. O resultado é coerente com o mecanismo identificado na caracterização: 84% do custo concentra-se na busca de caminho, e mapas maiores exigem mais deslocamento sem contato visual — precisamente as situações em que o regime econômico substitui a busca completa pelo passo guloso.
+**A economia praticamente triplica** entre a menor e a maior escala. O resultado é coerente com o mecanismo identificado na caracterização: a maior parte do custo concentra-se na busca de caminho (76% no ambiente final), e mapas maiores exigem mais deslocamento sem contato visual — precisamente as situações em que o regime econômico substitui a busca completa pelo passo guloso.
 
 Esse é o achado central do experimento: **a vantagem do modelo proposto não é artefato da configuração original — ela se amplifica conforme o ambiente cresce**, que é a direção relevante para aplicação prática, onde ambientes tendem a ser maiores que o testado.
 

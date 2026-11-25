@@ -1,5 +1,7 @@
 > 🇧🇷 [Português](../resultados_hibrido.md) · 🇬🇧 **English**
 
+> **Note:** development record. The final numbers and conclusions (definitive environment, 28,400 matches, ablation) are in the [thesis](../../monografia/) and the [README](../../README.en.md); where they differ, those prevail.
+
 # Calibration of the Proposed Model
 
 Calibration was conducted exclusively on the **200 tuning seeds**, isolated from the 1000 benchmark seeds — during tuning the model never saw the scenarios on which it would later be evaluated.
@@ -50,7 +52,7 @@ It deliberates (full positional evaluation) if and only if:
 
 where **ValueAtStake** = *n* × (Proximity + Vulnerability), with *n* visible enemies, Proximity the inverse of the distance to the nearest, and Vulnerability the fraction of health lost; and **EstimatedCost** = candidate cells × (visible enemies + 1).
 
-With no enemies in sight, value at stake is zero and the economic regime is always chosen. The parameter spans the whole spectrum: **λ = 0 always deliberates** (equivalent to the pure heuristic); **high λ never deliberates** (equivalent to the reactive).
+With no enemies in sight, value at stake is zero and the economic regime is always chosen. The parameter spans the whole spectrum: **λ = 0 deliberates whenever an enemy is in sight; high λ never deliberates.** Since movement outside deliberation is still greedy stepping, λ = 0 is not equivalent to the pure heuristic.
 
 ### 2.1 Economic regime
 

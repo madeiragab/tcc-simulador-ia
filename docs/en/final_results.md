@@ -1,5 +1,7 @@
 > 🇧🇷 [Português](../resultados_finais.md) · 🇬🇧 **English**
 
+> **Note:** development record. The final numbers and conclusions (definitive environment, 28,400 matches, ablation) are in the [thesis](../../monografia/) and the [README](../../README.en.md); where they differ, those prevail.
+
 # Final Results — Official Benchmark
 
 Final execution over the official bank of 1000 benchmark seeds, under the definitive rule set (120° vision cone, proximity sensor, straight-line fire, directional cover, +3/−1/−3 scoring, between-match learning). **7,000 matches** across 7 batches, all documented under `data/runs/`, plus a further 4,000 in the MCTS and generalization experiments.
@@ -19,7 +21,7 @@ Three instances of the same model per match. Under symmetric conditions the win 
 
 Findings:
 
-- **Art3miz 0.1 obtains the highest StrategicScore (0.497)**, ahead of reactive (0.473) and heuristic (0.438). It leads four of the metric's five dimensions: win rate, cover usage, speed to decide the match, and computational economy.
+- **Art3miz 0.1 obtains the highest StrategicScore among the five models (0.497)**, ahead of reactive (0.473) and heuristic (0.438). The later ablation showed that the greedy reactive (reactive + greedy stepping) reaches 0.505 at cost 150, with no detectable difference.
 - **It is the most economical among all functional models**: 379 operations per match, against 437 for reactive (−13%) and 777 for heuristic (−51%).
 - **It is the most decisive**: only 5.7% draws, against 11.6% for the heuristic — which, being mutually cautious, frequently deadlocks to the turn limit. It also wins faster (29.3 turns against 35.5 and 45.1).
 - In strategic efficiency (wins per thousand operations), the ordering is **Art3miz 0.1 at 0.829 > reactive 0.714 > heuristic 0.380**: more than **twice** the heuristic's efficiency.
@@ -27,7 +29,7 @@ Findings:
 
 ## 2. Direct confrontation
 
-The evaluated model against full-cost opponents.
+The evaluated model against both baselines, in the same match.
 
 ### 2.1 Three-way confrontation (decisive)
 
@@ -112,9 +114,9 @@ This is the result underpinning the work's thesis: **there is no best model in a
 
 The results support three conclusions, and stating them precisely matters.
 
-**The efficiency hypothesis is confirmed.** Art3miz 0.1 reduces computational cost by 51% relative to the pure heuristic and is the cheapest functional model in the study. Under symmetric conditions it delivers equal or superior performance to the others (win rate 0.314; lowest draw rate; fewest turns to victory) for a fraction of the processing, reaching the **highest StrategicScore in the study (0.497)** and more than double the heuristic's strategic efficiency. Formalizing the value-versus-cost trade-off therefore produces a measurably more efficient agent.
+**The efficiency hypothesis is confirmed only in self-play.** Art3miz 0.1 reduces computational cost by 51% relative to the pure heuristic and has the highest StrategicScore among the five models (0.497). The ablation showed that about 81% of that saving comes from greedy stepping, not from the deliberation criterion. In direct confrontation there is a significant loss of wins, so the hypothesis does not hold in both conditions.
 
-**The competitive superiority hypothesis is not confirmed.** When facing opponents paying the full price of analysis, Art3miz 0.1 wins less (≈0.23 against ≈0.33). The economy obtained by deliberating selectively has a price: on turns when it opts for the economic regime, the agent occasionally misses the position full evaluation would have found, and opponents that always deliberate exploit that difference.
+**The competitive superiority hypothesis is not confirmed.** In direct confrontation Art3miz 0.1 wins less (≈0.23 against ≈0.33), and its cost does not differ from the reactive's. The heuristic versus λ = 0 comparison points to greedy stepping as the likely origin of the disadvantage; the exact mechanism was not identified.
 
 **The Reactive AI proves a remarkably strong baseline.** With 484 operations and a 0.330 win rate in the three-way confrontation, it shows the highest efficiency in direct competition (0.682 wins per thousand operations). Formal testing reinforces the conclusion: **the heuristic does not win significantly more than the reactive** (p = 0.757), despite spending 48% more operations (p < 0.001). In tactical environments with limited perception and a short horizon, simple well-chosen rules are hard to beat — analytical sophistication must justify its cost, and in this domain it did not.
 

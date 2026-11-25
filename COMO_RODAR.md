@@ -327,7 +327,7 @@ godot --headless --path simulator -- batch 1000 benchmark verde=art3miz vermelho
 ```
 
 O primeiro comando, com `turnos`, também gera os dados da análise por tipo de
-turno (Tabela 13).
+turno (Tabela 12).
 
 ### 9.3 Confronto com o MCTS (Tabelas 7 e 8)
 
@@ -335,7 +335,7 @@ turno (Tabela 13).
 godot --headless --path simulator -- batch 1000 benchmark verde=mcts vermelho=art3miz azul=heuristica
 ```
 
-### 9.4 Generalização para outras escalas (Tabela 10)
+### 9.4 Generalização para outras escalas (Tabela 9)
 
 ```bash
 godot --headless --path simulator -- batch 1000 benchmark mapa=25 verde=art3miz vermelho=heuristica azul=reativa
@@ -357,7 +357,7 @@ godot --headless --path simulator -- batch 200 tuning lambda=0.05 verde=art3miz 
 godot --headless --path simulator -- batch 200 tuning verde=heuristica vermelho=reativa azul=reativa
 ```
 
-### 9.6 Ablação: de onde vem a economia (Tabela 11)
+### 9.6 Ablação: de onde vem a economia (Tabela 10)
 
 ```bash
 # Art3miz com λ = 0: delibera sempre que há inimigo à vista, mas mantém o deslocamento econômico
@@ -369,7 +369,7 @@ godot --headless --path simulator -- batch 1000 benchmark turnos verde=reativa_g
 godot --headless --path simulator -- batch 1000 benchmark turnos verde=art3miz vermelho=heuristica azul=reativa_gulosa
 ```
 
-### 9.7 Variantes do Art3miz (Tabela 12)
+### 9.7 Variantes do Art3miz (Tabela 11)
 
 ```bash
 # alvo escolhido a partir da posição de chegada
